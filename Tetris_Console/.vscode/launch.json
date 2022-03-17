@@ -10,11 +10,11 @@
             "request": "launch",
             "preLaunchTask": "build",
             // If you have changed target frameworks, make sure to update the program path.
-            "program": "${workspaceFolder}/Tetris_Console/bin/Debug/netcoreapp3.1/Tetris_Console.dll",
+            "program": "${workspaceFolder}/bin/Debug/netcoreapp3.1/Tetris_Console.dll",
             "args": [],
-            "cwd": "${workspaceFolder}/Tetris_Console",
+            "cwd": "${workspaceFolder}",
             // For more information about the 'console' field, see https://aka.ms/VSCode-CS-LaunchJson-Console
-            "console": "internalConsole",
+            "console": "externalTerminal",
             "stopAtEntry": false
         },
         {
