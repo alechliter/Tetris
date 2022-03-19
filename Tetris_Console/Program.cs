@@ -9,6 +9,7 @@ namespace Lechliter.Tetris_Console
         private static ITetromino<PieceType, Direction> tetromino;
         private static ITracker<PieceType, Direction> tracker;
         private static IView<TextColor, PieceType> view;
+        private static IFrame frame;
 
         private static void SimpleTest(ITetromino<PieceType, Direction> tetromino){
             LogPosition(tetromino);
@@ -39,22 +40,57 @@ namespace Lechliter.Tetris_Console
             Console.Clear();
             view?.Display(tracker.AllPieces);
         }
+
+        private static bool HandleInput()
+        {
+            bool isDone = false;
+            ConsoleKeyInfo key;
+            if (Console.KeyAvailable)
+            {
+                key = Console.ReadKey(true);
+
+                switch (key.Key)
+                {
+                    case ConsoleKey.LeftArrow:
+                        tetromino.Move(Direction.Left);
+                        break;
+                    case ConsoleKey.RightArrow:
+                        tetromino.Move(Direction.Right);
+                        break;
+                    case ConsoleKey.UpArrow:
+                        // TODO: Replace with Drop 
+                        tetromino.Move(Direction.Up);
+                        break;
+                    case ConsoleKey.DownArrow:
+                        tetromino.Move(Direction.Down);
+                        break;
+                    case ConsoleKey.C:
+                        tetromino.Rotate(Direction.Left);
+                        break;
+                    case ConsoleKey.V:
+                        tetromino.Rotate(Direction.Right);
+                        break;
+                    case ConsoleKey.Q:
+                        isDone = true;
+                        break;
+                    case ConsoleKey.N:
+                        tetromino.NewPiece();
+                        break;
+                }
+            }
+            return isDone;
+        }
+
         static void Main(string[] args)
         {
             spwanPoint = new Point(Tracker.GRID_DIM.X / 2 - 1, 0);
             tetromino = new Tetromino(spwanPoint);
             tracker = new Tracker(tetromino);
             view = new ConsoleView();
+            frame = new Frame();
 
             tracker.GridUpdate += Display; // Displays the grid whenever the grid is updated
-
-            //KeyPress3 keyPressTracker = new KeyPress3();
-            //keyPressTracker.moveLeft += () => tetromino.Move(Direction.Left);
-            //keyPressTracker.moveRight += () => tetromino.Move(Direction.Right);
-            //keyPressTracker.moveDown += () => tetromino.Move(Direction.Down);
-            //keyPressTracker.drop += () => tetromino.Move(Direction.Up);
-            //keyPressTracker.rotateLeft += () => tetromino.Rotate(Direction.Left);
-            //keyPressTracker.rotateRight += () => tetromino.Rotate(Direction.Right);
+            frame.FrameAction += () => tetromino.Move(Direction.Down); // move the tetromino down each frame
 
             // ! TEST: DELETE LATER
             SimpleTest(tetromino);
@@ -68,87 +104,10 @@ namespace Lechliter.Tetris_Console
             SimpleTest(tetromino);
             // !
 
-            // long past = DateTime.Now.Ticks;
-            // long now = past;
-            // long ticks_diff = now - past;
-            // long interval_ms = 300;
-
-            // while(true){
-            //     now = DateTime.Now.Ticks;
-            //     ticks_diff = now - past;
-            //     if(ticks_diff >= interval_ms * TimeSpan.TicksPerMillisecond){
-            //         view.Display(Tracker.AllPieces);
-            //         past = now;
-            //     }
-            // }
-
-            // IList<ConsoleKey> SupportedKeys = new List<ConsoleKey>() {
-            //     ConsoleKey.C, ConsoleKey.V,
-            //     ConsoleKey.LeftArrow, ConsoleKey.RightArrow, ConsoleKey.UpArrow, ConsoleKey.DownArrow
-            // };
-            // foreach(ConsoleKey key in SupportedKeys){
-            //     KeyPress.AddKey(key);
-            // }
-            // KeyPress.AddPressedEvent(ConsoleKey.LeftArrow, () => tetromino.Move(Direction.Left));
-            // KeyPress.AddPressedEvent(ConsoleKey.RightArrow, () => tetromino.Move(Direction.Right));
-            // KeyPress.AddPressedEvent(ConsoleKey.UpArrow, () => tetromino.Move(Direction.Up));
-            // KeyPress.AddPressedEvent(ConsoleKey.DownArrow, () => tetromino.Move(Direction.Down));
-
-            // while(true){
-            //     KeyPress.HandleAllEvents();
-            // }
-
-
-            long past = DateTime.Now.Ticks;
-            long now = past;
-            long ticks_diff = now - past;
-            long interval_ms = 1000;
-
             bool isDone = false;
             while(!isDone){
-                //keyPressTracker.Frame(keyPressTracker.ReadKey, keyPressTracker.ParseKeysPressed);
-                ConsoleKeyInfo key;
-                if (Console.KeyAvailable)
-                {
-                    key = Console.ReadKey(true);
-
-                    switch (key.Key)
-                    {
-                        case ConsoleKey.LeftArrow:
-                            tetromino.Move(Direction.Left);
-                            break;
-                        case ConsoleKey.RightArrow:
-                            tetromino.Move(Direction.Right);
-                            break;
-                        case ConsoleKey.UpArrow:
-                            // TODO: Replace with Drop 
-                            tetromino.Move(Direction.Up);
-                            break;
-                        case ConsoleKey.DownArrow:
-                            tetromino.Move(Direction.Down);
-                            break;
-                        case ConsoleKey.C:
-                            tetromino.Rotate(Direction.Left);
-                            break;
-                        case ConsoleKey.V:
-                            tetromino.Rotate(Direction.Right);
-                            break;
-                        case ConsoleKey.Q:
-                            isDone = true;
-                            break;
-                        case ConsoleKey.N:
-                            tetromino.NewPiece();
-                            break;
-                    }
-                }
-
-                now = DateTime.Now.Ticks;
-                ticks_diff = now - past;
-                if(ticks_diff >= interval_ms * TimeSpan.TicksPerMillisecond){
-                    tetromino.Move(Direction.Down);
-                    past = now;
-                }
-
+                isDone = HandleInput();
+                frame.nextFrame();
             }
 
             Console.WriteLine("Done.");
