@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Lechliter.Tetris_Console
 {
-    struct IntDimensions
+    public struct IntDimensions
     {
         public int X, Y;
         public IntDimensions(int width, int height)
@@ -13,7 +13,7 @@ namespace Lechliter.Tetris_Console
             this.Y = height;
         }
     }
-    class Tracker : ITracker<PieceType, Direction>
+    public class Tracker : ITracker<PieceType, Direction>
     {
         /* Public Members */
         public static readonly IntDimensions GRID_DIM;

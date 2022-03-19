@@ -1,6 +1,6 @@
 ﻿namespace Lechliter.Tetris_Console
 {
-    struct Point
+    public struct Point
     {
         public float x, y;
         public Point(float x, float y)
@@ -19,7 +19,7 @@
         }
 
     }
-    interface IGameObject
+    public interface IGameObject
     {
         public Point Position { get; }
     }

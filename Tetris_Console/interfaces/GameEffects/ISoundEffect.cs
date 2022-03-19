@@ -4,7 +4,7 @@ using System.Text;
 
 namespace LechliterTetris_Console.Interfaces
 {
-    interface ISoundEffect <TSoundPlayer>
+    public interface ISoundEffect <TSoundPlayer>
     {
         struct Sounds
         {

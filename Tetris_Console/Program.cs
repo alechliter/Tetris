@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Lechliter.Tetris_Console
 {
-    class Program
+    public class Program
     {
         private static Point spwanPoint;
         private static ITetromino<PieceType, Direction> tetromino;
@@ -18,6 +18,18 @@ namespace Lechliter.Tetris_Console
             tetromino.Move(Direction.Left);
             LogPosition(tetromino);
         }
+
+        private static void GeneratePiecesTest(ITracker<PieceType, Direction> tracker)
+        {
+            tracker.AllPieces[3, 10] = PieceType.O;
+            tracker.AllPieces[4, 10] = PieceType.T;
+            tracker.AllPieces[5, 10] = PieceType.J;
+            tracker.AllPieces[6, 10] = PieceType.L;
+            tracker.AllPieces[7, 10] = PieceType.I;
+            tracker.AllPieces[8, 10] = PieceType.S;
+            tracker.AllPieces[9, 10] = PieceType.Z;
+        }
+
         private static void LogPosition(ITetromino<PieceType, Direction> piece)
         {
             Console.WriteLine("x: {0} y: {1}", piece.Position.x, piece.Position.y);
@@ -29,35 +41,32 @@ namespace Lechliter.Tetris_Console
         }
         static void Main(string[] args)
         {
-            spwanPoint = new Point(Tracker.GRID_DIM.X, 0);
+            spwanPoint = new Point(Tracker.GRID_DIM.X / 2 - 1, 0);
             tetromino = new Tetromino(spwanPoint);
-
-            // ! TEST: DELETE LATER
-            SimpleTest(tetromino);
-            // !
-
             tracker = new Tracker(tetromino);
             view = new ConsoleView();
 
             tracker.GridUpdate += Display; // Displays the grid whenever the grid is updated
 
-            // ! TEST: DELETE LATER
-            tracker.AllPieces[3, 10] = PieceType.O;
-            tracker.AllPieces[4, 10] = PieceType.T;
-            tracker.AllPieces[5, 10] = PieceType.J;
-            tracker.AllPieces[6, 10] = PieceType.L;
-            tracker.AllPieces[7, 10] = PieceType.I;
-            tracker.AllPieces[8, 10] = PieceType.S;
-            tracker.AllPieces[9, 10] = PieceType.Z;
-            // !
+            //KeyPress3 keyPressTracker = new KeyPress3();
+            //keyPressTracker.moveLeft += () => tetromino.Move(Direction.Left);
+            //keyPressTracker.moveRight += () => tetromino.Move(Direction.Right);
+            //keyPressTracker.moveDown += () => tetromino.Move(Direction.Down);
+            //keyPressTracker.drop += () => tetromino.Move(Direction.Up);
+            //keyPressTracker.rotateLeft += () => tetromino.Rotate(Direction.Left);
+            //keyPressTracker.rotateRight += () => tetromino.Rotate(Direction.Right);
 
             // ! TEST: DELETE LATER
             SimpleTest(tetromino);
             // !
 
-            tetromino.Rotate(Direction.Left);
-            
-            tetromino.Rotate(Direction.Left);
+            // ! TEST: DELETE LATER
+            GeneratePiecesTest(tracker);
+            // !
+
+            // ! TEST: DELETE LATER
+            SimpleTest(tetromino);
+            // !
 
             // long past = DateTime.Now.Ticks;
             // long now = past;
@@ -97,12 +106,14 @@ namespace Lechliter.Tetris_Console
 
             bool isDone = false;
             while(!isDone){
-
+                //keyPressTracker.Frame(keyPressTracker.ReadKey, keyPressTracker.ParseKeysPressed);
                 ConsoleKeyInfo key;
-                if(Console.KeyAvailable){
+                if (Console.KeyAvailable)
+                {
                     key = Console.ReadKey(true);
 
-                    switch(key.Key){
+                    switch (key.Key)
+                    {
                         case ConsoleKey.LeftArrow:
                             tetromino.Move(Direction.Left);
                             break;
@@ -115,13 +126,13 @@ namespace Lechliter.Tetris_Console
                             break;
                         case ConsoleKey.DownArrow:
                             tetromino.Move(Direction.Down);
-                            break;  
+                            break;
                         case ConsoleKey.C:
                             tetromino.Rotate(Direction.Left);
-                            break;  
+                            break;
                         case ConsoleKey.V:
                             tetromino.Rotate(Direction.Right);
-                            break; 
+                            break;
                         case ConsoleKey.Q:
                             isDone = true;
                             break;

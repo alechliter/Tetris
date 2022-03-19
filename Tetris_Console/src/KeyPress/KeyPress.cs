@@ -10,7 +10,7 @@ namespace Lechliter.Tetris_Console
     /// <summary>
     /// Key-Event structure that saves the events and properties of a given keyboard key.
     /// </summary>
-    class KeyEvent
+    public class KeyEvent
     {
         public Action DownEvent;
         public Action UpEvent;

@@ -7,7 +7,7 @@ namespace Lechliter.Tetris_Console
     /// <summary>
     /// A class that provides support for key press and release events in a console application.
     /// </summary>
-    class KeyPress2
+    public class KeyPress2
     {
         /* Private Members */
 

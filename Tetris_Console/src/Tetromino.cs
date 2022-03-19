@@ -10,7 +10,7 @@ namespace Lechliter.Tetris_Console
     /// X - Locked Piece,
     /// E - Empty space
     /// </summary>
-    enum PieceType
+    public enum PieceType
     {
         I, O, T, J, L, S, Z, X, E // X - Locked, E - Empty
     }
@@ -18,11 +18,11 @@ namespace Lechliter.Tetris_Console
     /// Direction of travel.
     /// Directions: Up, Down, Left, Right
     /// </summary>
-    enum Direction
+    public enum Direction
     {
         Up, Down, Left, Right
     }
-    class Tetromino : ITetromino<PieceType, Direction>
+    public class Tetromino : ITetromino<PieceType, Direction>
     {
         /* Private members */
         private Point pivot;

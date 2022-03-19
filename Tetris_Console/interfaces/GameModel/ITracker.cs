@@ -10,7 +10,7 @@ namespace Lechliter.Tetris_Console
     /// </summary>
     /// <typeparam name="TPieceType">Enum: type of tetromino piece</typeparam>
     /// <typeparam name="TPieceDirection">Enum: direction of movement</typeparam>
-    interface ITracker<TPieceType, TPieceDirection> where TPieceType : System.Enum 
+    public interface ITracker<TPieceType, TPieceDirection> where TPieceType : System.Enum 
                                                     where TPieceDirection : System.Enum
                                                                          
     {

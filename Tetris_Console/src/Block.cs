@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Lechliter.Tetris_Console
 {
-    class Block : IBlock
+    public class Block : IBlock
     {
         /* Private members */
         private Point origin;

@@ -4,11 +4,11 @@ using System.Text;
 
 namespace Lechliter.Tetris_Console
 {
-    enum TextColor
+    public enum TextColor
     {
         Red, Yellow, Blue, Green, Orange, Purple, DarkBlue, Default
     }
-    class ConsoleView : IView<TextColor, PieceType>
+    public class ConsoleView : IView<TextColor, PieceType>
     {
         public TextColor Color { get; protected set; } // current text color
 

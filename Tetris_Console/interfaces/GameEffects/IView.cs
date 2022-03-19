@@ -2,7 +2,7 @@
 
 namespace Lechliter.Tetris_Console
 {
-    interface IView <TColor, TPieceType> where TColor : struct, System.Enum
+    public interface IView <TColor, TPieceType> where TColor : struct, System.Enum
                                                      where TPieceType : System.Enum 
 
     {

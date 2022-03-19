@@ -1,6 +1,6 @@
 ﻿namespace Lechliter.Tetris_Console
 {   
-    struct Dimensions
+    public struct Dimensions
     {
         public float X, Y;
         public Dimensions(float width, float height)
@@ -9,7 +9,7 @@
             this.Y = height;
         }
     }
-    interface IBlock : IGameObject
+    public interface IBlock : IGameObject
     {
         Dimensions Dim { get; }
 

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Lechliter.Tetris_Console
 {
-    interface ITetromino <TPieceType, TDirection> : IGameObject where TPieceType : System.Enum 
+    public interface ITetromino <TPieceType, TDirection> : IGameObject where TPieceType : System.Enum 
                                                                 where TDirection : System.Enum
     {
         public ICollection<IBlock> Blocks { get; set; }
