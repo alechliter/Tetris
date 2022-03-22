@@ -10,6 +10,8 @@ namespace Lechliter.Tetris_Console
         private static ITracker<PieceType, Direction> tracker;
         private static IView<TextColor, PieceType> view;
         private static IFrame frame;
+        private static IInputHandler<ConsoleKey, Action> inputHandler;
+        private static bool isDone = false;
 
         private static void SimpleTest(ITetromino<PieceType, Direction> tetromino){
             LogPosition(tetromino);
@@ -81,6 +83,20 @@ namespace Lechliter.Tetris_Console
             return isDone;
         }
 
+        static void InitializeInputHandler()
+        {
+            inputHandler.KeyEvent[ConsoleKey.UpArrow] = () => tetromino.Move(Direction.Up);
+            inputHandler.KeyEvent[ConsoleKey.DownArrow] = () => tetromino.Move(Direction.Down);
+            inputHandler.KeyEvent[ConsoleKey.LeftArrow] = () => tetromino.Move(Direction.Left);
+            inputHandler.KeyEvent[ConsoleKey.RightArrow] = () => tetromino.Move(Direction.Right);
+
+            inputHandler.KeyEvent[ConsoleKey.C] = () => tetromino.Rotate(Direction.Left);
+            inputHandler.KeyEvent[ConsoleKey.V] = () => tetromino.Rotate(Direction.Right);
+
+            inputHandler.KeyEvent[ConsoleKey.N] = () => tetromino.NewPiece();
+            inputHandler.KeyEvent[ConsoleKey.Q] = () => isDone = true;
+        }
+
         static void Main(string[] args)
         {
             spwanPoint = new Point(Tracker.GRID_DIM.X / 2 - 1, 0);
@@ -88,6 +104,9 @@ namespace Lechliter.Tetris_Console
             tracker = new Tracker(tetromino);
             view = new ConsoleView();
             frame = new Frame();
+            inputHandler = new InputHandler();
+            
+            InitializeInputHandler();
 
             tracker.GridUpdate += Display; // Displays the grid whenever the grid is updated
             frame.FrameAction += () => tetromino.Move(Direction.Down); // move the tetromino down each frame
@@ -104,9 +123,10 @@ namespace Lechliter.Tetris_Console
             SimpleTest(tetromino);
             // !
 
-            bool isDone = false;
+            //bool isDone = false;
             while(!isDone){
-                isDone = HandleInput();
+                //isDone = HandleInput();
+                inputHandler.HandleInput();
                 frame.nextFrame();
             }
 
