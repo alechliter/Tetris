@@ -43,46 +43,6 @@ namespace Lechliter.Tetris_Console
             view?.Display(tracker.AllPieces);
         }
 
-        private static bool HandleInput()
-        {
-            bool isDone = false;
-            ConsoleKeyInfo key;
-            if (Console.KeyAvailable)
-            {
-                key = Console.ReadKey(true);
-
-                switch (key.Key)
-                {
-                    case ConsoleKey.LeftArrow:
-                        tetromino.Move(Direction.Left);
-                        break;
-                    case ConsoleKey.RightArrow:
-                        tetromino.Move(Direction.Right);
-                        break;
-                    case ConsoleKey.UpArrow:
-                        // TODO: Replace with Drop 
-                        tetromino.Move(Direction.Up);
-                        break;
-                    case ConsoleKey.DownArrow:
-                        tetromino.Move(Direction.Down);
-                        break;
-                    case ConsoleKey.C:
-                        tetromino.Rotate(Direction.Left);
-                        break;
-                    case ConsoleKey.V:
-                        tetromino.Rotate(Direction.Right);
-                        break;
-                    case ConsoleKey.Q:
-                        isDone = true;
-                        break;
-                    case ConsoleKey.N:
-                        tetromino.NewPiece();
-                        break;
-                }
-            }
-            return isDone;
-        }
-
         static void InitializeInputHandler()
         {
             inputHandler.KeyEvent[ConsoleKey.UpArrow] = () => tetromino.Move(Direction.Up);
@@ -111,21 +71,7 @@ namespace Lechliter.Tetris_Console
             tracker.GridUpdate += Display; // Displays the grid whenever the grid is updated
             frame.FrameAction += () => tetromino.Move(Direction.Down); // move the tetromino down each frame
 
-            // ! TEST: DELETE LATER
-            SimpleTest(tetromino);
-            // !
-
-            // ! TEST: DELETE LATER
-            GeneratePiecesTest(tracker);
-            // !
-
-            // ! TEST: DELETE LATER
-            SimpleTest(tetromino);
-            // !
-
-            //bool isDone = false;
             while(!isDone){
-                //isDone = HandleInput();
                 inputHandler.HandleInput();
                 frame.nextFrame();
             }
