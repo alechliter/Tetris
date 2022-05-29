@@ -30,9 +30,10 @@ namespace Lechliter.Tetris_Console
             if (Console.KeyAvailable)
             {
                 key = Console.ReadKey(true);
-                if (KeyEvent.ContainsKey(key.Key))
+                Action keyEvent = null;
+                if (KeyEvent.TryGetValue(key.Key, out keyEvent))
                 {
-                    KeyEvent[key.Key].Invoke();
+                    keyEvent.Invoke();
                 }
             }
         }
