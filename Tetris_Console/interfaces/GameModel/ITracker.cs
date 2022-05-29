@@ -10,15 +10,16 @@ namespace Lechliter.Tetris_Console
     /// </summary>
     /// <typeparam name="TPieceType">Enum: type of tetromino piece</typeparam>
     /// <typeparam name="TPieceDirection">Enum: direction of movement</typeparam>
-    public interface ITracker<TPieceType, TPieceDirection> where TPieceType : System.Enum 
+    public interface ITracker<TPieceType, TPieceDirection, TMoveType> where TPieceType : System.Enum 
                                                     where TPieceDirection : System.Enum
+                                                    where TMoveType : System.Enum
                                                                          
     {
         /// <summary>
         /// The current tetromino piece being followed by the tracker.
         /// </summary>
         /// <value>Reference to the tetromino. </value>
-        ITetromino<TPieceType, TPieceDirection> CurrentPiece { get; set; }
+        ITetromino<TPieceType, TPieceDirection, TMoveType> CurrentPiece { get; set; }
 
         /// <summary>
         /// Matrix of stationary blocks and boundaries, with the origin (LockedPieces[0, 0]) in the 

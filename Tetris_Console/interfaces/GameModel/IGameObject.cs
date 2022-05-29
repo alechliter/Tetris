@@ -3,7 +3,7 @@
     public struct Point
     {
         public float x, y;
-        public Point(float x, float y)
+        public Point(float x = 0, float y = 0)
         {
             this.x = x;
             this.y = y;

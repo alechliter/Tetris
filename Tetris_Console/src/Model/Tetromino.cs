@@ -22,11 +22,19 @@ namespace Lechliter.Tetris_Console
     {
         Up, Down, Left, Right
     }
-    public class Tetromino : ITetromino<PieceType, Direction>
+
+    public enum MoveType
+    {
+        NotSet, Translation, Rotation, Spawn
+    }
+
+    public class Tetromino : ITetromino<PieceType, Direction, MoveType>
     {
         /* Private members */
         private Point pivot;
         private Point initialPos;
+        private Point velocity;
+        private Direction rotation_direction;
         private PieceType type;
         private static Random rand;
         private static readonly int NUM_TYPES = 7;
@@ -36,7 +44,12 @@ namespace Lechliter.Tetris_Console
         public ICollection<IBlock> Blocks { get; set; }
         public Point Position { get { return pivot; } }
         public PieceType Type { get { return type; } }
-        public event Action UpdatePosition;
+
+        public Point Velocity { get { return velocity; } }
+
+        public Direction Rotation {  get { return rotation_direction; } }
+
+        public event Action<MoveType> UpdatePosition;
 
         /* Constructor ------------------------------------------------------------------------*/
         public Tetromino(Point initialPos)
@@ -48,6 +61,7 @@ namespace Lechliter.Tetris_Console
         private void Initialize(Point initialPos)
         {
             this.initialPos = initialPos;
+            velocity = new Point();
             NewPiece();
         }
         private void MoveBlocksBy(Point vector)
@@ -195,8 +209,9 @@ namespace Lechliter.Tetris_Console
                     Console.Error.WriteLine("ERROR: Invalid direction");
                     break;
             }
+            this.velocity = velocity;
             // Broadcasts change to every subscriber
-            UpdatePosition?.Invoke();
+            UpdatePosition?.Invoke(MoveType.Translation);
         }
 
         public void Rotate(Direction direction)
@@ -219,7 +234,9 @@ namespace Lechliter.Tetris_Console
             foreach(IBlock block in Blocks){
                 RotateAboutPivot(block, angle);
             }
-            UpdatePosition?.Invoke();
+
+            rotation_direction = direction;
+            UpdatePosition?.Invoke(MoveType.Rotation);
             
         }
 
@@ -234,7 +251,7 @@ namespace Lechliter.Tetris_Console
             Blocks = new List<IBlock>(NUM_BLOCKS);
             ConstructTetromino(Blocks, type, ref pivot);
             
-            UpdatePosition?.Invoke();
+            UpdatePosition?.Invoke(MoveType.Spawn);
         }
         
     }

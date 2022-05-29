@@ -3,8 +3,9 @@ using System.Collections.Generic;
 
 namespace Lechliter.Tetris_Console
 {
-    public interface ITetromino <TPieceType, TDirection> : IGameObject where TPieceType : System.Enum 
+    public interface ITetromino <TPieceType, TDirection, TMoveType> : IGameObject where TPieceType : System.Enum 
                                                                 where TDirection : System.Enum
+                                                                where TMoveType : System.Enum
     {
         public ICollection<IBlock> Blocks { get; set; }
         public TPieceType Type { get; }
@@ -12,7 +13,7 @@ namespace Lechliter.Tetris_Console
         /// <summary>
         /// Subsriber event: notifies subsribers that the position/orientation of the tetromino changed.
         /// </summary>
-        public event Action UpdatePosition;
+        public event Action<TMoveType> UpdatePosition;
 
         /// <summary>
         /// Rotates the piece about its pivot point.

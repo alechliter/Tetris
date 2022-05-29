@@ -6,14 +6,14 @@ namespace Lechliter.Tetris_Console
     public class Program
     {
         private static Point spwanPoint;
-        private static ITetromino<PieceType, Direction> tetromino;
-        private static ITracker<PieceType, Direction> tracker;
+        private static ITetromino<PieceType, Direction, MoveType> tetromino;
+        private static ITracker<PieceType, Direction, MoveType> tracker;
         private static IView<TextColor, PieceType> view;
         private static IFrame frame;
         private static IInputHandler<ConsoleKey, Action> inputHandler;
         private static bool isDone = false;
 
-        private static void SimpleTest(ITetromino<PieceType, Direction> tetromino){
+        private static void SimpleTest(ITetromino<PieceType, Direction, MoveType> tetromino){
             LogPosition(tetromino);
             tetromino.Move(Direction.Down);
             tetromino.Move(Direction.Right);
@@ -22,7 +22,7 @@ namespace Lechliter.Tetris_Console
             LogPosition(tetromino);
         }
 
-        private static void GeneratePiecesTest(ITracker<PieceType, Direction> tracker)
+        private static void GeneratePiecesTest(ITracker<PieceType, Direction, MoveType> tracker)
         {
             tracker.AllPieces[3, 10] = PieceType.O;
             tracker.AllPieces[4, 10] = PieceType.T;
@@ -33,7 +33,7 @@ namespace Lechliter.Tetris_Console
             tracker.AllPieces[9, 10] = PieceType.Z;
         }
 
-        private static void LogPosition(ITetromino<PieceType, Direction> piece)
+        private static void LogPosition(ITetromino<PieceType, Direction, MoveType> piece)
         {
             Console.WriteLine("x: {0} y: {1}", piece.Position.x, piece.Position.y);
         }
@@ -68,6 +68,7 @@ namespace Lechliter.Tetris_Console
             
             InitializeInputHandler();
 
+            /* Subscribe to Events */
             tracker.GridUpdate += Display; // Displays the grid whenever the grid is updated
             frame.FrameAction += () => tetromino.Move(Direction.Down); // move the tetromino down each frame
 

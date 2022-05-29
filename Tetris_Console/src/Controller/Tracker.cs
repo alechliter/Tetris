@@ -13,11 +13,11 @@ namespace Lechliter.Tetris_Console
             this.Y = height;
         }
     }
-    public class Tracker : ITracker<PieceType, Direction>
+    public class Tracker : ITracker<PieceType, Direction, MoveType>
     {
         /* Public Members */
         public static readonly IntDimensions GRID_DIM;
-        public ITetromino<PieceType, Direction> CurrentPiece { get; set; }
+        public ITetromino<PieceType, Direction, MoveType> CurrentPiece { get; set; }
 
         public PieceType[,] LockedPieces { get; protected set; }
         public PieceType[,] AllPieces { get; protected set; }
@@ -29,7 +29,7 @@ namespace Lechliter.Tetris_Console
             const int WIDTH = 12, HEIGHT = 22;
             GRID_DIM = new IntDimensions(WIDTH, HEIGHT);
         }
-        public Tracker(ITetromino<PieceType, Direction> newPiece)
+        public Tracker(ITetromino<PieceType, Direction, MoveType> newPiece)
         {
             CurrentPiece = newPiece;
 
@@ -40,7 +40,7 @@ namespace Lechliter.Tetris_Console
         }
 
         /* Private Methods --------------------------------------------------------*/
-        private static PieceType[,] AddPieceToGrid(PieceType[,] pieces, ITetromino<PieceType, Direction> piece)
+        private static PieceType[,] AddPieceToGrid(PieceType[,] pieces, ITetromino<PieceType, Direction, MoveType> piece)
         {
             PieceType[,] newGrid = (PieceType[,])pieces.Clone();
 
@@ -85,7 +85,7 @@ namespace Lechliter.Tetris_Console
         }
 
         /* Public Methods -----------------------------------------------------------*/
-        public void UpdateGrid()
+        public void UpdateGrid(MoveType moveType)
         {
             this.AllPieces = AddPieceToGrid(this.LockedPieces, this.CurrentPiece);
             GridUpdate?.Invoke();
