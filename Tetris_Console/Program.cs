@@ -53,7 +53,7 @@ namespace Lechliter.Tetris_Console
             inputHandler.KeyEvent[ConsoleKey.C] = () => tetromino.Rotate(Direction.Left);
             inputHandler.KeyEvent[ConsoleKey.V] = () => tetromino.Rotate(Direction.Right);
 
-            inputHandler.KeyEvent[ConsoleKey.N] = () => tetromino.NewPiece();
+            inputHandler.KeyEvent[ConsoleKey.N] = () => { tracker.LockPiece(); tetromino.NewPiece();  };
             inputHandler.KeyEvent[ConsoleKey.Q] = () => isDone = true;
         }
 
@@ -71,6 +71,7 @@ namespace Lechliter.Tetris_Console
             /* Subscribe to Events */
             tracker.GridUpdate += Display; // Displays the grid whenever the grid is updated
             frame.FrameAction += () => tetromino.Move(Direction.Down); // move the tetromino down each frame
+            frame.FrameAction += (tracker as Tracker).NextFrame; // advance frame timers
 
             while(!isDone){
                 inputHandler.HandleInput();

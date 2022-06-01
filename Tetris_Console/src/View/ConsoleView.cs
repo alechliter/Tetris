@@ -78,11 +78,11 @@ namespace Lechliter.Tetris_Console
                     SetColor(TextColor.Red);
                     symbol = 'Z';
                     break;
-                case PieceType.X:
+                case PieceType.Locked:
                     SetColor(TextColor.Default);
                     symbol = 'X';
                     break;
-                case PieceType.E:
+                case PieceType.Empty:
                     SetColor(TextColor.Default);
                     symbol = '·'; // unicode: 183
                     break;

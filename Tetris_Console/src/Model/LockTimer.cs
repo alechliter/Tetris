@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Lechliter.Tetris_Console
 {
-    class LockTimer : IFrameTimer
+    public class LockTimer : IFrameTimer
     {
         /* Private Members */
 
@@ -18,6 +18,8 @@ namespace Lechliter.Tetris_Console
 
         /* Public Members*/
         public int FramesRemaining { get { return remaining_frames; } }
+
+        public bool IsRunning { get { return isCounting; } }
 
         public event Action TimerFinished;
 

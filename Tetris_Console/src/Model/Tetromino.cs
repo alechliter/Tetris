@@ -12,7 +12,7 @@ namespace Lechliter.Tetris_Console
     /// </summary>
     public enum PieceType
     {
-        I, O, T, J, L, S, Z, X, E // X - Locked, E - Empty
+        Empty, Locked, I, O, T, J, L, S, Z
     }
     /// <summary>
     /// Direction of travel.
@@ -20,12 +20,12 @@ namespace Lechliter.Tetris_Console
     /// </summary>
     public enum Direction
     {
-        Up, Down, Left, Right
+        NotSet, Up, Down, Left, Right
     }
 
     public enum MoveType
     {
-        NotSet, Translation, Rotation, Spawn
+        NotSet, Translation, Rotation, Spawn, Undo
     }
 
     public class Tetromino : ITetromino<PieceType, Direction, MoveType>
@@ -34,6 +34,7 @@ namespace Lechliter.Tetris_Console
         private Point pivot;
         private Point initialPos;
         private Point velocity;
+        private double angle;
         private Direction rotation_direction;
         private PieceType type;
         private static Random rand;
@@ -140,6 +141,34 @@ namespace Lechliter.Tetris_Console
             }
         }
 
+        private void move_blocks(Direction direction)
+        {
+            Point velocity = new Point();
+            switch (direction)
+            {
+                case Direction.Up:
+                    velocity.y -= Block.StandardDim.Y;
+                    MoveBlocksBy(velocity);
+                    break;
+                case Direction.Down:
+                    velocity.y += Block.StandardDim.Y;
+                    MoveBlocksBy(velocity);
+                    break;
+                case Direction.Left:
+                    velocity.x -= Block.StandardDim.X;
+                    MoveBlocksBy(velocity);
+                    break;
+                case Direction.Right:
+                    velocity.x += Block.StandardDim.X;
+                    MoveBlocksBy(velocity);
+                    break;
+                default:
+                    Console.Error.WriteLine("ERROR: Invalid direction");
+                    break;
+            }
+            this.velocity = velocity;
+        }
+
         /*  Public Methods --------------------------------------------------------------------*/
         public static PieceType RandType()
         {
@@ -186,32 +215,15 @@ namespace Lechliter.Tetris_Console
 
         public void Move(Direction direction)
         {
-            Point velocity = new Point();
-            switch (direction)
-            {
-                case Direction.Up:
-                    velocity.y -= Block.StandardDim.Y;
-                    MoveBlocksBy(velocity);
-                    break;
-                case Direction.Down:
-                    velocity.y += Block.StandardDim.Y;
-                    MoveBlocksBy(velocity);
-                    break;
-                case Direction.Left:
-                    velocity.x -= Block.StandardDim.X;
-                    MoveBlocksBy(velocity);
-                    break;
-                case Direction.Right:
-                    velocity.x += Block.StandardDim.X;
-                    MoveBlocksBy(velocity);
-                    break;
-                default:
-                    Console.Error.WriteLine("ERROR: Invalid direction");
-                    break;
-            }
-            this.velocity = velocity;
+            move_blocks(direction);
             // Broadcasts change to every subscriber
             UpdatePosition?.Invoke(MoveType.Translation);
+        }
+
+        public void Move(Direction direction, MoveType moveType = MoveType.Translation)
+        {
+            move_blocks(direction);
+            UpdatePosition?.Invoke(moveType);
         }
 
         public void Rotate(Direction direction)
@@ -236,8 +248,28 @@ namespace Lechliter.Tetris_Console
             }
 
             rotation_direction = direction;
+            this.angle = angle;
             UpdatePosition?.Invoke(MoveType.Rotation);
             
+        }
+
+        public void UndoMove(MoveType moveType)
+        {
+            switch (moveType)
+            {
+                case MoveType.Translation:
+                    velocity = -1 * velocity;
+                    MoveBlocksBy(velocity);
+                    UpdatePosition?.Invoke(MoveType.Undo);
+                    break;
+                case MoveType.Rotation:
+                    foreach (IBlock block in Blocks)
+                    {
+                        RotateAboutPivot(block, -angle);
+                    }
+                    UpdatePosition?.Invoke(MoveType.Undo);
+                    break;
+            }
         }
 
         public void NewPiece(){
@@ -252,6 +284,24 @@ namespace Lechliter.Tetris_Console
             ConstructTetromino(Blocks, type, ref pivot);
             
             UpdatePosition?.Invoke(MoveType.Spawn);
+        }
+
+        public Tetromino Copy()
+        {
+            Tetromino copy_piece = new Tetromino(Position);
+
+            copy_piece.type = type;
+            copy_piece.pivot = pivot.Copy();
+            copy_piece.Blocks = new List<IBlock>();
+            foreach (Block block in Blocks)
+            {
+                copy_piece.Blocks.Add(block.Copy());
+            }
+            copy_piece.velocity = velocity.Copy();
+            copy_piece.rotation_direction = rotation_direction;
+            copy_piece.angle = angle;
+
+            return copy_piece;
         }
         
     }

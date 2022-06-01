@@ -15,6 +15,9 @@ namespace Lechliter.Tetris_Console
     }
     public class Tracker : ITracker<PieceType, Direction, MoveType>
     {
+        /* Private Members */
+        private ICollisionDetector<PieceType, Direction, MoveType> collisionDetector;
+
         /* Public Members */
         public static readonly IntDimensions GRID_DIM;
         public ITetromino<PieceType, Direction, MoveType> CurrentPiece { get; set; }
@@ -35,8 +38,14 @@ namespace Lechliter.Tetris_Console
 
             LockedPieces = NewGrid();
             AllPieces = AddPieceToGrid(LockedPieces, CurrentPiece);
+            collisionDetector = new CollisionDetector();
 
-            CurrentPiece.UpdatePosition += this.UpdateGrid; //subscribes to changes in the position
+            // Subscribes to changes in the position
+            CurrentPiece.UpdatePosition += DetectCollisions;
+            CurrentPiece.UpdatePosition += UpdateGrid;
+            CurrentPiece.UpdatePosition += (MoveType) => (collisionDetector as CollisionDetector).RestartStationaryTimer();
+            // Subscribe to timer events
+            collisionDetector.LockPiece += LockPiece;
         }
 
         /* Private Methods --------------------------------------------------------*/
@@ -45,15 +54,17 @@ namespace Lechliter.Tetris_Console
             PieceType[,] newGrid = (PieceType[,])pieces.Clone();
 
             foreach(IBlock block in piece.Blocks){
-                // Rounds the x and y values to the upper level and then converts the coordinate
-                // to the corresponding position in the xy-matrix.
-                int x = (int) Math.Ceiling(block.Position.x) % GRID_DIM.X;
-                int y = (int) Math.Ceiling(block.Position.y) % GRID_DIM.Y;
+                int x, y;
+                GridPosition(block.Position, out x, out y);
                 if(x < GRID_DIM.X - 1 && x > 0 && y < GRID_DIM.Y - 1 && y > 0){
-                    // TODO: Handle collision with block
-                    newGrid[x, y] = piece.Type;
-                }else{
-                    // TODO: Handle collision with wall
+                    if (newGrid[x, y] == PieceType.Empty)
+                    {
+                        newGrid[x, y] = piece.Type;
+                    }
+                    else
+                    {
+                        Console.Error.WriteLine("ERROR: Piece Collision Detected But Not Handled.");
+                    }
                 }
             }
             return newGrid;
@@ -67,38 +78,68 @@ namespace Lechliter.Tetris_Console
             // Fills the buffer area (perimeter) of the grid with locked markers
             for(int x = 0; x < GRID_DIM.X; x++)
             {
-                grid[x, 0] = PieceType.X;
-                grid[x, GRID_DIM.Y - 1] = PieceType.X;
+                grid[x, 0] = PieceType.Empty;
+                grid[x, GRID_DIM.Y - 1] = PieceType.Locked;
             }
             for(int y = 1; y < GRID_DIM.Y - 1; y++)
             {
-                grid[0, y] = PieceType.X;
+                grid[0, y] = PieceType.Locked;
                 // Fills the remaining grid area with empty markers
                 for(int x = 1; x < GRID_DIM.X - 1; x++)
                 {
-                    grid[x, y] = PieceType.E;
+                    grid[x, y] = PieceType.Empty;
                 }
-                grid[GRID_DIM.X - 1, y] = PieceType.X;
+                grid[GRID_DIM.X - 1, y] = PieceType.Locked;
             }
 
             return grid;
         }
 
+        private void DetectCollisions(MoveType moveType)
+        {
+            collisionDetector.DetectCollisions(CurrentPiece, LockedPieces, moveType);
+        }
+
         /* Public Methods -----------------------------------------------------------*/
+
+        /// <summary>
+        /// Rounds the x and y values of a block's position to the upper level and then converts the coordinate 
+        /// to the corresponding position in the xy-matrix.
+        /// </summary>
+        /// <param name="point">The point to find the xy-matrix indicies for. </param>
+        /// <param name="X">The x index of the block.</param>
+        /// <param name="Y">The y index of the block.</param>
+        public static void GridPosition(Point point, out int X, out int Y)
+        {
+            X = (int)Math.Ceiling(point.x) % GRID_DIM.X;
+            Y = (int)Math.Ceiling(point.y) % GRID_DIM.Y;
+        }
+
         public void UpdateGrid(MoveType moveType)
         {
             this.AllPieces = AddPieceToGrid(this.LockedPieces, this.CurrentPiece);
             GridUpdate?.Invoke();
         }
-        public bool DetectCollision()
-        {
-            // TODO: Finish
-            return true;
-        }
 
         public void LockPiece()
         {
-            // TODO: Finish
+            LockedPieces = AllPieces;
+            CurrentPiece.NewPiece();
+            //Console.WriteLine("Pieces Locked!");
+        }
+
+        public bool isCollision(MoveType moveType)
+        {
+            return collisionDetector.DetectCollisions(CurrentPiece, LockedPieces, moveType);
+        }
+
+        public void NextFrame()
+        {
+            collisionDetector.LockTimerFalling.CountDown();
+            collisionDetector.LockTimerStationary.CountDown();
+            
+            //Console.WriteLine($"Falling Timer: {collisionDetector.LockTimerFalling.FramesRemaining}");
+            //Console.WriteLine($"Stationary Timer: {collisionDetector.LockTimerStationary.FramesRemaining}");
         }
     }
 }

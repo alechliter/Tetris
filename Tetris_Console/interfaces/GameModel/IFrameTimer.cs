@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Lechliter.Tetris_Console
 {
-    interface IFrameTimer
+    public interface IFrameTimer
     {
         /// <summary>
         /// The remaining frames left in the counter before the TimerFinished action is invoked.

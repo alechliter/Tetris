@@ -38,5 +38,10 @@ namespace Lechliter.Tetris_Console
             origin += vector;
         }
 
+        public Block Copy()
+        {
+            return new Block(origin.Copy());
+        }
+
     }
 }

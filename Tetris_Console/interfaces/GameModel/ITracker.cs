@@ -19,21 +19,21 @@ namespace Lechliter.Tetris_Console
         /// The current tetromino piece being followed by the tracker.
         /// </summary>
         /// <value>Reference to the tetromino. </value>
-        ITetromino<TPieceType, TPieceDirection, TMoveType> CurrentPiece { get; set; }
+        public ITetromino<TPieceType, TPieceDirection, TMoveType> CurrentPiece { get; set; }
 
         /// <summary>
         /// Matrix of stationary blocks and boundaries, with the origin (LockedPieces[0, 0]) in the 
         /// top left corner of the grid.
         /// </summary>
         /// <value>Matrix of TPieceType values.</value>
-        TPieceType[,] LockedPieces { get; }
+        public TPieceType[,] LockedPieces { get; }
 
         /// <summary>
         /// Matrix of stationary blocks, boundaries, and the current tetromino blocks, with the origin (LockedPieces[0, 0]) in the 
         /// top left corner of the grid.
         /// </summary>
         /// <value>Matrix of TPieceType values.</value>
-        TPieceType[,] AllPieces { get; }
+        public TPieceType[,] AllPieces { get; }
 
         /// <summary>
         /// Subscriber event for when the grid updates. Alert all subscribers when the grid updates.
@@ -43,12 +43,6 @@ namespace Lechliter.Tetris_Console
         /// <summary>
         /// Convert tetromino piece to locked pieces
         /// </summary>
-        void LockPiece();
-
-        /// <summary>
-        /// Checks if the current tetromino piece in contact with the boundaries or locked pieces.
-        /// </summary>
-        /// <returns>True if the piece is in contact with other objects.</returns>
-        bool DetectCollision();
+        public void LockPiece();
     }
 }
