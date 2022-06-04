@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Lechliter.Tetris_Console
 {
@@ -20,10 +18,13 @@ namespace Lechliter.Tetris_Console
 
         /* Public Members */
         public static readonly IntDimensions GRID_DIM;
+
         public ITetromino<PieceType, Direction, MoveType> CurrentPiece { get; set; }
 
         public PieceType[,] LockedPieces { get; protected set; }
+
         public PieceType[,] AllPieces { get; protected set; }
+
         public event Action GridUpdate;
 
         /* Constructor */
@@ -32,6 +33,7 @@ namespace Lechliter.Tetris_Console
             const int WIDTH = 12, HEIGHT = 22;
             GRID_DIM = new IntDimensions(WIDTH, HEIGHT);
         }
+
         public Tracker(ITetromino<PieceType, Direction, MoveType> newPiece)
         {
             CurrentPiece = newPiece;
@@ -43,7 +45,12 @@ namespace Lechliter.Tetris_Console
             // Subscribes to changes in the position
             CurrentPiece.UpdatePosition += DetectCollisions;
             CurrentPiece.UpdatePosition += UpdateGrid;
-            CurrentPiece.UpdatePosition += (MoveType) => (collisionDetector as CollisionDetector).RestartStationaryTimer();
+            CurrentPiece.UpdatePosition += (MoveType moveType) => { 
+                if (moveType == MoveType.Translation || moveType == MoveType.Rotation)
+                {
+                    (collisionDetector as CollisionDetector).RestartStationaryTimer(); 
+                }
+            } ;
             // Subscribe to timer events
             collisionDetector.LockPiece += LockPiece;
         }
@@ -125,6 +132,7 @@ namespace Lechliter.Tetris_Console
         {
             LockedPieces = AllPieces;
             CurrentPiece.NewPiece();
+            (collisionDetector.LockTimerStationary as LockTimer).Stop();
             //Console.WriteLine("Pieces Locked!");
         }
 
@@ -137,9 +145,9 @@ namespace Lechliter.Tetris_Console
         {
             collisionDetector.LockTimerFalling.CountDown();
             collisionDetector.LockTimerStationary.CountDown();
-            
-            //Console.WriteLine($"Falling Timer: {collisionDetector.LockTimerFalling.FramesRemaining}");
-            //Console.WriteLine($"Stationary Timer: {collisionDetector.LockTimerStationary.FramesRemaining}");
+
+            Console.WriteLine($"Falling Timer: {collisionDetector.LockTimerFalling.FramesRemaining}");
+            Console.WriteLine($"Stationary Timer: {collisionDetector.LockTimerStationary.FramesRemaining}");
         }
     }
 }

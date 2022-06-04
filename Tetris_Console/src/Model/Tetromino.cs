@@ -253,6 +253,14 @@ namespace Lechliter.Tetris_Console
             
         }
 
+        public void Drop(ITracker<PieceType, Direction, MoveType> tracker)
+        {
+            while (!(tracker as Tracker).isCollision(MoveType.Translation))
+            {
+                move_blocks(Direction.Down);
+            }
+        }
+
         public void UndoMove(MoveType moveType)
         {
             switch (moveType)

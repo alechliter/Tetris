@@ -45,7 +45,7 @@ namespace Lechliter.Tetris_Console
 
         static void InitializeInputHandler()
         {
-            inputHandler.KeyEvent[ConsoleKey.UpArrow] = () => tetromino.Move(Direction.Up);
+            inputHandler.KeyEvent[ConsoleKey.UpArrow] = () => (tetromino as Tetromino).Drop(tracker);//tetromino.Move(Direction.Up);
             inputHandler.KeyEvent[ConsoleKey.DownArrow] = () => tetromino.Move(Direction.Down);
             inputHandler.KeyEvent[ConsoleKey.LeftArrow] = () => tetromino.Move(Direction.Left);
             inputHandler.KeyEvent[ConsoleKey.RightArrow] = () => tetromino.Move(Direction.Right);

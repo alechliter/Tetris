@@ -29,7 +29,7 @@ namespace Lechliter.Tetris_Console
     public class CollisionDetector : ICollisionDetector<PieceType, Direction, MoveType>
     {
         /* Private Members */
-        private static readonly int NUM_STATIONARY_FRAMES = 3;
+        private static readonly int NUM_STATIONARY_FRAMES = 20;
 
         private static readonly int NUM_FALLING_FRAMES = 2;
 
@@ -303,7 +303,8 @@ namespace Lechliter.Tetris_Console
                 int x, y;
                 Tracker.GridPosition(block.Position, out x, out y);
 
-                if (isInBounds(x, y) && grid_pieces[x, y] != PieceType.Empty)
+                isCollisionDetected = isInBounds(x, y) && grid_pieces[x, y] != PieceType.Empty;
+                if (isCollisionDetected)
                 {
                     switch (moveType)
                     {
