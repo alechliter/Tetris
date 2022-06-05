@@ -43,5 +43,8 @@ namespace Lechliter.Tetris_Console
             return new Block(origin.Copy());
         }
 
+        public bool IsSamePosition(Block block){
+            return block.Position.x == this.Position.x && block.Position.y == this.Position.y;
+        }
     }
 }

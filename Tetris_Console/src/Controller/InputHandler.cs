@@ -8,6 +8,8 @@ namespace Lechliter.Tetris_Console
     {
         public IDictionary<ConsoleKey, Action> KeyEvent { get; }
 
+        public Action AnyKeyEvent { get; set; }
+
         private static readonly ConsoleKey[] DEFAULT_KEYS = { 
             ConsoleKey.UpArrow, ConsoleKey.DownArrow, ConsoleKey.LeftArrow, ConsoleKey.RightArrow,
             ConsoleKey.C, ConsoleKey.V,
@@ -33,7 +35,8 @@ namespace Lechliter.Tetris_Console
                 Action keyEvent = null;
                 if (KeyEvent.TryGetValue(key.Key, out keyEvent))
                 {
-                    keyEvent.Invoke();
+                    keyEvent?.Invoke();
+                    AnyKeyEvent?.Invoke();
                 }
             }
         }

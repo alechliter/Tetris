@@ -8,6 +8,8 @@ namespace Lechliter.Tetris_Console
     {
         public IDictionary<TKey, TEvent> KeyEvent { get; }
 
+        public TEvent AnyKeyEvent { get; set; }
+
         void HandleInput();
     }
 }

@@ -20,6 +20,7 @@ namespace Lechliter.Tetris_Console
         static ConsoleView()
         {
             Console.Clear();
+            Console.CursorVisible = false;
             ConsoleOriginX = Console.CursorLeft;
             ConsoleOriginY = Console.CursorTop;
         }
@@ -120,9 +121,9 @@ namespace Lechliter.Tetris_Console
         /* Public Method */
         public void Display(PieceType[,] blocks)
         {
-            for (int y = 0; y < Tracker.GRID_DIM.Y; y++)
+            for (int y = 0; y < Tracker.BOUNDS_DIM.Y; y++)
             {
-                for(int x = 0; x < Tracker.GRID_DIM.X; x++)
+                for(int x = 0; x < Tracker.BOUNDS_DIM.X; x++)
                 {
                     PrintBlock(blocks[x, y], x, y);                  
                 }

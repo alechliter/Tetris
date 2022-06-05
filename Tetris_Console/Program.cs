@@ -39,7 +39,6 @@ namespace Lechliter.Tetris_Console
         }
 
         private static void Display(){
-            //Console.Clear();
             view?.Display(tracker.AllPieces);
         }
 
@@ -59,7 +58,7 @@ namespace Lechliter.Tetris_Console
 
         static void Main(string[] args)
         {
-            spwanPoint = new Point(Tracker.GRID_DIM.X / 2 - 1, 0);
+            spwanPoint = new Point(Tracker.BOUNDS_DIM.X / 2 - 1, 0);
             tetromino = new Tetromino(spwanPoint);
             tracker = new Tracker(tetromino);
             view = new ConsoleView();
@@ -72,6 +71,7 @@ namespace Lechliter.Tetris_Console
             tracker.GridUpdate += Display; // Displays the grid whenever the grid is updated
             frame.FrameAction += () => tetromino.Move(Direction.Down); // move the tetromino down each frame
             frame.FrameAction += (tracker as Tracker).NextFrame; // advance frame timers
+            // inputHandler.AnyKeyEvent += (tracker as Tracker).RestartStationaryTimer;
 
             while(!isDone){
                 inputHandler.HandleInput();

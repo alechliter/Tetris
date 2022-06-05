@@ -39,6 +39,11 @@ namespace Lechliter.Tetris_Console
         /// Subscriber event for when the grid updates. Alert all subscribers when the grid updates.
         /// </summary>
         public event Action GridUpdate;
+
+        /// <summary>
+        /// Subscriber event for when the game ends. Alerts all subscribers when a tetromino locks at the very top.
+        /// </summary>
+        public event Action GameOver;
         
         /// <summary>
         /// Convert tetromino piece to locked pieces
