@@ -39,7 +39,7 @@ namespace Lechliter.Tetris_Console
         }
 
         private static void Display(){
-            Console.Clear();
+            //Console.Clear();
             view?.Display(tracker.AllPieces);
         }
 

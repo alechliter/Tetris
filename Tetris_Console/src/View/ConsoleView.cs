@@ -10,9 +10,19 @@ namespace Lechliter.Tetris_Console
     }
     public class ConsoleView : IView<TextColor, PieceType>
     {
+        private static readonly int ConsoleOriginX;
+
+        private static readonly int ConsoleOriginY;
+
         public TextColor Color { get; protected set; } // current text color
 
         /* Constructor */
+        static ConsoleView()
+        {
+            Console.Clear();
+            ConsoleOriginX = Console.CursorLeft;
+            ConsoleOriginY = Console.CursorTop;
+        }
 
         /* Private Method */
         private static void SetColor(TextColor color)
@@ -45,7 +55,7 @@ namespace Lechliter.Tetris_Console
                     break;
             }
         }
-        private static void PrintBlock(PieceType type)
+        private static void PrintBlock(PieceType type, int x, int y)
         {
             char symbol = '?';
             switch (type)
@@ -90,7 +100,21 @@ namespace Lechliter.Tetris_Console
                     Console.Error.WriteLine("ERROR: Invalid Type (PrintBlock)");
                     break;
             }
-            Console.Write(" " + symbol);
+            WriteAt(symbol.ToString(), x * 2 , y);
+        }
+
+        protected static void WriteAt(string s, int x, int y)
+        {
+            try
+            {
+                Console.SetCursorPosition(ConsoleOriginY + x, ConsoleOriginY + y);
+                Console.Write(s);
+            }
+            catch (ArgumentOutOfRangeException e)
+            {
+                Console.Clear();
+                Console.WriteLine(e.Message);
+            }
         }
 
         /* Public Method */
@@ -100,7 +124,7 @@ namespace Lechliter.Tetris_Console
             {
                 for(int x = 0; x < Tracker.GRID_DIM.X; x++)
                 {
-                    PrintBlock(blocks[x, y]);                  
+                    PrintBlock(blocks[x, y], x, y);                  
                 }
                 Console.WriteLine();
             }
