@@ -107,6 +107,78 @@ namespace Lechliter.Tetris_Console
             collisionDetector.DetectCollisions(CurrentPiece, LockedPieces, moveType);
         }
 
+        private bool isLineFull(int row_number)
+        {
+            bool isFull = true;
+            int x = 1;
+            while(isFull && x < GRID_DIM.X - 2)
+            {
+                isFull = this.LockedPieces[x, row_number] != PieceType.Empty;
+                x++;
+            }
+            return isFull;
+        }
+
+        private bool isLineEmpty(int row_number)
+        {
+            bool isEmpty = true;
+            int x = 1;
+            while(isEmpty && x < GRID_DIM.X - 2)
+            {
+                isEmpty = this.LockedPieces[x, row_number] == PieceType.Empty;
+                x++;
+            }
+            return isEmpty;
+        }
+
+        private void EraseRow(int row_number)
+        {
+            for (int x = 1; x < GRID_DIM.X - 2; x++)
+            {
+                this.LockedPieces[x, row_number] = PieceType.Empty;
+            }
+        }
+
+        private void CopyRowTo(int src_row, int dest_row)
+        {
+            for (int x = 1; x < GRID_DIM.X - 2; x++)
+            {
+                this.LockedPieces[x, dest_row] = this.LockedPieces[x, src_row];
+            }
+        }
+
+        private void MoveLinesDown(int row_number)
+        {
+            if (row_number < GRID_DIM.Y - 1)
+            {
+                if (row_number < GRID_DIM.Y - 2)
+                {
+                    CopyRowTo(row_number, row_number + 1);
+                }
+
+                EraseRow(row_number);
+
+                if(row_number - 1 > 0 && !isLineEmpty(row_number - 1)){
+                    MoveLinesDown(row_number - 1);
+                }
+            }
+        }
+        
+        private void ClearLines()
+        {
+            for(int row_number = GRID_DIM.Y - 2; row_number > 0; row_number--)
+            {
+                while (isLineFull(row_number))
+                {
+                    MoveLinesDown(row_number - 1);
+                }
+                if (isLineEmpty(row_number - 1)){
+                    break;
+                }
+            }
+            this.AllPieces = this.LockedPieces;
+        }
+
         /* Public Methods -----------------------------------------------------------*/
 
         /// <summary>
@@ -131,9 +203,9 @@ namespace Lechliter.Tetris_Console
         public void LockPiece()
         {
             LockedPieces = AllPieces;
+            ClearLines();
             CurrentPiece.NewPiece();
             (collisionDetector.LockTimerStationary as LockTimer).Stop();
-            //Console.WriteLine("Pieces Locked!");
         }
 
         public bool isCollision(MoveType moveType)
@@ -146,8 +218,8 @@ namespace Lechliter.Tetris_Console
             collisionDetector.LockTimerFalling.CountDown();
             collisionDetector.LockTimerStationary.CountDown();
 
-            Console.WriteLine($"Falling Timer: {collisionDetector.LockTimerFalling.FramesRemaining}");
-            Console.WriteLine($"Stationary Timer: {collisionDetector.LockTimerStationary.FramesRemaining}");
+            //Console.WriteLine($"Falling Timer: {collisionDetector.LockTimerFalling.FramesRemaining}");
+            //Console.WriteLine($"Stationary Timer: {collisionDetector.LockTimerStationary.FramesRemaining}");
         }
     }
 }

@@ -7,8 +7,8 @@ namespace Lechliter.Tetris_Console
     /// <summary>
     /// Type of tetromino piece. 
     /// Pieces: I, O, T, J, L, S, Z, 
-    /// X - Locked Piece,
-    /// E - Empty space
+    /// Locked - Locked Piece,
+    /// Empty - Empty space
     /// </summary>
     public enum PieceType
     {
