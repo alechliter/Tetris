@@ -224,11 +224,11 @@ namespace Lechliter.Tetris_Console
         {
             LockedPieces = AllPieces;
             ClearLines();
+            ResetStationaryTimer();
             if (!IsGameOver())
             {
                 CurrentPiece.NewPiece();
             }
-            (collisionDetector.LockTimerStationary as LockTimer).Stop();
         }
 
         public bool isCollision(MoveType moveType)
@@ -236,9 +236,9 @@ namespace Lechliter.Tetris_Console
             return collisionDetector.DetectCollisions(CurrentPiece, LockedPieces, moveType);
         }
 
-        public void RestartStationaryTimer()
+        public void ResetStationaryTimer()
         {
-            (collisionDetector as CollisionDetector).RestartStationaryTimer();
+            (collisionDetector as CollisionDetector).StopAndResetStationaryTimer();
         }
 
         public void NextFrame()

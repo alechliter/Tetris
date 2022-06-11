@@ -64,12 +64,13 @@ namespace Lechliter.Tetris_Console
             {
                 LockPiece?.Invoke();
                 LockTimerFalling.Reset();
-                (LockTimerFalling as LockTimer).Stop();
+                LockTimerFalling.Stop();
             };
             LockTimerStationary.TimerFinished += () =>
             {               
                 LockPiece?.Invoke();
-                RestartStationaryTimer();             
+                LockTimerStationary.Reset();
+                LockTimerStationary.Stop();
             };
         }
 
@@ -82,7 +83,13 @@ namespace Lechliter.Tetris_Console
         private void RestartFallingTimer()
         {
             LockTimerFalling.Reset();
-            (LockTimerFalling as LockTimer).Start();
+            LockTimerFalling.Start();
+        }
+
+        private void RestartStationaryTimer()
+        {
+            LockTimerStationary.Reset();
+            LockTimerStationary.Start();
         }
 
         private void RestartFallingTimerWhenFalling()
@@ -93,6 +100,17 @@ namespace Lechliter.Tetris_Console
                 if (!(LockTimerFalling as LockTimer).IsRunning)
                 {
                     RestartFallingTimer();
+                }
+            }
+        }
+
+        private void RestartStationaryTimerWhenFalling()
+        {
+            if ((piece as Tetromino).Velocity.y < 0)
+            {
+                if (!(LockTimerStationary as LockTimer).IsRunning)
+                {
+                    RestartStationaryTimer();
                 }
             }
         }
@@ -283,11 +301,10 @@ namespace Lechliter.Tetris_Console
         }
 
         /* Public Methods */
-        public void RestartStationaryTimer()
+        public void StopAndResetStationaryTimer()
         {
+            LockTimerStationary.Stop();
             LockTimerStationary.Reset();
-            (LockTimerStationary as LockTimer).Start();
-            //Console.WriteLine("Stationary Timer Restarted!");
         }
 
         public bool DetectCollisions(ITetromino<PieceType, Direction, MoveType> piece, PieceType[,] grid_pieces, MoveType moveType)
@@ -310,6 +327,7 @@ namespace Lechliter.Tetris_Console
                         case MoveType.Translation:
                             (piece as Tetromino).UndoMove(moveType);
                             RestartFallingTimerWhenFalling();
+                            RestartStationaryTimerWhenFalling();
                             break;
                         case MoveType.Rotation:
                             UndoRotation(x, y);

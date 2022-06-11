@@ -71,7 +71,7 @@ namespace Lechliter.Tetris_Console
             tracker.GridUpdate += Display; // Displays the grid whenever the grid is updated
             frame.FrameAction += () => tetromino.Move(Direction.Down); // move the tetromino down each frame
             frame.FrameAction += (tracker as Tracker).NextFrame; // advance frame timers
-            // inputHandler.AnyKeyEvent += (tracker as Tracker).RestartStationaryTimer;
+            inputHandler.AnyKeyEvent += (tracker as Tracker).ResetStationaryTimer;
 
             while(!isDone){
                 inputHandler.HandleInput();

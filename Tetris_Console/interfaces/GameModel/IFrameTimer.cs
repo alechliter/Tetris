@@ -27,6 +27,16 @@ namespace Lechliter.Tetris_Console
         public void Reset();
 
         /// <summary>
+        /// Start the timer from the current number of remaining frames.
+        /// </summary>
+        public void Start();
+
+        /// <summary>
+        /// Stop the timer.
+        /// </summary>
+        public void Stop();
+
+        /// <summary>
         /// Set a new frame number to count down from.
         /// </summary>
         /// <param name="numFrames">Number of frames to count down from.</param>
