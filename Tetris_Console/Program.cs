@@ -54,6 +54,11 @@ namespace Lechliter.Tetris_Console
 
             inputHandler.KeyEvent[ConsoleKey.N] = () => { tracker.LockPiece(); tetromino.NewPiece();  };
             inputHandler.KeyEvent[ConsoleKey.Q] = () => isDone = true;
+
+            inputHandler.KeyEvent[ConsoleKey.R] = () => {
+                Console.Clear();
+                Display();
+            };
         }
 
         static void Main(string[] args)
