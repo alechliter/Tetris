@@ -9,10 +9,11 @@ namespace Lechliter.Tetris_Console
     /// Pieces: I, O, T, J, L, S, Z, 
     /// Locked - Locked Piece,
     /// Empty - Empty space
+    /// NotSet - Not Set
     /// </summary>
     public enum PieceType
     {
-        Empty, Locked, I, O, T, J, L, S, Z
+        NotSet = -1, Empty, Locked, I, O, T, J, L, S, Z
     }
     /// <summary>
     /// Direction of travel.

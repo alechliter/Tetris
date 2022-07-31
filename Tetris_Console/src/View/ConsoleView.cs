@@ -97,6 +97,10 @@ namespace Lechliter.Tetris_Console
                     SetColor(TextColor.Default);
                     symbol = '·'; // unicode: 183
                     break;
+                case PieceType.NotSet:
+                    SetColor(TextColor.Default);
+                    symbol = ' ';
+                    break;
                 default:
                     Console.Error.WriteLine("ERROR: Invalid Type (PrintBlock)");
                     break;
