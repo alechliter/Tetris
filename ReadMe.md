@@ -19,3 +19,7 @@ In the windows terminal, enter the **Tetris_Console** folder and run the command
 ```
 dotnet run
 ```
+Or, in the main folder, run the command:
+```
+dotnet run Tetris_Console
+```
