@@ -73,13 +73,13 @@ namespace Lechliter.Tetris_Console
                 int x, y;
                 GridPosition(block.Position, out x, out y);
                 if(x < BOUNDS_DIM.X - 1 && x > 0 && y < BOUNDS_DIM.Y - 1 && y >= 0){
-                    if (newGrid[x, y] == PieceType.Empty)
+                    if (pieces[x, y] == PieceType.Empty)
                     {
                         newGrid[x, y] = piece.Type;
                     }
                     else
                     {
-                        Console.Error.WriteLine("ERROR: Piece Collision Detected But Not Handled.");
+                        Console.Error.WriteLine($"ERROR: Piece Collision Detected But Not Handled. Position - X:{x}, Y:{y}");
                     }
                 }
             }
