@@ -226,7 +226,7 @@ namespace Lechliter.Tetris_Console
         [Obsolete]
         private void ParseMovementDirections((int vertical, int horizontal)[] options, int x, int y)
         {
-            // TODO: This has bugs, if you can't figure it out, replace it with the original version. This solution isn't that much better anyway...
+            // TODO: This has many bugs and is too complicated. This solution isn't more efficient than the original, and only reduces code duplication.
             Func<int, int, int, bool> noBoundaryToLeft = (int x_pivot, int x, int disp) => x_pivot < x && x_pivot - disp > 0;
             Func<int, int, int, bool> noBoundaryToRight = (int x_pivot, int x, int disp) => x_pivot > x && x_pivot + disp < Tracker.BOUNDS_DIM.X - 1;
 
