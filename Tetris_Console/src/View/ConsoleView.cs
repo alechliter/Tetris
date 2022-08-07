@@ -8,7 +8,7 @@ namespace Lechliter.Tetris_Console
     {
         Red, Yellow, Blue, Green, Orange, Purple, DarkBlue, Default
     }
-    public class ConsoleView : IView<TextColor, PieceType>
+    public class ConsoleView : IView<TextColor, ePieceType>
     {
         private static readonly int ConsoleOriginX;
 
@@ -56,48 +56,48 @@ namespace Lechliter.Tetris_Console
                     break;
             }
         }
-        private static void PrintBlock(PieceType type, int x, int y)
+        private static void PrintBlock(ePieceType type, int x, int y)
         {
             char symbol = '?';
             switch (type)
             {
-                case PieceType.I:
+                case ePieceType.I:
                     SetColor(TextColor.Blue);
                     symbol = 'I';
                     break;
-                case PieceType.O:
+                case ePieceType.O:
                     SetColor(TextColor.Yellow);
                     symbol = 'O';
                     break;
-                case PieceType.T:
+                case ePieceType.T:
                     SetColor(TextColor.Purple);
                     symbol = 'T';
                     break;
-                case PieceType.J:
+                case ePieceType.J:
                     SetColor(TextColor.DarkBlue);
                     symbol = 'J';
                     break;
-                case PieceType.L:
+                case ePieceType.L:
                     SetColor(TextColor.Orange);
                     symbol = 'L';
                     break;
-                case PieceType.S:
+                case ePieceType.S:
                     SetColor(TextColor.Green);
                     symbol = 'S';
                     break;
-                case PieceType.Z:
+                case ePieceType.Z:
                     SetColor(TextColor.Red);
                     symbol = 'Z';
                     break;
-                case PieceType.Locked:
+                case ePieceType.Locked:
                     SetColor(TextColor.Default);
                     symbol = 'X';
                     break;
-                case PieceType.Empty:
+                case ePieceType.Empty:
                     SetColor(TextColor.Default);
                     symbol = '·'; // unicode: 183
                     break;
-                case PieceType.NotSet:
+                case ePieceType.NotSet:
                     SetColor(TextColor.Default);
                     symbol = ' ';
                     break;
@@ -123,7 +123,7 @@ namespace Lechliter.Tetris_Console
         }
 
         /* Public Method */
-        public void Display(PieceType[,] blocks)
+        public void Display(ePieceType[,] blocks)
         {
             for (int y = 0; y < Tracker.BOUNDS_DIM.Y; y++)
             {

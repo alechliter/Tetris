@@ -4,23 +4,13 @@ using System.Text;
 
 namespace Lechliter.Tetris_Console
 {
-    public struct IntPoint
-    {
-        public int X, Y;
-        public IntPoint(int x, int y)
-        {
-            X = x;
-            Y = y;
-        }
-    }
-
     public struct Component
     {
-        public PieceType[,] Elements;
+        public ePieceType[,] Elements;
         public IntPoint Position;
         public IntDimensions Size;
 
-        public Component(PieceType[,] elements, IntPoint position)
+        public Component(ePieceType[,] elements, IntPoint position)
         {
             Elements = elements;
             Position = position;
@@ -28,7 +18,7 @@ namespace Lechliter.Tetris_Console
         }
     }
 
-    public class ConsoleLayout : ILayout<IntPoint, PieceType[,], Component>
+    public class ConsoleLayout : ILayout<IntPoint, ePieceType[,], Component>
     {
         // Private Members
         private const int GRID_WIDTH = 20;
@@ -40,14 +30,14 @@ namespace Lechliter.Tetris_Console
         // Public Members
         public IntPoint Origin { get; }
 
-        public PieceType[,] Grid { get; protected set; }
+        public ePieceType[,] Grid { get; protected set; }
 
         // Constructors
         public ConsoleLayout()
         {
             Origin = new IntPoint(Console.CursorLeft, Console.CursorTop);
             Dimensions = new IntDimensions(GRID_WIDTH, GRID_HEIGHT);
-            Grid = new PieceType[GRID_WIDTH, GRID_HEIGHT];
+            Grid = new ePieceType[GRID_WIDTH, GRID_HEIGHT];
             Components = new List<Component>();
         }
 
@@ -79,12 +69,12 @@ namespace Lechliter.Tetris_Console
 
         private void NewGrid()
         {
-            Grid = new PieceType[Dimensions.X, Dimensions.Y];
+            Grid = new ePieceType[Dimensions.X, Dimensions.Y];
             for (int x = 0; x < Dimensions.X; x++)
             {
                 for (int y = 0; y < Dimensions.Y; y++)
                 {
-                    Grid[x, y] = PieceType.NotSet;
+                    Grid[x, y] = ePieceType.NotSet;
                 }
             }
         }

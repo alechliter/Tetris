@@ -24,7 +24,7 @@ namespace Lechliter.Tetris_Console
 		/// <summary>
 		/// The unique component identication index.
 		/// </summary>
-		public int ComponentID { get; protected set; }
+		public int ComponentID { get; }
 
 		/// <summary>
 		/// The contents of the component to display in a layout.
