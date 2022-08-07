@@ -15,7 +15,7 @@ namespace Lechliter.Tetris_Console
 		/// <summary>
 		/// The dimensions of the grid;
 		/// </summary>
-		public TDim Dimensions { get; set; }
+		public TDim Dimensions { get; }
 
 		/// <summary>
 		/// The layer number of the component in the layout.

@@ -61,7 +61,7 @@ namespace Lechliter.Tetris_Console
             };
         }
 
-        static void Main(string[] args)
+        static void StartGame()
         {
             spwanPoint = new Point(Tracker.BOUNDS_DIM.X / 2 - 1, 0);
             tetromino = new Tetromino(spwanPoint);
@@ -69,7 +69,7 @@ namespace Lechliter.Tetris_Console
             view = new ConsoleView();
             frame = new Frame();
             inputHandler = new InputHandler();
-            
+
             InitializeInputHandler();
 
             /* Subscribe to Events */
@@ -78,13 +78,30 @@ namespace Lechliter.Tetris_Console
             frame.FrameAction += (tracker as Tracker).NextFrame; // advance frame timers
             inputHandler.AnyKeyEvent += (tracker as Tracker).ResetStationaryTimer;
 
-            while(!isDone){
+            while (!isDone)
+            {
                 inputHandler.HandleInput();
                 frame.nextFrame();
             }
 
             Console.WriteLine("Done.");
             Console.Read();
+        }
+
+        static void Main(string[] args)
+        {
+            //StartGame();
+            ConsoleDynamicLayout layout = new ConsoleDynamicLayout();
+
+            DynamicComponent componentTest = new DynamicComponent();
+            componentTest.Grid = new ComponentContent[,] { { new ComponentContent('a', eTextColor.Green) } , { new ComponentContent('b', eTextColor.Red) } };
+            layout.AddComponent(componentTest);
+
+            DynamicComponent componentTest2 = new DynamicComponent(1, new IntPoint(1, 0));
+            componentTest2.Grid = new ComponentContent[,] { { new ComponentContent('a', eTextColor.Green) }, { new ComponentContent('b', eTextColor.Red) } };
+            layout.AddComponent(componentTest2);
+
+            layout.DisplayAll();
         }
     }
 }

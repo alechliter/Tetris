@@ -10,7 +10,15 @@ namespace Lechliter.Tetris_Console
 
         public IntPoint Origin { get; set; }
 
-        public IntDimensions Dimensions { get; set; }
+        public IntDimensions Dimensions
+        {
+            get
+            {
+                int width = this.Grid.GetLength(0);
+                int height = this.Grid.GetLength(1);
+                return new IntDimensions(width, height);
+            }
+        }
 
         public int Layer { get; set; }
 
@@ -25,8 +33,12 @@ namespace Lechliter.Tetris_Console
             DynamicComponent.NextID = 0;
         }
 
-        public DynamicComponent()
+        public DynamicComponent(int layer = 0, IntPoint origin = new IntPoint())
         {
+            this.Layer = layer;
+            this.Origin = origin;
+            this.Grid = new ComponentContent[,] { };
+
             this.ComponentID = DynamicComponent.NextID;
             DynamicComponent.NextID++;
         }

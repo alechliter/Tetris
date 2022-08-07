@@ -9,7 +9,7 @@ namespace Lechliter.Tetris_Console
         // Public Members
         public IntPoint Origin { get; set; }
 
-        public List<DynamicComponent> Components { 
+        public List<DynamicComponent> Components {
             get {
                 List<DynamicComponent> components = new List<DynamicComponent>();
 
@@ -31,12 +31,20 @@ namespace Lechliter.Tetris_Console
         // Private Members
         private static readonly IntPoint ConsoleOrigin;
 
+        private static IntPoint CursorPosition { get; set; }
+
         private SortedDictionary<int, List<DynamicComponent>> Layers { get; set; }
 
         // Constructors
         static ConsoleDynamicLayout()
         {
-            ConsoleOrigin = new IntPoint(Console.CursorLeft, Console.CursorTop);
+            try
+            {
+                ConsoleOrigin = new IntPoint(Console.CursorLeft, Console.CursorTop);
+            } catch
+            {
+                ConsoleOrigin = new IntPoint(0, 0);
+            }
         }
 
         public ConsoleDynamicLayout()
@@ -51,6 +59,7 @@ namespace Lechliter.Tetris_Console
         {
             if (IsComponentIDUnique(component))
             {
+                component.Display += (int id) => DisplayComponent(component);
                 List<DynamicComponent> components;
                 if (this.Layers.ContainsKey(component.Layer))
                 {
@@ -119,8 +128,8 @@ namespace Lechliter.Tetris_Console
 
         private void SetCursorPosition(IntPoint point)
         {
-            IntPoint newPosition = ConsoleOrigin + this.Origin + point;
-            Console.SetCursorPosition(newPosition.X, newPosition.Y);
+            CursorPosition = ConsoleOrigin + this.Origin + point;
+            Console.SetCursorPosition(CursorPosition.X, CursorPosition.Y);
         }
 
         private void MoveCursor(int x, int y)
@@ -133,7 +142,7 @@ namespace Lechliter.Tetris_Console
         {
             try
             {
-                Console.SetCursorPosition(Console.CursorLeft + x, Console.CursorTop + y);
+                Console.SetCursorPosition(CursorPosition.X + x, CursorPosition.Y + y);
                 Console.Write(s);
             }
             catch (ArgumentOutOfRangeException e)

@@ -9,5 +9,11 @@ namespace Lechliter.Tetris_Console
         public char Value;
 
         public eTextColor Color;
+
+        public ComponentContent(char value, eTextColor color)
+        {
+            Value = value;
+            Color = color;
+        }
     }
 }
