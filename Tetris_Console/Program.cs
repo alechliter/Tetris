@@ -8,7 +8,7 @@ namespace Lechliter.Tetris_Console
         private static Point spwanPoint;
         private static ITetromino<ePieceType, eDirection, eMoveType> tetromino;
         private static ITracker<ePieceType, eDirection, eMoveType> tracker;
-        private static IView<TextColor, ePieceType> view;
+        private static IView<eTextColor, ePieceType> view;
         private static IFrame frame;
         private static IInputHandler<ConsoleKey, Action> inputHandler;
         private static bool isDone = false;

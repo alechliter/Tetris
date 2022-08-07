@@ -4,17 +4,13 @@ using System.Text;
 
 namespace Lechliter.Tetris_Console
 {
-    public enum TextColor
-    {
-        Red, Yellow, Blue, Green, Orange, Purple, DarkBlue, Default
-    }
-    public class ConsoleView : IView<TextColor, ePieceType>
+    public class ConsoleView : IView<eTextColor, ePieceType>
     {
         private static readonly int ConsoleOriginX;
 
         private static readonly int ConsoleOriginY;
 
-        public TextColor Color { get; protected set; } // current text color
+        public eTextColor Color { get; protected set; } // current text color
 
         /* Constructor */
         static ConsoleView()
@@ -26,29 +22,29 @@ namespace Lechliter.Tetris_Console
         }
 
         /* Private Method */
-        private static void SetColor(TextColor color)
+        private static void SetColor(eTextColor color)
         {
             switch (color)
             {
-                case TextColor.Red:
+                case eTextColor.Red:
                     Console.ForegroundColor = ConsoleColor.Red;
                     break;
-                case TextColor.Yellow:
+                case eTextColor.Yellow:
                     Console.ForegroundColor = ConsoleColor.Yellow;
                     break;
-                case TextColor.Blue:
+                case eTextColor.Blue:
                     Console.ForegroundColor = ConsoleColor.Cyan;
                     break;
-                case TextColor.DarkBlue:
+                case eTextColor.DarkBlue:
                     Console.ForegroundColor = ConsoleColor.Blue;
                     break;
-                case TextColor.Green:
+                case eTextColor.Green:
                     Console.ForegroundColor = ConsoleColor.Green;
                     break;
-                case TextColor.Orange:
+                case eTextColor.Orange:
                     Console.ForegroundColor = ConsoleColor.White;
                     break;
-                case TextColor.Purple:
+                case eTextColor.Purple:
                     Console.ForegroundColor = ConsoleColor.Magenta;
                     break;
                 default:
@@ -62,43 +58,43 @@ namespace Lechliter.Tetris_Console
             switch (type)
             {
                 case ePieceType.I:
-                    SetColor(TextColor.Blue);
+                    SetColor(eTextColor.Blue);
                     symbol = 'I';
                     break;
                 case ePieceType.O:
-                    SetColor(TextColor.Yellow);
+                    SetColor(eTextColor.Yellow);
                     symbol = 'O';
                     break;
                 case ePieceType.T:
-                    SetColor(TextColor.Purple);
+                    SetColor(eTextColor.Purple);
                     symbol = 'T';
                     break;
                 case ePieceType.J:
-                    SetColor(TextColor.DarkBlue);
+                    SetColor(eTextColor.DarkBlue);
                     symbol = 'J';
                     break;
                 case ePieceType.L:
-                    SetColor(TextColor.Orange);
+                    SetColor(eTextColor.Orange);
                     symbol = 'L';
                     break;
                 case ePieceType.S:
-                    SetColor(TextColor.Green);
+                    SetColor(eTextColor.Green);
                     symbol = 'S';
                     break;
                 case ePieceType.Z:
-                    SetColor(TextColor.Red);
+                    SetColor(eTextColor.Red);
                     symbol = 'Z';
                     break;
                 case ePieceType.Locked:
-                    SetColor(TextColor.Default);
+                    SetColor(eTextColor.Default);
                     symbol = 'X';
                     break;
                 case ePieceType.Empty:
-                    SetColor(TextColor.Default);
+                    SetColor(eTextColor.Default);
                     symbol = '·'; // unicode: 183
                     break;
                 case ePieceType.NotSet:
-                    SetColor(TextColor.Default);
+                    SetColor(eTextColor.Default);
                     symbol = ' ';
                     break;
                 default:
