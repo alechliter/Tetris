@@ -21,8 +21,41 @@ namespace Lechliter.Tetris_Console
             ConsoleOriginY = Console.CursorTop;
         }
 
-        /* Private Method */
-        private static void SetColor(eTextColor color)
+        /* Private Methods */
+        private static void PrintBlock(ePieceType type, int x, int y)
+        {
+            char symbol = GetBlock(type);
+            WriteAt(symbol.ToString(), x * 2 , y);
+        }
+
+        protected static void WriteAt(string s, int x, int y)
+        {
+            try
+            {
+                Console.SetCursorPosition(ConsoleOriginX + x, ConsoleOriginY + y);
+                Console.Write(s);
+            }
+            catch (ArgumentOutOfRangeException e)
+            {
+                Console.Clear();
+                Console.WriteLine(e.Message);
+            }
+        }
+
+        /* Public Method */
+        public void Display(ePieceType[,] blocks)
+        {
+            for (int y = 0; y < Tracker.BOUNDS_DIM.Y; y++)
+            {
+                for(int x = 0; x < Tracker.BOUNDS_DIM.X; x++)
+                {
+                    PrintBlock(blocks[x, y], x, y);                  
+                }
+                Console.WriteLine();
+            }
+        }
+
+        public static void SetColor(eTextColor color)
         {
             switch (color)
             {
@@ -52,7 +85,8 @@ namespace Lechliter.Tetris_Console
                     break;
             }
         }
-        private static void PrintBlock(ePieceType type, int x, int y)
+
+        public static char GetBlock(ePieceType type)
         {
             char symbol = '?';
             switch (type)
@@ -101,34 +135,7 @@ namespace Lechliter.Tetris_Console
                     Console.Error.WriteLine("ERROR: Invalid Type (PrintBlock)");
                     break;
             }
-            WriteAt(symbol.ToString(), x * 2 , y);
-        }
-
-        protected static void WriteAt(string s, int x, int y)
-        {
-            try
-            {
-                Console.SetCursorPosition(ConsoleOriginY + x, ConsoleOriginY + y);
-                Console.Write(s);
-            }
-            catch (ArgumentOutOfRangeException e)
-            {
-                Console.Clear();
-                Console.WriteLine(e.Message);
-            }
-        }
-
-        /* Public Method */
-        public void Display(ePieceType[,] blocks)
-        {
-            for (int y = 0; y < Tracker.BOUNDS_DIM.Y; y++)
-            {
-                for(int x = 0; x < Tracker.BOUNDS_DIM.X; x++)
-                {
-                    PrintBlock(blocks[x, y], x, y);                  
-                }
-                Console.WriteLine();
-            }
+            return symbol;
         }
     }
 }

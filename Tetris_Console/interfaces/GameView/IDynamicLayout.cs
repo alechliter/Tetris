@@ -4,12 +4,12 @@ using System.Text;
 
 namespace Lechliter.Tetris_Console
 {
-    public interface IDynamicLayout<TComponent, TPoint>
+    public interface IDynamicLayout<TComponent, TComponentCollection, TPoint> where TComponentCollection: ICollection<TComponent>
     {
         /// <summary>
         /// A collection of components to display
         /// </summary>
-        public ICollection<TComponent> Components { get; protected set; }
+        public TComponentCollection Components { get; }
 
         /// <summary>
         /// The origin of the overall layout

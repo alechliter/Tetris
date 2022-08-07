@@ -4,17 +4,18 @@ using System.Text;
 
 namespace Lechliter.Tetris_Console
 {
-	public interface IComponent<TPoint, TGrid>
+	public interface IComponent<TPoint, TGrid, TDim>
 	{
-		/// <summary>
-		/// The next ID to assign to a new component.
-		/// </summary>
-		public static int NextID { get; protected set; }
 
 		/// <summary>
 		/// The origin of the component.
 		/// </summary>
 		public TPoint Origin { get; set; }
+
+		/// <summary>
+		/// The dimensions of the grid;
+		/// </summary>
+		public TDim Dimensions { get; set; }
 
 		/// <summary>
 		/// The layer number of the component in the layout.
