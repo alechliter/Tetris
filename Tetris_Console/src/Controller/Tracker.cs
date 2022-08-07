@@ -70,7 +70,7 @@ namespace Lechliter.Tetris_Console
                     }
                     else
                     {
-                        Console.Error.WriteLine($"ERROR: Piece Collision Detected But Not Handled. Position - X:{x}, Y:{y}");
+                        ErrorMessageHandler.DisplayMessage($"ERROR: Piece Collision Detected But Not Handled. Position - X:{x}, Y:{y}");
                     }
                 }
             }
@@ -166,9 +166,12 @@ namespace Lechliter.Tetris_Console
         {
             for(int row_number = BOUNDS_DIM.Y - 2; row_number > 0; row_number--)
             {
+                int i = 0;
                 while (isLineFull(row_number))
                 {
                     MoveLinesDown(row_number - 1);
+                    Console.Beep(400 + i, 115);
+                    i += 135;
                 }
                 if (isLineEmpty(row_number - 1)){
                     break;
@@ -222,6 +225,7 @@ namespace Lechliter.Tetris_Console
         public void LockPiece()
         {
             LockedPieces = AllPieces;
+            Console.Beep(600, 200);
             ClearLines();
             ResetStationaryTimer();
             if (!IsGameOver())
@@ -244,9 +248,26 @@ namespace Lechliter.Tetris_Console
         {
             collisionDetector.LockTimerFalling.CountDown();
             collisionDetector.LockTimerStationary.CountDown();
+        }
 
-            Console.WriteLine($"Falling Timer: {collisionDetector.LockTimerFalling.FramesRemaining}");
-            Console.WriteLine($"Stationary Timer: {collisionDetector.LockTimerStationary.FramesRemaining}");
+        public ComponentContent[,] Displaytimer()
+        {
+            string fallingTimer = $"Falling Timer: {collisionDetector.LockTimerFalling.FramesRemaining}";
+            string stationaryTimer = $"Stationary Timer: {collisionDetector.LockTimerStationary.FramesRemaining}";
+
+            ComponentContent[,] timers = new ComponentContent[Math.Max(fallingTimer.Length, stationaryTimer.Length), 2];
+
+            for(int i = 0; i < fallingTimer.Length; i++)
+            {
+                timers[i, 0] = new ComponentContent(fallingTimer[i], eTextColor.Yellow);
+            }
+
+            for (int i = 0; i < stationaryTimer.Length; i++)
+            {
+                timers[i, 1] = new ComponentContent(stationaryTimer[i], eTextColor.Yellow);
+            }
+
+            return timers;
         }
     }
 }

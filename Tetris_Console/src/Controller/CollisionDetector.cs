@@ -311,7 +311,7 @@ namespace Lechliter.Tetris_Console
                             UndoRotation(x, y);
                             break;
                         default:
-                            Console.WriteLine("Unhandled collision from move type: {0}", moveType.ToString());
+                            ErrorMessageHandler.DisplayMessage($"Unhandled collision from move type: {moveType.ToString()}");
                             break;
                     }
                     CollisionDetected?.Invoke();

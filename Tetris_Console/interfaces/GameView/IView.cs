@@ -6,8 +6,8 @@ namespace Lechliter.Tetris_Console
                                                      where TPieceType : System.Enum 
 
     {
-        TColor Color { get; }
-        void Display(TPieceType[,] blocks);
+        static TColor Color { get; }
+        void Display();
 
     }
 }

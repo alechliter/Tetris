@@ -24,23 +24,32 @@ namespace Lechliter.Tetris_Console
 
         public ComponentContent[,] Grid { get; set; }
 
-        public Action<int> Display { get; set; }
+        public event Action<int> Display;
 
         public int ComponentID { get; }
+
+        public int Spacing { get; protected set; }
 
         static DynamicComponent()
         {
             DynamicComponent.NextID = 0;
         }
 
-        public DynamicComponent(int layer = 0, IntPoint origin = new IntPoint())
+        public DynamicComponent(int layer = 0, IntPoint origin = new IntPoint(), int spacing = 1)
         {
             this.Layer = layer;
             this.Origin = origin;
             this.Grid = new ComponentContent[,] { };
+            this.Spacing = spacing;
 
             this.ComponentID = DynamicComponent.NextID;
             DynamicComponent.NextID++;
+        }
+
+        public void OnUpdate(ComponentContent[,] grid)
+        {
+            this.Grid = grid;
+            this.Display?.Invoke(this.ComponentID);
         }
     }
 }

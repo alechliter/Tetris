@@ -35,15 +35,12 @@ namespace Lechliter.Tetris_Console
 		/// <summary>
 		/// An event that emits when the component needs to be displayed.
 		/// </summary>
-		public Action<int> Display { get; set; }
+		public event Action<int> Display;
 
 		/// <summary>
 		/// A method that subscribes to the component's content provider.
 		/// </summary>
 		/// <param name="grid">The new grid content to display.</param>
-		public void OnUpdate(TGrid grid)
-		{
-			this.Display.Invoke(this.ComponentID);
-		}
+		public void OnUpdate(TGrid grid);
 	}
 }

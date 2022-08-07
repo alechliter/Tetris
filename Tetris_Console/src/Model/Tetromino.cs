@@ -112,7 +112,7 @@ namespace Lechliter.Tetris_Console
                     blocks.Add(new Block(pivot + new Point(0.0f, Block.StandardDim.Y)));
                     break;
                 default:
-                    Console.Error.WriteLine("ERROR: Invalid Piece Type");
+                    ErrorMessageHandler.DisplayMessage("ERROR: Invalid Piece Type");
                     break;
             }
         }
@@ -139,7 +139,7 @@ namespace Lechliter.Tetris_Console
                     MoveBlocksBy(velocity);
                     break;
                 default:
-                    Console.Error.WriteLine("ERROR: Invalid direction");
+                    ErrorMessageHandler.DisplayMessage("ERROR: Invalid direction");
                     break;
             }
             this.velocity = velocity;
@@ -174,7 +174,7 @@ namespace Lechliter.Tetris_Console
                     newType = ePieceType.Z;
                     break;
                 default:
-                    Console.Error.WriteLine("ERROR: Invalid Tetromino Type (RandType)");
+                    ErrorMessageHandler.DisplayMessage("ERROR: Invalid Tetromino Type (RandType)");
                     break;
             }
             return newType;
@@ -215,7 +215,7 @@ namespace Lechliter.Tetris_Console
 	            	angle = Math.PI / 2.0; // Rotate 90 degrees to the right
 	            	break; 
 	            default:
-	            	Console.Error.WriteLine("ERROR: Invalid rotation direction.");
+	            	ErrorMessageHandler.DisplayMessage("ERROR: Invalid rotation direction.");
 	            	break;
 	        }
             

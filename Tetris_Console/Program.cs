@@ -39,7 +39,29 @@ namespace Lechliter.Tetris_Console
         }
 
         private static void Display(){
-            view?.Display(tracker.AllPieces);
+            view?.Display();
+        }
+
+        private static void AddComponents()
+        {
+            // Add Grid to Layout
+            DynamicComponent gridComponent = new DynamicComponent(1, new IntPoint(5, 4), 2);
+            gridComponent.Grid = ConsoleView.ConvertPieceGridToContentGrid(tracker.AllPieces);
+            tracker.GridUpdate += () => gridComponent.OnUpdate(ConsoleView.ConvertPieceGridToContentGrid(tracker.AllPieces));
+            ConsoleView.Layout.AddComponent(gridComponent);
+
+            // Timer Display
+            IntPoint timerPosition = gridComponent.Origin + new IntPoint(gridComponent.Dimensions.X * 2, 0);
+            DynamicComponent timerComponent = new DynamicComponent(1, timerPosition);
+            timerComponent.Grid = (tracker as Tracker).Displaytimer();
+            frame.FrameAction += () => timerComponent.OnUpdate((tracker as Tracker).Displaytimer());
+            ConsoleView.Layout.AddComponent(timerComponent);
+
+            // Error Messages
+            IntPoint errorPosition = gridComponent.Origin + new IntPoint(gridComponent.Dimensions.X * 2, gridComponent.Dimensions.Y / 2);
+            DynamicComponent errorComponent = new DynamicComponent(0, errorPosition);
+            ErrorMessageHandler.NewErrorMessage += (ComponentContent[,] content) => errorComponent.OnUpdate(content);
+            ConsoleView.Layout.AddComponent(errorComponent);
         }
 
         static void InitializeInputHandler()
@@ -59,6 +81,7 @@ namespace Lechliter.Tetris_Console
                 Console.Clear();
                 Display();
             };
+            inputHandler.KeyEvent[ConsoleKey.H] = () => Console.CursorVisible = false;
         }
 
         static void StartGame()
@@ -73,10 +96,12 @@ namespace Lechliter.Tetris_Console
             InitializeInputHandler();
 
             /* Subscribe to Events */
-            tracker.GridUpdate += Display; // Displays the grid whenever the grid is updated
             frame.FrameAction += () => tetromino.Move(eDirection.Down); // move the tetromino down each frame
             frame.FrameAction += (tracker as Tracker).NextFrame; // advance frame timers
             inputHandler.AnyKeyEvent += (tracker as Tracker).ResetStationaryTimer;
+
+            /* Add Components to View Layout */
+            AddComponents();
 
             while (!isDone)
             {
@@ -90,18 +115,7 @@ namespace Lechliter.Tetris_Console
 
         static void Main(string[] args)
         {
-            //StartGame();
-            ConsoleDynamicLayout layout = new ConsoleDynamicLayout();
-
-            DynamicComponent componentTest = new DynamicComponent();
-            componentTest.Grid = new ComponentContent[,] { { new ComponentContent('a', eTextColor.Green) } , { new ComponentContent('b', eTextColor.Red) } };
-            layout.AddComponent(componentTest);
-
-            DynamicComponent componentTest2 = new DynamicComponent(1, new IntPoint(1, 0));
-            componentTest2.Grid = new ComponentContent[,] { { new ComponentContent('a', eTextColor.Green) }, { new ComponentContent('b', eTextColor.Red) } };
-            layout.AddComponent(componentTest2);
-
-            layout.DisplayAll();
+            StartGame();
         }
     }
 }

@@ -6,57 +6,54 @@ namespace Lechliter.Tetris_Console
 {
     public class ConsoleView : IView<eTextColor, ePieceType>
     {
-        private static readonly int ConsoleOriginX;
+        /* Private Members */
 
-        private static readonly int ConsoleOriginY;
+        /* Public Members */
+        public static ConsoleDynamicLayout Layout;
 
-        public eTextColor Color { get; protected set; } // current text color
+        public static eTextColor Color { get; protected set; } // current text color
 
         /* Constructor */
         static ConsoleView()
         {
             Console.Clear();
             Console.CursorVisible = false;
-            ConsoleOriginX = Console.CursorLeft;
-            ConsoleOriginY = Console.CursorTop;
+            Console.SetWindowSize(100, 40);
+            Console.Title = "Console Tetris";
+            Layout = new ConsoleDynamicLayout();
         }
 
         /* Private Methods */
-        private static void PrintBlock(ePieceType type, int x, int y)
-        {
-            char symbol = GetBlock(type);
-            WriteAt(symbol.ToString(), x * 2 , y);
-        }
-
-        protected static void WriteAt(string s, int x, int y)
-        {
-            try
-            {
-                Console.SetCursorPosition(ConsoleOriginX + x, ConsoleOriginY + y);
-                Console.Write(s);
-            }
-            catch (ArgumentOutOfRangeException e)
-            {
-                Console.Clear();
-                Console.WriteLine(e.Message);
-            }
-        }
 
         /* Public Method */
-        public void Display(ePieceType[,] blocks)
+        public void Display()
         {
-            for (int y = 0; y < Tracker.BOUNDS_DIM.Y; y++)
+            Layout.DisplayAll();
+        }
+
+        public static ComponentContent[,] ConvertPieceGridToContentGrid(ePieceType[,] blocks)
+        {
+            int x_dim = blocks.GetLength(0);
+            int y_dim = blocks.GetLength(1);
+
+            ComponentContent[,] content = new ComponentContent[x_dim, y_dim];
+
+            for (int y = 0; y < y_dim; y++)
             {
-                for(int x = 0; x < Tracker.BOUNDS_DIM.X; x++)
+                for (int x = 0; x < x_dim; x++)
                 {
-                    PrintBlock(blocks[x, y], x, y);                  
+                    content[x, y] = new ComponentContent();
+                    content[x, y].Value = GetBlock(blocks[x, y]);
+                    content[x, y].Color = GetBlockColor(blocks[x, y]);
                 }
-                Console.WriteLine();
             }
+
+            return content;
         }
 
         public static void SetColor(eTextColor color)
         {
+            Color = color;
             switch (color)
             {
                 case eTextColor.Red:
@@ -86,53 +83,85 @@ namespace Lechliter.Tetris_Console
             }
         }
 
+        public static eTextColor GetBlockColor(ePieceType type)
+        {
+            eTextColor color;
+            switch (type)
+            {
+                case ePieceType.I:
+                    color = eTextColor.Blue;
+                    break;
+                case ePieceType.O:
+                    color = eTextColor.Yellow;
+                    break;
+                case ePieceType.T:
+                    color = eTextColor.Purple;
+                    break;
+                case ePieceType.J:
+                    color = eTextColor.DarkBlue;
+                    break;
+                case ePieceType.L:
+                    color = eTextColor.Orange;
+                    break;
+                case ePieceType.S:
+                    color = eTextColor.Green;
+                    break;
+                case ePieceType.Z:
+                    color = eTextColor.Red;
+                    break;
+                case ePieceType.Locked:
+                    color = eTextColor.Default;
+                    break;
+                case ePieceType.Empty:
+                    color = eTextColor.Default;
+                    break;
+                case ePieceType.NotSet:
+                    color = eTextColor.Default;
+                    break;
+                default:
+                    color = eTextColor.Default;
+                    break;
+            }
+            return color;
+        }
+
         public static char GetBlock(ePieceType type)
         {
             char symbol = '?';
             switch (type)
             {
                 case ePieceType.I:
-                    SetColor(eTextColor.Blue);
                     symbol = 'I';
                     break;
                 case ePieceType.O:
-                    SetColor(eTextColor.Yellow);
                     symbol = 'O';
                     break;
                 case ePieceType.T:
-                    SetColor(eTextColor.Purple);
                     symbol = 'T';
                     break;
                 case ePieceType.J:
-                    SetColor(eTextColor.DarkBlue);
                     symbol = 'J';
                     break;
                 case ePieceType.L:
-                    SetColor(eTextColor.Orange);
                     symbol = 'L';
                     break;
                 case ePieceType.S:
-                    SetColor(eTextColor.Green);
                     symbol = 'S';
                     break;
                 case ePieceType.Z:
-                    SetColor(eTextColor.Red);
                     symbol = 'Z';
                     break;
                 case ePieceType.Locked:
-                    SetColor(eTextColor.Default);
                     symbol = 'X';
                     break;
                 case ePieceType.Empty:
-                    SetColor(eTextColor.Default);
                     symbol = '·'; // unicode: 183
                     break;
                 case ePieceType.NotSet:
-                    SetColor(eTextColor.Default);
                     symbol = ' ';
                     break;
                 default:
-                    Console.Error.WriteLine("ERROR: Invalid Type (PrintBlock)");
+                    ErrorMessageHandler.DisplayMessage("ERROR: Invalid Type (PrintBlock)");
                     break;
             }
             return symbol;

@@ -112,18 +112,17 @@ namespace Lechliter.Tetris_Console
         // Private Methods
         private void PrintComponent(DynamicComponent component)
         {
-            SetCursorPosition(component.Origin);
-
             for (int y = 0; y < component.Dimensions.Y; y++)
             {
+                SetCursorPosition(component.Origin);
                 for (int x = 0; x < component.Dimensions.X; x++)
                 {
                     MoveCursor(x, y);
                     ConsoleView.SetColor(component.Grid[x, y].Color);
-                    WriteAt(component.Grid[x, y].Value.ToString(), x, y);
+                    WriteAt(component.Grid[x, y].Value.ToString(), x * component.Spacing, y);
                 }
-                Console.WriteLine();
             }
+            ResetCursorPosition();
         }
 
         private void SetCursorPosition(IntPoint point)
@@ -132,10 +131,22 @@ namespace Lechliter.Tetris_Console
             Console.SetCursorPosition(CursorPosition.X, CursorPosition.Y);
         }
 
+        private void ResetCursorPosition()
+        {
+            Console.SetCursorPosition(ConsoleOrigin.X, ConsoleOrigin.Y);
+        }
+
         private void MoveCursor(int x, int y)
         {
-            Console.CursorLeft += x;
-            Console.CursorTop += y;
+            try
+            {
+                Console.CursorLeft += x;
+                Console.CursorTop += y;
+            }
+            catch
+            {
+                ErrorMessageHandler.DisplayMessage($"Error: Attempted to Write at: {Console.CursorLeft + x}, {Console.CursorTop + y}");
+            }
         }
 
         protected static void WriteAt(string s, int x, int y)
