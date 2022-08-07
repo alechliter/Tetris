@@ -3,30 +3,27 @@ using System.Collections.Generic;
 
 namespace Lechliter.Tetris_Console
 {
-    public struct IntDimensions
-    {
-        public int X, Y;
-        public IntDimensions(int width, int height)
-        {
-            this.X = width;
-            this.Y = height;
-        }
-    }
-    public class Tracker : ITracker<PieceType, Direction, MoveType>
+    public class Tracker : ITracker<ePieceType, eDirection, eMoveType>
     {
         /* Private Members */
-        private ICollisionDetector<PieceType, Direction, MoveType> collisionDetector;
+        private ICollisionDetector<ePieceType, eDirection, eMoveType> collisionDetector;
 
         /* Public Members */
         public static readonly IntDimensions BOUNDS_DIM;
 
         public static readonly IntDimensions GRID_DIM;
 
-        public ITetromino<PieceType, Direction, MoveType> CurrentPiece { get; set; }
+        public const int X_POSITION = 10;
 
-        public PieceType[,] LockedPieces { get; protected set; }
+        public const int Y_POSITION = 10;
 
-        public PieceType[,] AllPieces { get; protected set; }
+        public ITetromino<ePieceType, eDirection, eMoveType> CurrentPiece { get; set; }
+
+        public ePieceType[,] LockedPieces { get; protected set; }
+
+        public ePieceType[,] AllPieces { get; protected set; }
+
+        public Component Grid { get; protected set; }
 
         public event Action GridUpdate;
          
@@ -40,13 +37,15 @@ namespace Lechliter.Tetris_Console
             GRID_DIM = new IntDimensions(WIDTH - 2, HEIGHT - 2);
         }
 
-        public Tracker(ITetromino<PieceType, Direction, MoveType> newPiece)
+        public Tracker(ITetromino<ePieceType, eDirection, eMoveType> newPiece)
         {
             CurrentPiece = newPiece;
 
             LockedPieces = NewGrid();
             AllPieces = AddPieceToGrid(LockedPieces, CurrentPiece);
             collisionDetector = new CollisionDetector();
+
+            Grid = new Component(AllPieces, new IntPoint(X_POSITION, Y_POSITION));
 
             // Subscribes to changes in the position
             CurrentPiece.UpdatePosition += DetectCollisions;
@@ -57,51 +56,51 @@ namespace Lechliter.Tetris_Console
         }
 
         /* Private Methods --------------------------------------------------------*/
-        private static PieceType[,] AddPieceToGrid(PieceType[,] pieces, ITetromino<PieceType, Direction, MoveType> piece)
+        private static ePieceType[,] AddPieceToGrid(ePieceType[,] pieces, ITetromino<ePieceType, eDirection, eMoveType> piece)
         {
-            PieceType[,] newGrid = (PieceType[,])pieces.Clone();
+            ePieceType[,] newGrid = (ePieceType[,])pieces.Clone();
 
             foreach(IBlock block in piece.Blocks){
                 int x, y;
                 GridPosition(block.Position, out x, out y);
                 if(x < BOUNDS_DIM.X - 1 && x > 0 && y < BOUNDS_DIM.Y - 1 && y >= 0){
-                    if (pieces[x, y] == PieceType.Empty)
+                    if (pieces[x, y] == ePieceType.Empty)
                     {
                         newGrid[x, y] = piece.Type;
                     }
                     else
                     {
-                        Console.Error.WriteLine($"ERROR: Piece Collision Detected But Not Handled. Position - X:{x}, Y:{y}");
+                        ErrorMessageHandler.DisplayMessage($"ERROR: Piece Collision Detected But Not Handled. Position - X:{x}, Y:{y}");
                     }
                 }
             }
             return newGrid;
         }
-        private static PieceType[,] NewGrid()
+        private static ePieceType[,] NewGrid()
         {
-            PieceType[,] grid = new PieceType[BOUNDS_DIM.X, BOUNDS_DIM.Y];
+            ePieceType[,] grid = new ePieceType[BOUNDS_DIM.X, BOUNDS_DIM.Y];
 
             // Fills the buffer area (perimeter) of the grid with locked markers
             for(int x = 0; x < BOUNDS_DIM.X; x++)
             {
-                grid[x, 0] = PieceType.Empty;
-                grid[x, BOUNDS_DIM.Y - 1] = PieceType.Locked;
+                grid[x, 0] = ePieceType.Empty;
+                grid[x, BOUNDS_DIM.Y - 1] = ePieceType.Locked;
             }
             for(int y = 0; y < BOUNDS_DIM.Y - 1; y++)
             {
-                grid[0, y] = PieceType.Locked;
+                grid[0, y] = ePieceType.Locked;
                 // Fills the remaining grid area with empty markers
                 for(int x = 1; x < BOUNDS_DIM.X - 1; x++)
                 {
-                    grid[x, y] = PieceType.Empty;
+                    grid[x, y] = ePieceType.Empty;
                 }
-                grid[BOUNDS_DIM.X - 1, y] = PieceType.Locked;
+                grid[BOUNDS_DIM.X - 1, y] = ePieceType.Locked;
             }
 
             return grid;
         }
 
-        private void DetectCollisions(MoveType moveType)
+        private void DetectCollisions(eMoveType moveType)
         {
             collisionDetector.DetectCollisions(CurrentPiece, LockedPieces, moveType);
         }
@@ -112,7 +111,7 @@ namespace Lechliter.Tetris_Console
             int x = 1;
             while(isFull && x < BOUNDS_DIM.X - 1)
             {
-                isFull = this.LockedPieces[x, row_number] != PieceType.Empty;
+                isFull = this.LockedPieces[x, row_number] != ePieceType.Empty;
                 x++;
             }
             return isFull;
@@ -124,7 +123,7 @@ namespace Lechliter.Tetris_Console
             int x = 1;
             while(isEmpty && x < BOUNDS_DIM.X - 1)
             {
-                isEmpty = this.LockedPieces[x, row_number] == PieceType.Empty;
+                isEmpty = this.LockedPieces[x, row_number] == ePieceType.Empty;
                 x++;
             }
             return isEmpty;
@@ -134,7 +133,7 @@ namespace Lechliter.Tetris_Console
         {
             for (int x = 1; x < BOUNDS_DIM.X - 1; x++)
             {
-                this.LockedPieces[x, row_number] = PieceType.Empty;
+                this.LockedPieces[x, row_number] = ePieceType.Empty;
             }
         }
 
@@ -167,9 +166,12 @@ namespace Lechliter.Tetris_Console
         {
             for(int row_number = BOUNDS_DIM.Y - 2; row_number > 0; row_number--)
             {
+                int i = 0;
                 while (isLineFull(row_number))
                 {
                     MoveLinesDown(row_number - 1);
+                    Console.Beep(400 + i, 115);
+                    i += 135;
                 }
                 if (isLineEmpty(row_number - 1)){
                     break;
@@ -214,7 +216,7 @@ namespace Lechliter.Tetris_Console
             Y = (int)Math.Ceiling(point.y) % BOUNDS_DIM.Y;
         }
 
-        public void UpdateGrid(MoveType moveType)
+        public void UpdateGrid(eMoveType moveType)
         {
             this.AllPieces = AddPieceToGrid(this.LockedPieces, this.CurrentPiece);
             GridUpdate?.Invoke();
@@ -223,6 +225,7 @@ namespace Lechliter.Tetris_Console
         public void LockPiece()
         {
             LockedPieces = AllPieces;
+            Console.Beep(600, 200);
             ClearLines();
             ResetStationaryTimer();
             if (!IsGameOver())
@@ -231,7 +234,7 @@ namespace Lechliter.Tetris_Console
             }
         }
 
-        public bool isCollision(MoveType moveType)
+        public bool isCollision(eMoveType moveType)
         {
             return collisionDetector.DetectCollisions(CurrentPiece, LockedPieces, moveType);
         }
@@ -245,9 +248,26 @@ namespace Lechliter.Tetris_Console
         {
             collisionDetector.LockTimerFalling.CountDown();
             collisionDetector.LockTimerStationary.CountDown();
+        }
 
-            Console.WriteLine($"Falling Timer: {collisionDetector.LockTimerFalling.FramesRemaining}");
-            Console.WriteLine($"Stationary Timer: {collisionDetector.LockTimerStationary.FramesRemaining}");
+        public ComponentContent[,] Displaytimer()
+        {
+            string fallingTimer = $"Falling Timer: {collisionDetector.LockTimerFalling.FramesRemaining}";
+            string stationaryTimer = $"Stationary Timer: {collisionDetector.LockTimerStationary.FramesRemaining}";
+
+            ComponentContent[,] timers = new ComponentContent[Math.Max(fallingTimer.Length, stationaryTimer.Length), 2];
+
+            for(int i = 0; i < fallingTimer.Length; i++)
+            {
+                timers[i, 0] = new ComponentContent(fallingTimer[i], eTextColor.Yellow);
+            }
+
+            for (int i = 0; i < stationaryTimer.Length; i++)
+            {
+                timers[i, 1] = new ComponentContent(stationaryTimer[i], eTextColor.Yellow);
+            }
+
+            return timers;
         }
     }
 }

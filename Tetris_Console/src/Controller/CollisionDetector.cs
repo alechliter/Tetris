@@ -4,38 +4,16 @@ using System.Text;
 
 namespace Lechliter.Tetris_Console
 {
-    public struct Movement
-    {
-        public MoveType moveType;
-        public Direction direction;
-        public int num_times;
-
-        public Movement(MoveType moveType = MoveType.NotSet, Direction direction = Direction.NotSet, int num_times = 1)
-        {
-            this.moveType = moveType;
-            this.direction = direction;
-            this.num_times = num_times;
-        }
-
-        public void ExecuteMove(ITetromino<PieceType, Direction, MoveType> piece)
-        {
-            for (int i = 0; i < num_times; i++)
-            {
-                (piece as Tetromino).Move(direction, MoveType.Undo);
-            }
-        }
-    }
-
-    public class CollisionDetector : ICollisionDetector<PieceType, Direction, MoveType>
+    public class CollisionDetector : ICollisionDetector<ePieceType, eDirection, eMoveType>
     {
         /* Private Members */
         private static readonly int NUM_FALLING_FRAMES = 8;
 
         private static readonly int NUM_STATIONARY_FRAMES = 2;
 
-        private ITetromino<PieceType, Direction, MoveType> piece;
+        private ITetromino<ePieceType, eDirection, eMoveType> piece;
 
-        private PieceType[,] grid_pieces;
+        private ePieceType[,] grid_pieces;
 
         /* Public Members */
         public IFrameTimer LockTimerFalling { get; protected set; }
@@ -140,16 +118,16 @@ namespace Lechliter.Tetris_Console
             {
                 switch (move.direction)
                 {
-                    case Direction.Up:
+                    case eDirection.Up:
                         isPossible &= noBoundaryAbove(y, move.num_times);
                         break;
-                    case Direction.Down:
+                    case eDirection.Down:
                         isPossible &= noBoundaryBelow(y, move.num_times);
                         break;
-                    case Direction.Left:
+                    case eDirection.Left:
                         isPossible &= noBoundaryToLeft(x_pivot, x, move.num_times);
                         break;
-                    case Direction.Right:
+                    case eDirection.Right:
                         isPossible &= noBoundaryToRight(x_pivot, x, move.num_times);
                         break;
                 }
@@ -183,7 +161,7 @@ namespace Lechliter.Tetris_Console
 
             if (!foundPossibleMove)
             {
-                (piece as Tetromino).UndoMove(MoveType.Rotation);
+                (piece as Tetromino).UndoMove(eMoveType.Rotation);
             }
         }
 
@@ -191,42 +169,42 @@ namespace Lechliter.Tetris_Console
         {
             return new List<List<Movement>>()
             {
-                new List<Movement>(){ new Movement(MoveType.Translation, Direction.Up, 1) },
-                new List<Movement>(){ new Movement(MoveType.Translation, Direction.Left, 1) },
-                new List<Movement>(){ new Movement(MoveType.Translation, Direction.Right, 1) },
-                new List<Movement>(){ new Movement(MoveType.Translation, Direction.Down, 1) },
+                new List<Movement>(){ new Movement(eMoveType.Translation, eDirection.Up, 1) },
+                new List<Movement>(){ new Movement(eMoveType.Translation, eDirection.Left, 1) },
+                new List<Movement>(){ new Movement(eMoveType.Translation, eDirection.Right, 1) },
+                new List<Movement>(){ new Movement(eMoveType.Translation, eDirection.Down, 1) },
 
-                new List<Movement>(){ new Movement(MoveType.Translation, Direction.Up, 2) },
-                new List<Movement>(){ new Movement(MoveType.Translation, Direction.Left, 2) },
-                new List<Movement>(){ new Movement(MoveType.Translation, Direction.Right, 2) },
-                new List<Movement>(){ new Movement(MoveType.Translation, Direction.Down, 2) },
+                new List<Movement>(){ new Movement(eMoveType.Translation, eDirection.Up, 2) },
+                new List<Movement>(){ new Movement(eMoveType.Translation, eDirection.Left, 2) },
+                new List<Movement>(){ new Movement(eMoveType.Translation, eDirection.Right, 2) },
+                new List<Movement>(){ new Movement(eMoveType.Translation, eDirection.Down, 2) },
 
-                new List<Movement>(){ new Movement(MoveType.Translation, Direction.Up, 1), new Movement(MoveType.Translation, Direction.Left, 1) },
-                new List<Movement>(){ new Movement(MoveType.Translation, Direction.Up, 1), new Movement(MoveType.Translation, Direction.Right, 1) },
-                new List<Movement>(){ new Movement(MoveType.Translation, Direction.Down, 1), new Movement(MoveType.Translation, Direction.Left, 1) },
-                new List<Movement>(){ new Movement(MoveType.Translation, Direction.Down, 1), new Movement(MoveType.Translation, Direction.Right, 1) },
+                new List<Movement>(){ new Movement(eMoveType.Translation, eDirection.Up, 1), new Movement(eMoveType.Translation, eDirection.Left, 1) },
+                new List<Movement>(){ new Movement(eMoveType.Translation, eDirection.Up, 1), new Movement(eMoveType.Translation, eDirection.Right, 1) },
+                new List<Movement>(){ new Movement(eMoveType.Translation, eDirection.Down, 1), new Movement(eMoveType.Translation, eDirection.Left, 1) },
+                new List<Movement>(){ new Movement(eMoveType.Translation, eDirection.Down, 1), new Movement(eMoveType.Translation, eDirection.Right, 1) },
 
-                new List<Movement>(){ new Movement(MoveType.Translation, Direction.Up, 2), new Movement(MoveType.Translation, Direction.Left, 1) },
-                new List<Movement>(){ new Movement(MoveType.Translation, Direction.Up, 2), new Movement(MoveType.Translation, Direction.Right, 1) },
-                new List<Movement>(){ new Movement(MoveType.Translation, Direction.Down, 2), new Movement(MoveType.Translation, Direction.Left, 1) },
-                new List<Movement>(){ new Movement(MoveType.Translation, Direction.Down, 2), new Movement(MoveType.Translation, Direction.Right, 1) },
+                new List<Movement>(){ new Movement(eMoveType.Translation, eDirection.Up, 2), new Movement(eMoveType.Translation, eDirection.Left, 1) },
+                new List<Movement>(){ new Movement(eMoveType.Translation, eDirection.Up, 2), new Movement(eMoveType.Translation, eDirection.Right, 1) },
+                new List<Movement>(){ new Movement(eMoveType.Translation, eDirection.Down, 2), new Movement(eMoveType.Translation, eDirection.Left, 1) },
+                new List<Movement>(){ new Movement(eMoveType.Translation, eDirection.Down, 2), new Movement(eMoveType.Translation, eDirection.Right, 1) },
 
-                new List<Movement>(){ new Movement(MoveType.Translation, Direction.Up, 1), new Movement(MoveType.Translation, Direction.Left, 2) },
-                new List<Movement>(){ new Movement(MoveType.Translation, Direction.Up, 1), new Movement(MoveType.Translation, Direction.Right, 2) },
-                new List<Movement>(){ new Movement(MoveType.Translation, Direction.Down, 1), new Movement(MoveType.Translation, Direction.Left, 2) },
-                new List<Movement>(){ new Movement(MoveType.Translation, Direction.Down, 1), new Movement(MoveType.Translation, Direction.Right, 2) },
+                new List<Movement>(){ new Movement(eMoveType.Translation, eDirection.Up, 1), new Movement(eMoveType.Translation, eDirection.Left, 2) },
+                new List<Movement>(){ new Movement(eMoveType.Translation, eDirection.Up, 1), new Movement(eMoveType.Translation, eDirection.Right, 2) },
+                new List<Movement>(){ new Movement(eMoveType.Translation, eDirection.Down, 1), new Movement(eMoveType.Translation, eDirection.Left, 2) },
+                new List<Movement>(){ new Movement(eMoveType.Translation, eDirection.Down, 1), new Movement(eMoveType.Translation, eDirection.Right, 2) },
 
-                new List<Movement>(){ new Movement(MoveType.Translation, Direction.Up, 2), new Movement(MoveType.Translation, Direction.Left, 2) },
-                new List<Movement>(){ new Movement(MoveType.Translation, Direction.Up, 2), new Movement(MoveType.Translation, Direction.Right, 2) },
-                new List<Movement>(){ new Movement(MoveType.Translation, Direction.Down, 2), new Movement(MoveType.Translation, Direction.Left, 2) },
-                new List<Movement>(){ new Movement(MoveType.Translation, Direction.Down, 2), new Movement(MoveType.Translation, Direction.Right, 2) },
+                new List<Movement>(){ new Movement(eMoveType.Translation, eDirection.Up, 2), new Movement(eMoveType.Translation, eDirection.Left, 2) },
+                new List<Movement>(){ new Movement(eMoveType.Translation, eDirection.Up, 2), new Movement(eMoveType.Translation, eDirection.Right, 2) },
+                new List<Movement>(){ new Movement(eMoveType.Translation, eDirection.Down, 2), new Movement(eMoveType.Translation, eDirection.Left, 2) },
+                new List<Movement>(){ new Movement(eMoveType.Translation, eDirection.Down, 2), new Movement(eMoveType.Translation, eDirection.Right, 2) },
             };
         }
 
         [Obsolete]
         private void ParseMovementDirections((int vertical, int horizontal)[] options, int x, int y)
         {
-            // TODO: This has bugs, if you can't figure it out, replace it with the original version. This solution isn't that much better anyway...
+            // TODO: This has many bugs and is too complicated. This solution isn't more efficient than the original, and only reduces code duplication.
             Func<int, int, int, bool> noBoundaryToLeft = (int x_pivot, int x, int disp) => x_pivot < x && x_pivot - disp > 0;
             Func<int, int, int, bool> noBoundaryToRight = (int x_pivot, int x, int disp) => x_pivot > x && x_pivot + disp < Tracker.BOUNDS_DIM.X - 1;
 
@@ -236,33 +214,33 @@ namespace Lechliter.Tetris_Console
             bool undoMove = true;
             foreach ((int vertical, int horizontal) in options)
             {
-                Dictionary<Direction, bool> possibleDirections = new Dictionary<Direction, bool>()
+                Dictionary<eDirection, bool> possibleDirections = new Dictionary<eDirection, bool>()
                 {
-                    { Direction.Up,  vertical > 0 && y - vertical > 0 },
-                    { Direction.Down, vertical > 0 && y + vertical < Tracker.BOUNDS_DIM.Y - 1 },
-                    { Direction.Left, horizontal > 0 && noBoundaryToLeft(x_pivot, x, horizontal) },
-                    { Direction.Right, horizontal > 0 && noBoundaryToRight(x_pivot, x, horizontal) }
+                    { eDirection.Up,  vertical > 0 && y - vertical > 0 },
+                    { eDirection.Down, vertical > 0 && y + vertical < Tracker.BOUNDS_DIM.Y - 1 },
+                    { eDirection.Left, horizontal > 0 && noBoundaryToLeft(x_pivot, x, horizontal) },
+                    { eDirection.Right, horizontal > 0 && noBoundaryToRight(x_pivot, x, horizontal) }
                 };
 
                 List<Movement> vertical_left = new List<Movement>();
                 List<Movement> vertical_right = new List<Movement>();
 
-                foreach (KeyValuePair<Direction, bool> possibleDirection in possibleDirections)
+                foreach (KeyValuePair<eDirection, bool> possibleDirection in possibleDirections)
                 {
                     if (possibleDirection.Value)
                     {
-                        if(possibleDirection.Key == Direction.Left)
+                        if(possibleDirection.Key == eDirection.Left)
                         {
-                            vertical_left.Add(new Movement(MoveType.Translation, possibleDirection.Key, num_times: horizontal));
+                            vertical_left.Add(new Movement(eMoveType.Translation, possibleDirection.Key, num_times: horizontal));
                         }
-                        else if (possibleDirection.Key == Direction.Right)
+                        else if (possibleDirection.Key == eDirection.Right)
                         {
-                            vertical_right.Add(new Movement(MoveType.Translation, possibleDirection.Key, num_times: horizontal));
+                            vertical_right.Add(new Movement(eMoveType.Translation, possibleDirection.Key, num_times: horizontal));
                         }
                         else
                         {
-                            vertical_left.Add(new Movement(MoveType.Translation, possibleDirection.Key, num_times: vertical));
-                            vertical_right.Add(new Movement(MoveType.Translation, possibleDirection.Key, num_times: vertical));
+                            vertical_left.Add(new Movement(eMoveType.Translation, possibleDirection.Key, num_times: vertical));
+                            vertical_right.Add(new Movement(eMoveType.Translation, possibleDirection.Key, num_times: vertical));
                         }
                     }
                 }
@@ -290,7 +268,7 @@ namespace Lechliter.Tetris_Console
             }
             if (undoMove)
             {
-                (piece as Tetromino).UndoMove(MoveType.Rotation);
+                (piece as Tetromino).UndoMove(eMoveType.Rotation);
             }
         }
 
@@ -307,7 +285,7 @@ namespace Lechliter.Tetris_Console
             LockTimerStationary.Reset();
         }
 
-        public bool DetectCollisions(ITetromino<PieceType, Direction, MoveType> piece, PieceType[,] grid_pieces, MoveType moveType)
+        public bool DetectCollisions(ITetromino<ePieceType, eDirection, eMoveType> piece, ePieceType[,] grid_pieces, eMoveType moveType)
         {
             bool isCollisionDetected = false;
 
@@ -319,21 +297,21 @@ namespace Lechliter.Tetris_Console
                 int x, y;
                 Tracker.GridPosition(block.Position, out x, out y);
 
-                isCollisionDetected = isInBounds(x, y) && grid_pieces[x, y] != PieceType.Empty;
+                isCollisionDetected = isInBounds(x, y) && grid_pieces[x, y] != ePieceType.Empty;
                 if (isCollisionDetected)
                 {
                     switch (moveType)
                     {
-                        case MoveType.Translation:
+                        case eMoveType.Translation:
                             (piece as Tetromino).UndoMove(moveType);
                             RestartFallingTimerWhenFalling();
                             RestartStationaryTimerWhenFalling();
                             break;
-                        case MoveType.Rotation:
+                        case eMoveType.Rotation:
                             UndoRotation(x, y);
                             break;
                         default:
-                            Console.WriteLine("Unhandled collision from move type: {0}", moveType.ToString());
+                            ErrorMessageHandler.DisplayMessage($"Unhandled collision from move type: {moveType.ToString()}");
                             break;
                     }
                     CollisionDetected?.Invoke();
@@ -356,7 +334,7 @@ namespace Lechliter.Tetris_Console
         /// <param name="grid_pieces">Grid that contains the piece and locked pieces.</param>
         /// <param name="moves">The list of movements to test on the piece.</param>
         /// <returns>True if the list of movements is possible.</returns>
-        public bool TryMove(ITetromino<PieceType, Direction, MoveType> piece, PieceType[,] grid_pieces, params Movement[] moves)
+        public bool TryMove(ITetromino<ePieceType, eDirection, eMoveType> piece, ePieceType[,] grid_pieces, params Movement[] moves)
         {
             bool isValidMove = true;
 
@@ -366,11 +344,11 @@ namespace Lechliter.Tetris_Console
             {
                 switch (movement.moveType)
                 {
-                    case MoveType.Translation:
+                    case eMoveType.Translation:
                         for(int i = 0; i < movement.num_times; i++)
                             potential_piece.Move(movement.direction);
                         break;
-                    case MoveType.Rotation:
+                    case eMoveType.Rotation:
                         for (int i = 0; i < movement.num_times; i++)
                             potential_piece.Rotate(movement.direction);
                         break;
@@ -381,7 +359,7 @@ namespace Lechliter.Tetris_Console
             {
                 int x, y;
                 Tracker.GridPosition(block.Position, out x, out y);
-                if (!isInBounds(x, y) || grid_pieces[x, y] != PieceType.Empty)
+                if (!isInBounds(x, y) || grid_pieces[x, y] != ePieceType.Empty)
                 {
                     isValidMove = false;
                     break;

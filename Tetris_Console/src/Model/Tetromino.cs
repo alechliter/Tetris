@@ -4,39 +4,15 @@ using System.Text;
 
 namespace Lechliter.Tetris_Console
 {
-    /// <summary>
-    /// Type of tetromino piece. 
-    /// Pieces: I, O, T, J, L, S, Z, 
-    /// Locked - Locked Piece,
-    /// Empty - Empty space
-    /// </summary>
-    public enum PieceType
-    {
-        Empty, Locked, I, O, T, J, L, S, Z
-    }
-    /// <summary>
-    /// Direction of travel.
-    /// Directions: Up, Down, Left, Right
-    /// </summary>
-    public enum Direction
-    {
-        NotSet, Up, Down, Left, Right
-    }
-
-    public enum MoveType
-    {
-        NotSet, Translation, Rotation, Spawn, Undo
-    }
-
-    public class Tetromino : ITetromino<PieceType, Direction, MoveType>
+    public class Tetromino : ITetromino<ePieceType, eDirection, eMoveType>
     {
         /* Private members */
         private Point pivot;
         private Point initialPos;
         private Point velocity;
         private double angle;
-        private Direction rotation_direction;
-        private PieceType type;
+        private eDirection rotation_direction;
+        private ePieceType type;
         private static Random rand;
         private static readonly int NUM_TYPES = 7;
         private static readonly int NUM_BLOCKS = 4;
@@ -44,13 +20,13 @@ namespace Lechliter.Tetris_Console
         /* Public members */
         public ICollection<IBlock> Blocks { get; set; }
         public Point Position { get { return pivot; } }
-        public PieceType Type { get { return type; } }
+        public ePieceType Type { get { return type; } }
 
         public Point Velocity { get { return velocity; } }
 
-        public Direction Rotation {  get { return rotation_direction; } }
+        public eDirection Rotation {  get { return rotation_direction; } }
 
-        public event Action<MoveType> UpdatePosition;
+        public event Action<eMoveType> UpdatePosition;
 
         /* Constructor ------------------------------------------------------------------------*/
         public Tetromino(Point initialPos)
@@ -87,118 +63,118 @@ namespace Lechliter.Tetris_Console
 
             block.MoveTo(vector + pivot);
         }
-        private static void ConstructTetromino(ICollection<IBlock> blocks, PieceType type, ref Point pivot)
+        private static void ConstructTetromino(ICollection<IBlock> blocks, ePieceType type, ref Point pivot)
         {
             switch (type)
             {
-                case PieceType.I:
+                case ePieceType.I:
                     pivot += new Point(Block.StandardDim.X / 2.0f, Block.StandardDim.Y / 2.0f); // offsets pivot from the center of the grid
                     blocks.Add(new Block(pivot + new Point(-Block.StandardDim.X / 2.0f, 3 * Block.StandardDim.Y / 2.0f)));
                     blocks.Add(new Block(pivot + new Point(-Block.StandardDim.X / 2.0f, Block.StandardDim.Y / 2.0f)));
                     blocks.Add(new Block(pivot + new Point(-Block.StandardDim.X / 2.0f, -Block.StandardDim.Y / 2.0f)));
                     blocks.Add(new Block(pivot + new Point(-Block.StandardDim.X / 2.0f, -3 * Block.StandardDim.Y / 2.0f)));
                     break;
-                case PieceType.O:
+                case ePieceType.O:
                     pivot += new Point(Block.StandardDim.X / 2.0f, Block.StandardDim.Y / 2.0f); // offsets pivot from the center of the grid
                     blocks.Add(new Block(pivot + new Point(Block.StandardDim.X / 2.0f, Block.StandardDim.Y / 2.0f)));
                     blocks.Add(new Block(pivot + new Point(Block.StandardDim.X / 2.0f, -Block.StandardDim.Y / 2.0f)));
                     blocks.Add(new Block(pivot + new Point(-Block.StandardDim.X / 2.0f, Block.StandardDim.Y / 2.0f)));
                     blocks.Add(new Block(pivot + new Point(-Block.StandardDim.X / 2.0f, -Block.StandardDim.Y / 2.0f)));
                     break;
-                case PieceType.T:
+                case ePieceType.T:
                     blocks.Add(new Block(pivot));
                     blocks.Add(new Block(pivot + new Point(Block.StandardDim.X , 0.0f)));
                     blocks.Add(new Block(pivot + new Point(-Block.StandardDim.X, 0.0f)));
                     blocks.Add(new Block(pivot + new Point(0.0f, -Block.StandardDim.Y)));
                     break;
-                case PieceType.J:
+                case ePieceType.J:
                     blocks.Add(new Block(pivot));
                     blocks.Add(new Block(pivot + new Point(0.0f, -Block.StandardDim.Y)));
                     blocks.Add(new Block(pivot + new Point(0.0f, Block.StandardDim.Y)));
                     blocks.Add(new Block(pivot + new Point(-Block.StandardDim.X, Block.StandardDim.Y)));
                     break;
-                case PieceType.L:
+                case ePieceType.L:
                     blocks.Add(new Block(pivot));
                     blocks.Add(new Block(pivot + new Point(0.0f, -Block.StandardDim.Y)));
                     blocks.Add(new Block(pivot + new Point(0.0f, Block.StandardDim.Y)));
                     blocks.Add(new Block(pivot + new Point(Block.StandardDim.X, Block.StandardDim.Y)));
                     break;
-                case PieceType.S:
+                case ePieceType.S:
                     blocks.Add(new Block(pivot));
                     blocks.Add(new Block(pivot + new Point(-Block.StandardDim.X, 0.0f)));
                     blocks.Add(new Block(pivot + new Point(-Block.StandardDim.X, -Block.StandardDim.Y)));
                     blocks.Add(new Block(pivot + new Point(0.0f, Block.StandardDim.Y)));
                     break;
-                case PieceType.Z:
+                case ePieceType.Z:
                     blocks.Add(new Block(pivot));
                     blocks.Add(new Block(pivot + new Point(Block.StandardDim.X, 0.0f)));
                     blocks.Add(new Block(pivot + new Point(Block.StandardDim.X, -Block.StandardDim.Y)));
                     blocks.Add(new Block(pivot + new Point(0.0f, Block.StandardDim.Y)));
                     break;
                 default:
-                    Console.Error.WriteLine("ERROR: Invalid Piece Type");
+                    ErrorMessageHandler.DisplayMessage("ERROR: Invalid Piece Type");
                     break;
             }
         }
 
-        private void move_blocks(Direction direction)
+        private void move_blocks(eDirection direction)
         {
             Point velocity = new Point();
             switch (direction)
             {
-                case Direction.Up:
+                case eDirection.Up:
                     velocity.y -= Block.StandardDim.Y;
                     MoveBlocksBy(velocity);
                     break;
-                case Direction.Down:
+                case eDirection.Down:
                     velocity.y += Block.StandardDim.Y;
                     MoveBlocksBy(velocity);
                     break;
-                case Direction.Left:
+                case eDirection.Left:
                     velocity.x -= Block.StandardDim.X;
                     MoveBlocksBy(velocity);
                     break;
-                case Direction.Right:
+                case eDirection.Right:
                     velocity.x += Block.StandardDim.X;
                     MoveBlocksBy(velocity);
                     break;
                 default:
-                    Console.Error.WriteLine("ERROR: Invalid direction");
+                    ErrorMessageHandler.DisplayMessage("ERROR: Invalid direction");
                     break;
             }
             this.velocity = velocity;
         }
 
         /*  Public Methods --------------------------------------------------------------------*/
-        public static PieceType RandType()
+        public static ePieceType RandType()
         {
-            PieceType newType = PieceType.O;
+            ePieceType newType = ePieceType.O;
             int randomType = rand.Next(NUM_TYPES);
 
             switch (randomType)
             {
                 case 0: // I
-                    newType = PieceType.I;
+                    newType = ePieceType.I;
                     break;
                 case 1: // O
                     break;
                 case 2: // T
-                    newType = PieceType.T;
+                    newType = ePieceType.T;
                     break;
                 case 3: // J
-                    newType = PieceType.J;
+                    newType = ePieceType.J;
                     break;
                 case 4: // L
-                    newType = PieceType.L;
+                    newType = ePieceType.L;
                     break;
                 case 5: // S
-                    newType = PieceType.S;
+                    newType = ePieceType.S;
                     break;
                 case 6: // Z
-                    newType = PieceType.Z;
+                    newType = ePieceType.Z;
                     break;
                 default:
-                    Console.Error.WriteLine("ERROR: Invalid Tetromino Type (RandType)");
+                    ErrorMessageHandler.DisplayMessage("ERROR: Invalid Tetromino Type (RandType)");
                     break;
             }
             return newType;
@@ -213,33 +189,33 @@ namespace Lechliter.Tetris_Console
             return new Tetromino(initialPos);
         }
 
-        public void Move(Direction direction)
+        public void Move(eDirection direction)
         {
             move_blocks(direction);
             // Broadcasts change to every subscriber
-            UpdatePosition?.Invoke(MoveType.Translation);
+            UpdatePosition?.Invoke(eMoveType.Translation);
         }
 
-        public void Move(Direction direction, MoveType moveType = MoveType.Translation)
+        public void Move(eDirection direction, eMoveType moveType = eMoveType.Translation)
         {
             move_blocks(direction);
             UpdatePosition?.Invoke(moveType);
         }
 
-        public void Rotate(Direction direction)
+        public void Rotate(eDirection direction)
         {
             double angle = 0.0;
             
             switch (direction)
 	        {
-	            case Direction.Left:
+	            case eDirection.Left:
 	            	angle = -Math.PI / 2.0; // Rotate 90 degrees to the left
 	            	break;
-	            case Direction.Right:
+	            case eDirection.Right:
 	            	angle = Math.PI / 2.0; // Rotate 90 degrees to the right
 	            	break; 
 	            default:
-	            	Console.Error.WriteLine("ERROR: Invalid rotation direction.");
+	            	ErrorMessageHandler.DisplayMessage("ERROR: Invalid rotation direction.");
 	            	break;
 	        }
             
@@ -249,33 +225,33 @@ namespace Lechliter.Tetris_Console
 
             rotation_direction = direction;
             this.angle = angle;
-            UpdatePosition?.Invoke(MoveType.Rotation);
+            UpdatePosition?.Invoke(eMoveType.Rotation);
             
         }
 
-        public void Drop(ITracker<PieceType, Direction, MoveType> tracker)
+        public void Drop(ITracker<ePieceType, eDirection, eMoveType> tracker)
         {
-            while (!(tracker as Tracker).isCollision(MoveType.Translation))
+            while (!(tracker as Tracker).isCollision(eMoveType.Translation))
             {
-                move_blocks(Direction.Down);
+                move_blocks(eDirection.Down);
             }
         }
 
-        public void UndoMove(MoveType moveType)
+        public void UndoMove(eMoveType moveType)
         {
             switch (moveType)
             {
-                case MoveType.Translation:
+                case eMoveType.Translation:
                     velocity = -1 * velocity;
                     MoveBlocksBy(velocity);
-                    UpdatePosition?.Invoke(MoveType.Undo);
+                    UpdatePosition?.Invoke(eMoveType.Undo);
                     break;
-                case MoveType.Rotation:
+                case eMoveType.Rotation:
                     foreach (IBlock block in Blocks)
                     {
                         RotateAboutPivot(block, -angle);
                     }
-                    UpdatePosition?.Invoke(MoveType.Undo);
+                    UpdatePosition?.Invoke(eMoveType.Undo);
                     break;
             }
         }
@@ -291,7 +267,7 @@ namespace Lechliter.Tetris_Console
             Blocks = new List<IBlock>(NUM_BLOCKS);
             ConstructTetromino(Blocks, type, ref pivot);
             
-            UpdatePosition?.Invoke(MoveType.Spawn);
+            UpdatePosition?.Invoke(eMoveType.Spawn);
         }
 
         public Tetromino Copy()

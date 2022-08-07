@@ -4,51 +4,77 @@ using System.Text;
 
 namespace Lechliter.Tetris_Console
 {
-    public enum TextColor
+    public class ConsoleView : IView<eTextColor, ePieceType>
     {
-        Red, Yellow, Blue, Green, Orange, Purple, DarkBlue, Default
-    }
-    public class ConsoleView : IView<TextColor, PieceType>
-    {
-        private static readonly int ConsoleOriginX;
+        /* Private Members */
 
-        private static readonly int ConsoleOriginY;
+        /* Public Members */
+        public static ConsoleDynamicLayout Layout;
 
-        public TextColor Color { get; protected set; } // current text color
+        public static eTextColor Color { get; protected set; } // current text color
 
         /* Constructor */
         static ConsoleView()
         {
             Console.Clear();
             Console.CursorVisible = false;
-            ConsoleOriginX = Console.CursorLeft;
-            ConsoleOriginY = Console.CursorTop;
+            Console.SetWindowSize(100, 40);
+            Console.Title = "Console Tetris";
+            Layout = new ConsoleDynamicLayout();
         }
 
-        /* Private Method */
-        private static void SetColor(TextColor color)
+        /* Private Methods */
+
+        /* Public Method */
+        public void Display()
         {
+            Layout.DisplayAll();
+        }
+
+        public static ComponentContent[,] ConvertPieceGridToContentGrid(ePieceType[,] blocks)
+        {
+            int x_dim = blocks.GetLength(0);
+            int y_dim = blocks.GetLength(1);
+
+            ComponentContent[,] content = new ComponentContent[x_dim, y_dim];
+
+            for (int y = 0; y < y_dim; y++)
+            {
+                for (int x = 0; x < x_dim; x++)
+                {
+                    content[x, y] = new ComponentContent();
+                    content[x, y].Value = GetBlock(blocks[x, y]);
+                    content[x, y].Color = GetBlockColor(blocks[x, y]);
+                }
+            }
+
+            return content;
+        }
+
+        public static void SetColor(eTextColor color)
+        {
+            Color = color;
             switch (color)
             {
-                case TextColor.Red:
+                case eTextColor.Red:
                     Console.ForegroundColor = ConsoleColor.Red;
                     break;
-                case TextColor.Yellow:
+                case eTextColor.Yellow:
                     Console.ForegroundColor = ConsoleColor.Yellow;
                     break;
-                case TextColor.Blue:
+                case eTextColor.Blue:
                     Console.ForegroundColor = ConsoleColor.Cyan;
                     break;
-                case TextColor.DarkBlue:
+                case eTextColor.DarkBlue:
                     Console.ForegroundColor = ConsoleColor.Blue;
                     break;
-                case TextColor.Green:
+                case eTextColor.Green:
                     Console.ForegroundColor = ConsoleColor.Green;
                     break;
-                case TextColor.Orange:
+                case eTextColor.Orange:
                     Console.ForegroundColor = ConsoleColor.White;
                     break;
-                case TextColor.Purple:
+                case eTextColor.Purple:
                     Console.ForegroundColor = ConsoleColor.Magenta;
                     break;
                 default:
@@ -56,79 +82,89 @@ namespace Lechliter.Tetris_Console
                     break;
             }
         }
-        private static void PrintBlock(PieceType type, int x, int y)
+
+        public static eTextColor GetBlockColor(ePieceType type)
+        {
+            eTextColor color;
+            switch (type)
+            {
+                case ePieceType.I:
+                    color = eTextColor.Blue;
+                    break;
+                case ePieceType.O:
+                    color = eTextColor.Yellow;
+                    break;
+                case ePieceType.T:
+                    color = eTextColor.Purple;
+                    break;
+                case ePieceType.J:
+                    color = eTextColor.DarkBlue;
+                    break;
+                case ePieceType.L:
+                    color = eTextColor.Orange;
+                    break;
+                case ePieceType.S:
+                    color = eTextColor.Green;
+                    break;
+                case ePieceType.Z:
+                    color = eTextColor.Red;
+                    break;
+                case ePieceType.Locked:
+                    color = eTextColor.Default;
+                    break;
+                case ePieceType.Empty:
+                    color = eTextColor.Default;
+                    break;
+                case ePieceType.NotSet:
+                    color = eTextColor.Default;
+                    break;
+                default:
+                    color = eTextColor.Default;
+                    break;
+            }
+            return color;
+        }
+
+        public static char GetBlock(ePieceType type)
         {
             char symbol = '?';
             switch (type)
             {
-                case PieceType.I:
-                    SetColor(TextColor.Blue);
+                case ePieceType.I:
                     symbol = 'I';
                     break;
-                case PieceType.O:
-                    SetColor(TextColor.Yellow);
+                case ePieceType.O:
                     symbol = 'O';
                     break;
-                case PieceType.T:
-                    SetColor(TextColor.Purple);
+                case ePieceType.T:
                     symbol = 'T';
                     break;
-                case PieceType.J:
-                    SetColor(TextColor.DarkBlue);
+                case ePieceType.J:
                     symbol = 'J';
                     break;
-                case PieceType.L:
-                    SetColor(TextColor.Orange);
+                case ePieceType.L:
                     symbol = 'L';
                     break;
-                case PieceType.S:
-                    SetColor(TextColor.Green);
+                case ePieceType.S:
                     symbol = 'S';
                     break;
-                case PieceType.Z:
-                    SetColor(TextColor.Red);
+                case ePieceType.Z:
                     symbol = 'Z';
                     break;
-                case PieceType.Locked:
-                    SetColor(TextColor.Default);
+                case ePieceType.Locked:
                     symbol = 'X';
                     break;
-                case PieceType.Empty:
-                    SetColor(TextColor.Default);
+                case ePieceType.Empty:
                     symbol = '·'; // unicode: 183
                     break;
+                case ePieceType.NotSet:
+                    symbol = ' ';
+                    break;
                 default:
-                    Console.Error.WriteLine("ERROR: Invalid Type (PrintBlock)");
+                    ErrorMessageHandler.DisplayMessage("ERROR: Invalid Type (PrintBlock)");
                     break;
             }
-            WriteAt(symbol.ToString(), x * 2 , y);
-        }
-
-        protected static void WriteAt(string s, int x, int y)
-        {
-            try
-            {
-                Console.SetCursorPosition(ConsoleOriginY + x, ConsoleOriginY + y);
-                Console.Write(s);
-            }
-            catch (ArgumentOutOfRangeException e)
-            {
-                Console.Clear();
-                Console.WriteLine(e.Message);
-            }
-        }
-
-        /* Public Method */
-        public void Display(PieceType[,] blocks)
-        {
-            for (int y = 0; y < Tracker.BOUNDS_DIM.Y; y++)
-            {
-                for(int x = 0; x < Tracker.BOUNDS_DIM.X; x++)
-                {
-                    PrintBlock(blocks[x, y], x, y);                  
-                }
-                Console.WriteLine();
-            }
+            return symbol;
         }
     }
 }
