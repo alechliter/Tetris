@@ -13,17 +13,13 @@ namespace Lechliter.Tetris_Console
 
         public static readonly IntDimensions GRID_DIM;
 
-        public const int X_POSITION = 10;
-
-        public const int Y_POSITION = 10;
-
         public ITetromino<ePieceType, eDirection, eMoveType> CurrentPiece { get; set; }
 
         public ePieceType[,] LockedPieces { get; protected set; }
 
         public ePieceType[,] AllPieces { get; protected set; }
 
-        public Component Grid { get; protected set; }
+        public StaticComponent Grid { get; protected set; }
 
         public event Action GridUpdate;
          
@@ -44,8 +40,6 @@ namespace Lechliter.Tetris_Console
             LockedPieces = NewGrid();
             AllPieces = AddPieceToGrid(LockedPieces, CurrentPiece);
             collisionDetector = new CollisionDetector();
-
-            Grid = new Component(AllPieces, new IntPoint(X_POSITION, Y_POSITION));
 
             // Subscribes to changes in the position
             CurrentPiece.UpdatePosition += DetectCollisions;

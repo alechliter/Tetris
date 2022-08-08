@@ -3,14 +3,14 @@ using System.Collections.Generic;
 
 namespace Lechliter.Tetris_Console
 {
-    public class ConsoleLayout : ILayout<IntPoint, ePieceType[,], Component>
+    public class StaticConsoleLayout : ILayout<IntPoint, ePieceType[,], StaticComponent>
     {
         // Private Members
         private const int GRID_WIDTH = 20;
         private const int GRID_HEIGHT = 50;
 
         private IntDimensions Dimensions;
-        private List<Component> Components;
+        private List<StaticComponent> Components;
 
         // Public Members
         public IntPoint Origin { get; }
@@ -18,16 +18,16 @@ namespace Lechliter.Tetris_Console
         public ePieceType[,] Grid { get; protected set; }
 
         // Constructors
-        public ConsoleLayout()
+        public StaticConsoleLayout()
         {
             Origin = new IntPoint(Console.CursorLeft, Console.CursorTop);
             Dimensions = new IntDimensions(GRID_WIDTH, GRID_HEIGHT);
             Grid = new ePieceType[GRID_WIDTH, GRID_HEIGHT];
-            Components = new List<Component>();
+            Components = new List<StaticComponent>();
         }
 
         // Private Methods
-        private void AdjustGridDimensions(Component component)
+        private void AdjustGridDimensions(StaticComponent component)
         {
             if (component.Position.X > Dimensions.X || component.Position.Y > Dimensions.Y)
             {
@@ -40,7 +40,7 @@ namespace Lechliter.Tetris_Console
         private void UpdateGrid()
         {
             NewGrid();
-            foreach (Component component in Components)
+            foreach (StaticComponent component in Components)
             {
                 for (int x = component.Position.X; x < component.Size.X; x++)
                 {
@@ -65,7 +65,7 @@ namespace Lechliter.Tetris_Console
         }
 
         // Public Methods
-        public void AddToGrid(Component component, IntPoint position)
+        public void AddToGrid(StaticComponent component, IntPoint position)
         {
             Components.Add(component);
             AdjustGridDimensions(component);

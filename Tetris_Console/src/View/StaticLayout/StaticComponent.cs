@@ -1,12 +1,12 @@
 ﻿namespace Lechliter.Tetris_Console
 {
-    public struct Component
+    public struct StaticComponent
     {
         public ePieceType[,] Elements;
         public IntPoint Position;
         public IntDimensions Size;
 
-        public Component(ePieceType[,] elements, IntPoint position)
+        public StaticComponent(ePieceType[,] elements, IntPoint position)
         {
             Elements = elements;
             Position = position;

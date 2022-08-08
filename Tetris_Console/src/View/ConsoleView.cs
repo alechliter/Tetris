@@ -9,7 +9,7 @@ namespace Lechliter.Tetris_Console
         /* Private Members */
 
         /* Public Members */
-        public static ConsoleDynamicLayout Layout;
+        public static DynamicConsoleLayout Layout;
 
         public static eTextColor Color { get; protected set; } // current text color
 
@@ -20,7 +20,7 @@ namespace Lechliter.Tetris_Console
             Console.CursorVisible = false;
             Console.SetWindowSize(100, 40);
             Console.Title = "Console Tetris";
-            Layout = new ConsoleDynamicLayout();
+            Layout = new DynamicConsoleLayout();
         }
 
         /* Private Methods */

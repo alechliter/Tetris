@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Lechliter.Tetris_Console
 {
-    public class ConsoleDynamicLayout : IDynamicLayout<DynamicComponent, List<DynamicComponent>, IntPoint>
+    public class DynamicConsoleLayout : IDynamicLayout<DynamicComponent, List<DynamicComponent>, IntPoint>
     {
         // Public Members
         public IntPoint Origin { get; set; }
@@ -36,7 +36,7 @@ namespace Lechliter.Tetris_Console
         private SortedDictionary<int, List<DynamicComponent>> Layers { get; set; }
 
         // Constructors
-        static ConsoleDynamicLayout()
+        static DynamicConsoleLayout()
         {
             try
             {
@@ -47,7 +47,7 @@ namespace Lechliter.Tetris_Console
             }
         }
 
-        public ConsoleDynamicLayout()
+        public DynamicConsoleLayout()
         {
             this.Origin = new IntPoint(ConsoleOrigin);
             this.Components = new List<DynamicComponent>();
