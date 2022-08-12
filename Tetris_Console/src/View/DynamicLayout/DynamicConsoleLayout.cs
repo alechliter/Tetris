@@ -117,7 +117,7 @@ namespace Lechliter.Tetris_Console
                 SetCursorPosition(component.Origin);
                 for (int x = 0; x < component.Dimensions.X; x++)
                 {
-                    MoveCursor(x, y);
+                    //MoveCursor(x, y);
                     ConsoleView.SetColor(component.Grid[x, y].Color);
                     WriteAt(component.Grid[x, y].Value.ToString(), x * component.Spacing, y);
                 }
@@ -136,19 +136,6 @@ namespace Lechliter.Tetris_Console
             Console.SetCursorPosition(ConsoleOrigin.X, ConsoleOrigin.Y);
         }
 
-        private void MoveCursor(int x, int y)
-        {
-            try
-            {
-                Console.CursorLeft += x;
-                Console.CursorTop += y;
-            }
-            catch
-            {
-                ErrorMessageHandler.DisplayMessage($"Error: Attempted to Write at: {Console.CursorLeft + x}, {Console.CursorTop + y}");
-            }
-        }
-
         protected static void WriteAt(string s, int x, int y)
         {
             try
@@ -159,7 +146,7 @@ namespace Lechliter.Tetris_Console
             catch (ArgumentOutOfRangeException e)
             {
                 Console.Clear();
-                Console.WriteLine(e.Message);
+                ErrorMessageHandler.DisplayMessage(e.Message);
             }
         }
 

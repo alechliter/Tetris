@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace Lechliter.Tetris_Console
 {
@@ -12,30 +13,21 @@ namespace Lechliter.Tetris_Console
         private static IFrame frame;
         private static IInputHandler<ConsoleKey, Action> inputHandler;
         private static bool isDone = false;
+        private static bool isDev = false;
 
-        private static void SimpleTest(ITetromino<ePieceType, eDirection, eMoveType> tetromino){
-            LogPosition(tetromino);
-            tetromino.Move(eDirection.Down);
-            tetromino.Move(eDirection.Right);
-            tetromino.Move(eDirection.Right);
-            tetromino.Move(eDirection.Left);
-            LogPosition(tetromino);
-        }
-
-        private static void GeneratePiecesTest(ITracker<ePieceType, eDirection, eMoveType> tracker)
+        private static void SetFlags(string[] args)
         {
-            tracker.AllPieces[3, 10] = ePieceType.O;
-            tracker.AllPieces[4, 10] = ePieceType.T;
-            tracker.AllPieces[5, 10] = ePieceType.J;
-            tracker.AllPieces[6, 10] = ePieceType.L;
-            tracker.AllPieces[7, 10] = ePieceType.I;
-            tracker.AllPieces[8, 10] = ePieceType.S;
-            tracker.AllPieces[9, 10] = ePieceType.Z;
-        }
-
-        private static void LogPosition(ITetromino<ePieceType, eDirection, eMoveType> piece)
-        {
-            Console.WriteLine("x: {0} y: {1}", piece.Position.x, piece.Position.y);
+            foreach (string argument in args)
+            {
+                switch (argument)
+                {
+                    case "-d":
+                        isDev = true;
+                        break;
+                    default:
+                        break;
+                }
+            }
         }
 
         private static void Display(){
@@ -45,20 +37,37 @@ namespace Lechliter.Tetris_Console
         private static void AddComponents()
         {
             // Add Grid to Layout
-            DynamicComponent gridComponent = new DynamicComponent(1, new IntPoint(5, 4), 2);
+            DynamicComponent gridComponent = new DynamicComponent(1, new IntPoint(0, 0), 2);
             gridComponent.Grid = ConsoleView.ConvertPieceGridToContentGrid(tracker.AllPieces);
             tracker.GridUpdate += () => gridComponent.OnUpdate(ConsoleView.ConvertPieceGridToContentGrid(tracker.AllPieces));
             ConsoleView.Layout.AddComponent(gridComponent);
 
+            // Next Tetromino Preview
+            IntPoint nextPosition = gridComponent.Origin + new IntPoint(gridComponent.Dimensions.X * 2 + 2, 3);
+            DynamicComponent nextComponent = new DynamicComponent(2, nextPosition, 2);
+            nextComponent.Grid = ConsoleView.ConvertPieceGridToContentGrid((tracker as Tracker).NextPiece.Grid);
+            (tracker as Tracker).NextPiece.PieceUpdated += () => nextComponent.OnUpdate(ConsoleView.ConvertPieceGridToContentGrid((tracker as Tracker).NextPiece.Grid));
+            ConsoleView.Layout.AddComponent(nextComponent);
+
+            // Held Tetromino Preview
+            IntPoint heldPosition = nextPosition + new IntPoint(0, nextComponent.Dimensions.Y + 2);
+            DynamicComponent heldComponent = new DynamicComponent(2, heldPosition, 2);
+            heldComponent.Grid = ConsoleView.ConvertPieceGridToContentGrid((tracker as Tracker).HeldPiece.Grid);
+            (tracker as Tracker).HeldPiece.PieceUpdated += () => heldComponent.OnUpdate(ConsoleView.ConvertPieceGridToContentGrid((tracker as Tracker).HeldPiece.Grid));
+            ConsoleView.Layout.AddComponent(heldComponent);
+
             // Timer Display
-            IntPoint timerPosition = gridComponent.Origin + new IntPoint(gridComponent.Dimensions.X * 2, 0);
-            DynamicComponent timerComponent = new DynamicComponent(1, timerPosition);
-            timerComponent.Grid = (tracker as Tracker).Displaytimer();
-            frame.FrameAction += () => timerComponent.OnUpdate((tracker as Tracker).Displaytimer());
-            ConsoleView.Layout.AddComponent(timerComponent);
+            if (isDev)
+            {
+                IntPoint timerPosition = gridComponent.Origin + new IntPoint(gridComponent.Dimensions.X * 2, 0);
+                DynamicComponent timerComponent = new DynamicComponent(1, timerPosition);
+                timerComponent.Grid = (tracker as Tracker).Displaytimer();
+                frame.FrameAction += () => timerComponent.OnUpdate((tracker as Tracker).Displaytimer());
+                ConsoleView.Layout.AddComponent(timerComponent);
+            }
 
             // Error Messages
-            IntPoint errorPosition = gridComponent.Origin + new IntPoint(gridComponent.Dimensions.X * 2, gridComponent.Dimensions.Y / 2);
+            IntPoint errorPosition = gridComponent.Origin + new IntPoint(gridComponent.Dimensions.X * 2, heldPosition.Y + heldComponent.Dimensions.Y + 2);
             DynamicComponent errorComponent = new DynamicComponent(0, errorPosition);
             ErrorMessageHandler.NewErrorMessage += (ComponentContent[,] content) => errorComponent.OnUpdate(content);
             ConsoleView.Layout.AddComponent(errorComponent);
@@ -71,17 +80,15 @@ namespace Lechliter.Tetris_Console
             inputHandler.KeyEvent[ConsoleKey.LeftArrow] = () => tetromino.Move(eDirection.Left);
             inputHandler.KeyEvent[ConsoleKey.RightArrow] = () => tetromino.Move(eDirection.Right);
 
-            inputHandler.KeyEvent[ConsoleKey.C] = () => tetromino.Rotate(eDirection.Left);
-            inputHandler.KeyEvent[ConsoleKey.V] = () => tetromino.Rotate(eDirection.Right);
+            inputHandler.KeyEvent[ConsoleKey.S] = () => tetromino.Rotate(eDirection.Left);
+            inputHandler.KeyEvent[ConsoleKey.D] = () => tetromino.Rotate(eDirection.Right);
 
             inputHandler.KeyEvent[ConsoleKey.N] = () => { tracker.LockPiece(); tetromino.NewPiece();  };
             inputHandler.KeyEvent[ConsoleKey.Q] = () => isDone = true;
 
-            inputHandler.KeyEvent[ConsoleKey.R] = () => {
-                Console.Clear();
-                Display();
-            };
+            inputHandler.KeyEvent[ConsoleKey.R] = () => { Console.Clear(); Display(); };
             inputHandler.KeyEvent[ConsoleKey.H] = () => Console.CursorVisible = false;
+            inputHandler.KeyEvent[ConsoleKey.Spacebar] = () => (tracker as Tracker).HoldPiece();
         }
 
         static void StartGame()
@@ -99,6 +106,7 @@ namespace Lechliter.Tetris_Console
             frame.FrameAction += () => tetromino.Move(eDirection.Down); // move the tetromino down each frame
             frame.FrameAction += (tracker as Tracker).NextFrame; // advance frame timers
             inputHandler.AnyKeyEvent += (tracker as Tracker).ResetStationaryTimer;
+            (tracker as Tracker).GameOver += () => isDone = true;
 
             /* Add Components to View Layout */
             AddComponents();
@@ -115,6 +123,7 @@ namespace Lechliter.Tetris_Console
 
         static void Main(string[] args)
         {
+            SetFlags(args);
             StartGame();
         }
     }

@@ -111,6 +111,8 @@ namespace Lechliter.Tetris_Console
                     blocks.Add(new Block(pivot + new Point(Block.StandardDim.X, -Block.StandardDim.Y)));
                     blocks.Add(new Block(pivot + new Point(0.0f, Block.StandardDim.Y)));
                     break;
+                case ePieceType.NotSet:
+                    break;
                 default:
                     ErrorMessageHandler.DisplayMessage("ERROR: Invalid Piece Type");
                     break;
@@ -267,6 +269,20 @@ namespace Lechliter.Tetris_Console
             Blocks = new List<IBlock>(NUM_BLOCKS);
             ConstructTetromino(Blocks, type, ref pivot);
             
+            UpdatePosition?.Invoke(eMoveType.Spawn);
+        }
+
+        public void NewPiece(ePieceType type)
+        {
+            pivot = this.initialPos;
+
+            /* Picks a random type for the tetromino piece*/
+            this.type = type;
+
+            /* Creates a list of blocks and positions them according to the type */
+            Blocks = new List<IBlock>(NUM_BLOCKS);
+            ConstructTetromino(Blocks, type, ref pivot);
+
             UpdatePosition?.Invoke(eMoveType.Spawn);
         }
 

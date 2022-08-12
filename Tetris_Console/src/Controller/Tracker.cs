@@ -8,12 +8,18 @@ namespace Lechliter.Tetris_Console
         /* Private Members */
         private ICollisionDetector<ePieceType, eDirection, eMoveType> collisionDetector;
 
+        private bool canHoldPiece = true;
+
         /* Public Members */
         public static readonly IntDimensions BOUNDS_DIM;
 
         public static readonly IntDimensions GRID_DIM;
 
         public ITetromino<ePieceType, eDirection, eMoveType> CurrentPiece { get; set; }
+
+        public IPreview<ePieceType, eDirection, eMoveType> NextPiece { get; }
+
+        public IPreview<ePieceType, eDirection, eMoveType> HeldPiece { get; }
 
         public ePieceType[,] LockedPieces { get; protected set; }
 
@@ -36,6 +42,8 @@ namespace Lechliter.Tetris_Console
         public Tracker(ITetromino<ePieceType, eDirection, eMoveType> newPiece)
         {
             CurrentPiece = newPiece;
+            NextPiece = new Preview();
+            HeldPiece = new Preview(ePieceType.NotSet);
 
             LockedPieces = NewGrid();
             AllPieces = AddPieceToGrid(LockedPieces, CurrentPiece);
@@ -224,7 +232,29 @@ namespace Lechliter.Tetris_Console
             ResetStationaryTimer();
             if (!IsGameOver())
             {
-                CurrentPiece.NewPiece();
+                (CurrentPiece as Tetromino).NewPiece(NextPiece.Piece.Type);
+                NextPiece.NewPiece();
+                this.canHoldPiece = true;
+            }
+        }
+
+        public void HoldPiece()
+        {
+            if (this.canHoldPiece)
+            {
+                if (HeldPiece.Piece.Type != ePieceType.NotSet)
+                {
+                    Tetromino temp = (CurrentPiece as Tetromino).Copy();
+                    (CurrentPiece as Tetromino).NewPiece(HeldPiece.Piece.Type);
+                    HeldPiece.NewPiece(temp.Type);
+                }
+                else
+                {
+                    HeldPiece.NewPiece(CurrentPiece.Type);
+                    (CurrentPiece as Tetromino).NewPiece(NextPiece.Piece.Type);
+                    NextPiece.NewPiece();
+                }
+                this.canHoldPiece = false;
             }
         }
 

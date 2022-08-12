@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "TetrisConsoleProject": {
+      "commandName": "Project",
+      "commandLineArgs": "-d"
+    }
+  }
+}
