@@ -44,6 +44,11 @@ namespace Lechliter.Tetris_Console
         /// Subscriber event for when the game ends. Alerts all subscribers when a tetromino locks at the very top.
         /// </summary>
         public event Action GameOver;
+
+        /// <summary>
+        /// Subscriber event for when at least one line is cleared. Sends all subscribers the number of lines cleared.
+        /// </summary>
+        public event Action<int> LinesCleared;
         
         /// <summary>
         /// Convert tetromino piece to locked pieces

@@ -2,11 +2,18 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Lechliter.Tetris_Console.Interfaces
+namespace Lechliter.Tetris_Console
 {
-    interface IScore
+    public interface IScore
     {
-        int Score { get; protected set; }
-        void Increase(int numLines);
+        public int Score { get; }
+
+        public int Level { get; }
+
+        public event Action<int> NextLevel;
+
+        public event Action<int> UpdatedScore;
+
+        public void Increase(int numLines);
     }
 }

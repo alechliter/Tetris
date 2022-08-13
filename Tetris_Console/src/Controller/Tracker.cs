@@ -31,6 +31,8 @@ namespace Lechliter.Tetris_Console
          
         public event Action GameOver;
 
+        public event Action<int> LinesCleared;
+
         /* Constructor */
         static Tracker()
         {
@@ -166,18 +168,24 @@ namespace Lechliter.Tetris_Console
         
         private void ClearLines()
         {
+            int numLines = 0;
             for(int row_number = BOUNDS_DIM.Y - 2; row_number > 0; row_number--)
             {
                 int i = 0;
                 while (isLineFull(row_number))
                 {
                     MoveLinesDown(row_number - 1);
+                    numLines++;
                     Console.Beep(400 + i, 115);
                     i += 135;
                 }
                 if (isLineEmpty(row_number - 1)){
                     break;
                 }
+            }
+            if (numLines > 0)
+            {
+                this.LinesCleared?.Invoke(numLines);
             }
             this.AllPieces = this.LockedPieces;
         }

@@ -37,5 +37,10 @@ namespace Lechliter.Tetris_Console
             }
             return isNewFrame;
         }
+
+        public void SpeedUp(int ms)
+        {
+            interval_ms = DEFAULT_INTERVAL - ms * 100;
+        }
     }
 }

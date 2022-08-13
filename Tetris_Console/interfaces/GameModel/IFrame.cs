@@ -15,5 +15,10 @@ namespace Lechliter.Tetris_Console
         /// Determines if the next frame is reached. Invokes [frameAction] for each frame.
         /// </summary>
         bool nextFrame();
+
+        /// <summary>
+        /// Decreases the time between frames;
+        /// </summary>
+        void SpeedUp(int ms = 150);
     }
 }

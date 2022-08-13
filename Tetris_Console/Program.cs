@@ -12,6 +12,7 @@ namespace Lechliter.Tetris_Console
         private static IView<eTextColor, ePieceType> view;
         private static IFrame frame;
         private static IInputHandler<ConsoleKey, Action> inputHandler;
+        private static IScore scoreBoard;
         private static bool isDone = false;
         private static bool isDev = false;
 
@@ -42,8 +43,15 @@ namespace Lechliter.Tetris_Console
             tracker.GridUpdate += () => gridComponent.OnUpdate(ConsoleView.ConvertPieceGridToContentGrid(tracker.AllPieces));
             ConsoleView.Layout.AddComponent(gridComponent);
 
+            // ScoreBoard
+            IntPoint scorePosition = gridComponent.Origin + new IntPoint(gridComponent.Dimensions.X * 2, 0);
+            ScoreBoardView scoreBoardView = new ScoreBoardView(2, scorePosition);
+            scoreBoard.UpdatedScore += (score) => scoreBoardView.OnUpdate(score: score);
+            scoreBoard.NextLevel += (level) => scoreBoardView.OnUpdate(level: level);
+            ConsoleView.Layout.AddComponent(scoreBoardView.ScoreBoard);
+
             // Next Tetromino Preview
-            IntPoint nextPosition = gridComponent.Origin + new IntPoint(gridComponent.Dimensions.X * 2 + 2, 3);
+            IntPoint nextPosition = gridComponent.Origin + new IntPoint(gridComponent.Dimensions.X * 2 + 2, 3 + scoreBoardView.Dim.Y);
             DynamicComponent nextComponent = new DynamicComponent(2, nextPosition, 2);
             nextComponent.Grid = ConsoleView.ConvertPieceGridToContentGrid((tracker as Tracker).NextPiece.Grid);
             (tracker as Tracker).NextPiece.PieceUpdated += () => nextComponent.OnUpdate(ConsoleView.ConvertPieceGridToContentGrid((tracker as Tracker).NextPiece.Grid));
@@ -59,7 +67,7 @@ namespace Lechliter.Tetris_Console
             // Timer Display
             if (isDev)
             {
-                IntPoint timerPosition = gridComponent.Origin + new IntPoint(gridComponent.Dimensions.X * 2, 0);
+                IntPoint timerPosition = heldPosition + new IntPoint(0, heldComponent.Dimensions.Y + 2);
                 DynamicComponent timerComponent = new DynamicComponent(1, timerPosition);
                 timerComponent.Grid = (tracker as Tracker).Displaytimer();
                 frame.FrameAction += () => timerComponent.OnUpdate((tracker as Tracker).Displaytimer());
@@ -91,6 +99,16 @@ namespace Lechliter.Tetris_Console
             inputHandler.KeyEvent[ConsoleKey.Spacebar] = () => (tracker as Tracker).HoldPiece();
         }
 
+        static void InitializeEventListeners()
+        {
+            frame.FrameAction += () => tetromino.Move(eDirection.Down); // move the tetromino down each frame
+            frame.FrameAction += (tracker as Tracker).NextFrame;        // advance frame timers
+            inputHandler.AnyKeyEvent += (tracker as Tracker).ResetStationaryTimer;
+            tracker.GameOver += () => isDone = true;
+            tracker.LinesCleared += scoreBoard.Increase;
+            scoreBoard.NextLevel += (level) => frame.SpeedUp(level);
+        }
+
         static void StartGame()
         {
             spwanPoint = new Point(Tracker.BOUNDS_DIM.X / 2 - 1, 0);
@@ -99,16 +117,14 @@ namespace Lechliter.Tetris_Console
             view = new ConsoleView();
             frame = new Frame();
             inputHandler = new InputHandler();
+            scoreBoard = new ScoreBoard();
 
             InitializeInputHandler();
 
-            /* Subscribe to Events */
-            frame.FrameAction += () => tetromino.Move(eDirection.Down); // move the tetromino down each frame
-            frame.FrameAction += (tracker as Tracker).NextFrame; // advance frame timers
-            inputHandler.AnyKeyEvent += (tracker as Tracker).ResetStationaryTimer;
-            (tracker as Tracker).GameOver += () => isDone = true;
+            /* Set Up Cross-Component Listeners*/
+            InitializeEventListeners();
 
-            /* Add Components to View Layout */
+            /* Add Components to the View Layout */
             AddComponents();
 
             while (!isDone)

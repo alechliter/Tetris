@@ -155,7 +155,8 @@ namespace Lechliter.Tetris_Console
                     symbol = 'X';
                     break;
                 case ePieceType.Empty:
-                    symbol = '·'; // unicode: 183
+                    symbol = ' ';
+                    // symbol = '·'; // unicode: 183
                     break;
                 case ePieceType.NotSet:
                     symbol = ' ';
