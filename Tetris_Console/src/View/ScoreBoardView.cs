@@ -66,9 +66,7 @@ namespace Lechliter.Tetris_Console
             string title = "Score";
             string[] lines =
             {
-                $"{title, -WIDTH}",
-                bound,
-                $"{score, WIDTH}",
+                $"{title} {score, WIDTH - 6}",
                 bound,
                 $"Level {level, WIDTH - 6}"
             };

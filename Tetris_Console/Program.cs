@@ -52,22 +52,19 @@ namespace Lechliter.Tetris_Console
 
             // Next Tetromino Preview
             IntPoint nextPosition = gridComponent.Origin + new IntPoint(gridComponent.Dimensions.X * 2 + 2, 3 + scoreBoardView.Dim.Y);
-            DynamicComponent nextComponent = new DynamicComponent(2, nextPosition, 2);
-            nextComponent.Grid = ConsoleView.ConvertPieceGridToContentGrid((tracker as Tracker).NextPiece.Grid);
-            (tracker as Tracker).NextPiece.PieceUpdated += () => nextComponent.OnUpdate(ConsoleView.ConvertPieceGridToContentGrid((tracker as Tracker).NextPiece.Grid));
-            ConsoleView.Layout.AddComponent(nextComponent);
+            PreviewPieceView nextPiece = new PreviewPieceView(2, nextPosition, (tracker as Tracker).NextPiece as Preview);
+            ConsoleView.Layout.AddComponent(nextPiece.Component);
 
             // Held Tetromino Preview
-            IntPoint heldPosition = nextPosition + new IntPoint(0, nextComponent.Dimensions.Y + 2);
-            DynamicComponent heldComponent = new DynamicComponent(2, heldPosition, 2);
-            heldComponent.Grid = ConsoleView.ConvertPieceGridToContentGrid((tracker as Tracker).HeldPiece.Grid);
-            (tracker as Tracker).HeldPiece.PieceUpdated += () => heldComponent.OnUpdate(ConsoleView.ConvertPieceGridToContentGrid((tracker as Tracker).HeldPiece.Grid));
-            ConsoleView.Layout.AddComponent(heldComponent);
+            IntPoint heldPosition = nextPosition + new IntPoint(0, nextPiece.Dim.Y + 2);
+            PreviewPieceView heldPiece = new PreviewPieceView(2, heldPosition, (tracker as Tracker).HeldPiece as Preview);
+            ConsoleView.Layout.AddComponent(heldPiece.Component);
+
 
             // Timer Display
             if (isDev)
             {
-                IntPoint timerPosition = heldPosition + new IntPoint(0, heldComponent.Dimensions.Y + 2);
+                IntPoint timerPosition = heldPosition + new IntPoint(0, heldPiece.Dim.Y + 2);
                 DynamicComponent timerComponent = new DynamicComponent(1, timerPosition);
                 timerComponent.Grid = (tracker as Tracker).Displaytimer();
                 frame.FrameAction += () => timerComponent.OnUpdate((tracker as Tracker).Displaytimer());
@@ -75,7 +72,7 @@ namespace Lechliter.Tetris_Console
             }
 
             // Error Messages
-            IntPoint errorPosition = gridComponent.Origin + new IntPoint(gridComponent.Dimensions.X * 2, heldPosition.Y + heldComponent.Dimensions.Y + 2);
+            IntPoint errorPosition = gridComponent.Origin + new IntPoint(gridComponent.Dimensions.X * 2, heldPosition.Y + heldPiece.Dim.Y + 2);
             DynamicComponent errorComponent = new DynamicComponent(0, errorPosition);
             ErrorMessageHandler.NewErrorMessage += (ComponentContent[,] content) => errorComponent.OnUpdate(content);
             ConsoleView.Layout.AddComponent(errorComponent);
