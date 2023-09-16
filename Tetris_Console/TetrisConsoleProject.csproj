@@ -6,4 +6,20 @@
     <RootNamespace>Lechliter.Tetris_Console</RootNamespace>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Folder Include="lib\" />
+    <Folder Include="lib\Effects\" />
+    <Folder Include="lib\Effects\Logic\" />
+    <Folder Include="lib\Effects\Sound\" />
+    <Folder Include="lib\Objects\" />
+    <Folder Include="lib\Objects\Block\" />
+    <Folder Include="lib\Objects\CollisionDetector\" />
+    <Folder Include="lib\Objects\FrameTimer\" />
+    <Folder Include="lib\Objects\Frame\" />
+    <Folder Include="lib\Objects\GameObject\" />
+    <Folder Include="lib\Objects\InputHandler\" />
+    <Folder Include="lib\Views\" />
+    <Folder Include="lib\Views\Preview\" />
+  </ItemGroup>
+
 </Project>
