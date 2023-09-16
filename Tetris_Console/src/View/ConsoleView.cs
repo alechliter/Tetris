@@ -152,7 +152,7 @@ namespace Lechliter.Tetris_Console
                     symbol = 'Z';
                     break;
                 case ePieceType.Locked:
-                    symbol = 'X';
+                    symbol = '■';
                     break;
                 case ePieceType.Empty:
                     symbol = ' ';

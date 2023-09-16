@@ -10,17 +10,26 @@ namespace Lechliter.Tetris_Console
 
         public Action AnyKeyEvent { get; set; }
 
+        private Queue<ConsoleKeyInfo> PressedKeys;
+
+        private IFrame Timer;
+
         private static readonly ConsoleKey[] DEFAULT_KEYS = { 
             ConsoleKey.UpArrow, ConsoleKey.DownArrow, ConsoleKey.LeftArrow, ConsoleKey.RightArrow,
             ConsoleKey.C, ConsoleKey.V,
             ConsoleKey.Q, ConsoleKey.N
         };
 
+        private static readonly int QUEUE_LIMIT = 10;
+
         public InputHandler()
         {
             KeyEvent = new Dictionary<ConsoleKey, Action>();
+            PressedKeys = new Queue<ConsoleKeyInfo>();
+            Timer = new Frame(interval: 10);
+            Timer.FrameAction += InvokeNextWaitingKey;
 
-            foreach(ConsoleKey key in DEFAULT_KEYS)
+            foreach (ConsoleKey key in DEFAULT_KEYS)
             {
                 AddKey(key, () => {});
             }
@@ -32,11 +41,17 @@ namespace Lechliter.Tetris_Console
             if (Console.KeyAvailable)
             {
                 key = Console.ReadKey(true);
-                Action keyEvent = null;
-                if (KeyEvent.TryGetValue(key.Key, out keyEvent))
+                if (Timer.nextFrame())
                 {
-                    keyEvent?.Invoke();
-                    AnyKeyEvent?.Invoke();
+                    PressedKeys.Clear();
+                    InvokeKeyAction(key);
+                } else
+                {
+                    PressedKeys.Enqueue(key);
+                    if (PressedKeys.Count > QUEUE_LIMIT)
+                    {
+                        PressedKeys.Dequeue();
+                    }
                 }
             }
         }
@@ -46,6 +61,29 @@ namespace Lechliter.Tetris_Console
             if (!KeyEvent.ContainsKey(key))
             {
                 KeyEvent.Add(key, action);
+            }
+        }
+
+        private void InvokeKeyAction(ConsoleKeyInfo key)
+        {
+            Action keyEvent = null;
+            if (KeyEvent.TryGetValue(key.Key, out keyEvent))
+            {
+                keyEvent?.Invoke();
+                AnyKeyEvent?.Invoke();
+            }
+        }
+
+        private void InvokeNextWaitingKey()
+        {
+            if (PressedKeys.Count > 0)
+            {
+                ConsoleKeyInfo key = PressedKeys.Dequeue();
+                InvokeKeyAction(key);
+            }
+            while (Console.KeyAvailable)
+            {
+                Console.ReadKey(true);
             }
         }
     }

@@ -10,17 +10,19 @@ namespace Lechliter.Tetris_Console
         private long now;
         private long ticks_diff;
         private long interval_ms;
+        private long initial_interval_ms;
 
         private const long DEFAULT_INTERVAL = 1000;
 
         public event Action FrameAction;
 
-        public Frame()
+        public Frame(long interval = DEFAULT_INTERVAL)
         {
             past = DateTime.Now.Ticks;
             now = past;
             ticks_diff = now - past;
-            interval_ms = DEFAULT_INTERVAL;
+            interval_ms = interval;
+            initial_interval_ms = interval_ms;
         }
 
         public bool nextFrame()
@@ -40,7 +42,7 @@ namespace Lechliter.Tetris_Console
 
         public void SpeedUp(int ms)
         {
-            interval_ms = DEFAULT_INTERVAL - ms * 100;
+            interval_ms = initial_interval_ms - ms * 100;
         }
     }
 }

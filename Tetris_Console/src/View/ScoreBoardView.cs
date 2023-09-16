@@ -62,7 +62,7 @@ namespace Lechliter.Tetris_Console
 
         private string[] formatScore(int score = -1, int level = -1)
         {
-            string bound = "".PadLeft(WIDTH, '-');
+            string bound = "".PadLeft(WIDTH, '_');
             string title = "Score";
             string[] lines =
             {

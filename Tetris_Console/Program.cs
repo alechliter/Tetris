@@ -6,7 +6,7 @@ namespace Lechliter.Tetris_Console
 {
     public class Program
     {
-        private static Point spwanPoint;
+        private static Point spawnPoint;
         private static ITetromino<ePieceType, eDirection, eMoveType> tetromino;
         private static ITracker<ePieceType, eDirection, eMoveType> tracker;
         private static IView<eTextColor, ePieceType> view;
@@ -31,7 +31,8 @@ namespace Lechliter.Tetris_Console
             }
         }
 
-        private static void Display(){
+        private static void Display()
+        {
             view?.Display();
         }
 
@@ -66,8 +67,8 @@ namespace Lechliter.Tetris_Console
             {
                 IntPoint timerPosition = heldPosition + new IntPoint(0, heldPiece.Dim.Y + 2);
                 DynamicComponent timerComponent = new DynamicComponent(1, timerPosition);
-                timerComponent.Grid = (tracker as Tracker).Displaytimer();
-                frame.FrameAction += () => timerComponent.OnUpdate((tracker as Tracker).Displaytimer());
+                timerComponent.Grid = (tracker as Tracker).DisplayTimer();
+                frame.FrameAction += () => timerComponent.OnUpdate((tracker as Tracker).DisplayTimer());
                 ConsoleView.Layout.AddComponent(timerComponent);
             }
 
@@ -88,7 +89,7 @@ namespace Lechliter.Tetris_Console
             inputHandler.KeyEvent[ConsoleKey.S] = () => tetromino.Rotate(eDirection.Left);
             inputHandler.KeyEvent[ConsoleKey.D] = () => tetromino.Rotate(eDirection.Right);
 
-            inputHandler.KeyEvent[ConsoleKey.N] = () => { tracker.LockPiece(); tetromino.NewPiece();  };
+            inputHandler.KeyEvent[ConsoleKey.N] = () => { tracker.LockPiece(); tetromino.NewPiece(); };
             inputHandler.KeyEvent[ConsoleKey.Q] = () => isDone = true;
 
             inputHandler.KeyEvent[ConsoleKey.R] = () => { Console.Clear(); Display(); };
@@ -108,8 +109,8 @@ namespace Lechliter.Tetris_Console
 
         static void StartGame()
         {
-            spwanPoint = new Point(Tracker.BOUNDS_DIM.X / 2 - 1, 0);
-            tetromino = new Tetromino(spwanPoint);
+            spawnPoint = new Point(Tracker.BOUNDS_DIM.X / 2 - 1, 0);
+            tetromino = new Tetromino(spawnPoint);
             tracker = new Tracker(tetromino);
             view = new ConsoleView();
             frame = new Frame();
