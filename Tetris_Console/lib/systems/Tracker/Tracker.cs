@@ -26,9 +26,11 @@ namespace Lechliter.Tetris_Console
 
         public event Action<int> LinesCleared;
 
+        public event Action PieceLocked;
+
         private ICollisionDetector<ePieceType, eDirection, eMoveType> _CollisionDetector;
 
-        private bool canHoldPiece = true;
+        private bool CanHoldPiece = true;
 
         public Tracker(ITetromino<ePieceType, eDirection, eMoveType> newPiece, IntDimensions boundsDim, IntDimensions gridDim)
         {
@@ -68,20 +70,20 @@ namespace Lechliter.Tetris_Console
         public void LockPiece()
         {
             LockedPieces = AllPieces;
-            Console.Beep(600, 200);
+            PieceLocked?.Invoke();
             ClearLines();
             ResetStationaryTimer();
             if (!IsGameOver())
             {
                 CurrentPiece.NewPiece(NextPiece.Piece.Type);
                 NextPiece.NewPiece();
-                this.canHoldPiece = true;
+                CanHoldPiece = true;
             }
         }
 
         public void HoldPiece()
         {
-            if (this.canHoldPiece)
+            if (CanHoldPiece)
             {
                 if (HeldPiece.Piece.Type != ePieceType.NotSet)
                 {
@@ -95,7 +97,7 @@ namespace Lechliter.Tetris_Console
                     CurrentPiece.NewPiece(NextPiece.Piece.Type);
                     NextPiece.NewPiece();
                 }
-                this.canHoldPiece = false;
+                CanHoldPiece = false;
             }
         }
 
@@ -251,13 +253,10 @@ namespace Lechliter.Tetris_Console
             int numLines = 0;
             for (int row_number = BoundsDim.Y - 2; row_number > 0; row_number--)
             {
-                int i = 0;
                 while (isLineFull(row_number))
                 {
                     MoveLinesDown(row_number - 1);
                     numLines++;
-                    Console.Beep(400 + i, 115);
-                    i += 135;
                 }
                 if (isLineEmpty(row_number - 1))
                 {
@@ -266,9 +265,9 @@ namespace Lechliter.Tetris_Console
             }
             if (numLines > 0)
             {
-                this.LinesCleared?.Invoke(numLines);
+                LinesCleared?.Invoke(numLines);
             }
-            this.AllPieces = this.LockedPieces;
+            AllPieces = LockedPieces;
         }
 
         /// <summary>

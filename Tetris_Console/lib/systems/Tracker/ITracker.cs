@@ -61,6 +61,11 @@ namespace Lechliter.Tetris_Console
         public event Action<int> LinesCleared;
 
         /// <summary>
+        /// Subscriber event for when a tetromino piece locks.
+        /// </summary>
+        public event Action PieceLocked;
+
+        /// <summary>
         /// Convert tetromino piece to locked pieces
         /// </summary>
         public void LockPiece();

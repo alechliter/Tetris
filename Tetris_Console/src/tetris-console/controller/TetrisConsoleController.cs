@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using LechliterTetris_Console.Interfaces;
 
 namespace Lechliter.Tetris_Console
 {
@@ -13,6 +14,7 @@ namespace Lechliter.Tetris_Console
         private IFrame frame;
         private IInputHandler<ConsoleKey, Action> inputHandler;
         private IScore scoreBoard;
+        private ISoundEffect soundEffect;
         private bool isDone = false;
         private bool isDev = false;
 
@@ -66,6 +68,7 @@ namespace Lechliter.Tetris_Console
             spawnPoint = new Point(BOUNDS_DIM.X / 2 - 1, 0);
             tetromino = new Tetromino(spawnPoint);
             tracker = new Tracker(tetromino, BOUNDS_DIM, GRID_DIM);
+            soundEffect = new SimpleSoundEffect(tracker);
             view = new ConsoleView();
             frame = new Frame();
             inputHandler = new InputHandler();
