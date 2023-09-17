@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Lechliter.Tetris_Console
 {
@@ -39,12 +37,6 @@ namespace Lechliter.Tetris_Console
         /// <value>Matrix of TPieceType values.</value>
         public TPieceType[,] AllPieces { get; }
 
-        public IntDimensions GridDim { get; }
-
-        public IntDimensions BoundsDim { get; }
-
-        public StaticComponent Grid { get; }
-
         /// <summary>
         /// Subscriber event for when the grid updates. Alert all subscribers when the grid updates.
         /// </summary>
@@ -70,20 +62,11 @@ namespace Lechliter.Tetris_Console
         /// </summary>
         public void LockPiece();
 
-        /// <summary>
-        /// Rounds the x and y values of a block's position to the upper level and then converts the coordinate 
-        /// to the corresponding position in the xy-matrix.
-        /// </summary>
-        /// <param name="point">The point to find the xy-matrix indices for. </param>
-        /// <param name="X">The x index of the block.</param>
-        /// <param name="Y">The y index of the block.</param>
-        public void GridPosition(Point point, out int X, out int Y);
-
         public void UpdateGrid(eMoveType moveType);
 
         public void HoldPiece();
 
-        public bool isCollision(eMoveType moveType);
+        public bool IsCollision(eMoveType moveType);
 
         public void ResetStationaryTimer();
 

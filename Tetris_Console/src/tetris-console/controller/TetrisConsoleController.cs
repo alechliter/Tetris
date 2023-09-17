@@ -1,14 +1,15 @@
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
+using Lechliter.Tetris_Console.lib.objects.Grid;
 using LechliterTetris_Console.Interfaces;
+using System;
 
 namespace Lechliter.Tetris_Console
 {
     public class TetrisConsoleController : ITetrisConsoleController
     {
+        private IGrid<IntDimensions, Point> grid;
         private Point spawnPoint;
         private ITetromino<ePieceType, eDirection, eMoveType> tetromino;
+        private ICollisionDetector<ePieceType, eDirection, eMoveType> collisionDetector;
         private ITracker<ePieceType, eDirection, eMoveType> tracker;
         private IView<eTextColor, ePieceType> view;
         private IFrame frame;
@@ -17,17 +18,6 @@ namespace Lechliter.Tetris_Console
         private ISoundEffect soundEffect;
         private bool isDone = false;
         private bool isDev = false;
-
-        private static readonly IntDimensions BOUNDS_DIM;
-
-        private static readonly IntDimensions GRID_DIM;
-
-        static TetrisConsoleController()
-        {
-            const int WIDTH = 12, HEIGHT = 22;
-            BOUNDS_DIM = new IntDimensions(WIDTH, HEIGHT);
-            GRID_DIM = new IntDimensions(WIDTH - 2, HEIGHT - 2);
-        }
 
         public void Run(string[] args)
         {
@@ -60,14 +50,16 @@ namespace Lechliter.Tetris_Console
             inputHandler.AnyKeyEvent += tracker.ResetStationaryTimer;
             tracker.GameOver += () => isDone = true;
             tracker.LinesCleared += scoreBoard.Increase;
-            scoreBoard.NextLevel += (level) => frame.SpeedUp(level);
+            scoreBoard.NextLevel += frame.SpeedUp;
         }
 
         private void StartGame()
         {
-            spawnPoint = new Point(BOUNDS_DIM.X / 2 - 1, 0);
+            grid = new Grid();
+            spawnPoint = new Point(grid.BoundsDim.X / 2 - 1, 0);
             tetromino = new Tetromino(spawnPoint);
-            tracker = new Tracker(tetromino, BOUNDS_DIM, GRID_DIM);
+            collisionDetector = new CollisionDetector(grid);
+            tracker = new Tracker(tetromino, grid, collisionDetector);
             soundEffect = new SimpleSoundEffect(tracker);
             view = new ConsoleView();
             frame = new Frame();

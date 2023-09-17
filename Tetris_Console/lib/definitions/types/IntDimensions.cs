@@ -1,12 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Lechliter.Tetris_Console
+﻿namespace Lechliter.Tetris_Console
 {
     public struct IntDimensions
     {
-        public int X, Y;
+        public int X { get; private set; }
+
+        public int Y { get; private set; }
+
         public IntDimensions(int width, int height)
         {
             this.X = width;

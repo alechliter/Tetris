@@ -1,6 +1,6 @@
-﻿using System;
+﻿using Lechliter.Tetris_Console.lib.objects.Grid;
+using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace Lechliter.Tetris_Console
 {
@@ -9,10 +9,6 @@ namespace Lechliter.Tetris_Console
         public IFrameTimer LockTimerFalling { get; protected set; }
 
         public IFrameTimer LockTimerStationary { get; protected set; }
-
-        public IntDimensions BoundsDim { get; protected set; }
-
-        public IntDimensions GridDim { get; protected set; }
 
         public event Action CollisionDetected;
 
@@ -26,13 +22,11 @@ namespace Lechliter.Tetris_Console
 
         private ePieceType[,] grid_pieces;
 
-        private ITracker<ePieceType, eDirection, eMoveType> _Tracker;
+        private IGrid<IntDimensions, Point> _Grid;
 
-        public CollisionDetector(ITracker<ePieceType, eDirection, eMoveType> tracker, IntDimensions boundsDim, IntDimensions gridDim)
+        public CollisionDetector(IGrid<IntDimensions, Point> grid)
         {
-            BoundsDim = boundsDim;
-            GridDim = gridDim;
-            _Tracker = tracker;
+            _Grid = grid;
             Initialize();
         }
 
@@ -52,7 +46,7 @@ namespace Lechliter.Tetris_Console
             foreach (IBlock block in piece.Blocks)
             {
                 int x, y;
-                _Tracker.GridPosition(block.Position, out x, out y);
+                _Grid.GridPosition(block.Position, out x, out y);
 
                 isCollisionDetected = isInBounds(x, y) && grid_pieces[x, y] != ePieceType.Empty;
                 if (isCollisionDetected)
@@ -108,7 +102,7 @@ namespace Lechliter.Tetris_Console
             foreach (IBlock block in potential_piece.Blocks)
             {
                 int x, y;
-                _Tracker.GridPosition(block.Position, out x, out y);
+                _Grid.GridPosition(block.Position, out x, out y);
                 if (!isInBounds(x, y) || grid_pieces[x, y] != ePieceType.Empty)
                 {
                     isValidMove = false;
@@ -125,6 +119,7 @@ namespace Lechliter.Tetris_Console
             LockTimerStationary = new LockTimer(NUM_STATIONARY_FRAMES);
             InitializeLockPieceWatcher();
         }
+
         private void InitializeLockPieceWatcher()
         {
             LockTimerFalling.TimerFinished += () =>
@@ -143,7 +138,7 @@ namespace Lechliter.Tetris_Console
 
         private bool isInBounds(int x, int y)
         {
-            return x >= 0 && x < BoundsDim.X && y >= 0 && y < BoundsDim.Y;
+            return x >= 0 && x < _Grid.BoundsDim.X && y >= 0 && y < _Grid.BoundsDim.Y;
         }
 
 
@@ -196,12 +191,12 @@ namespace Lechliter.Tetris_Console
             bool isPossible = true;
 
             Func<int, int, int, bool> noBoundaryToLeft = (int x_pivot, int x, int disp) => x_pivot < x && x_pivot - disp > 0;
-            Func<int, int, int, bool> noBoundaryToRight = (int x_pivot, int x, int disp) => x_pivot > x && x_pivot + disp < BoundsDim.X - 1;
+            Func<int, int, int, bool> noBoundaryToRight = (int x_pivot, int x, int disp) => x_pivot > x && x_pivot + disp < _Grid.BoundsDim.X - 1;
             Func<int, int, bool> noBoundaryAbove = (int y, int disp) => y - disp > 0;
-            Func<int, int, bool> noBoundaryBelow = (int y, int disp) => y + disp < BoundsDim.Y - 1;
+            Func<int, int, bool> noBoundaryBelow = (int y, int disp) => y + disp < _Grid.BoundsDim.Y - 1;
 
             int x_pivot, y_pivot;
-            _Tracker.GridPosition(piece.Position, out x_pivot, out y_pivot);
+            _Grid.GridPosition(piece.Position, out x_pivot, out y_pivot);
 
             foreach (Movement move in moves)
             {
@@ -295,10 +290,10 @@ namespace Lechliter.Tetris_Console
         {
             // TODO: This has many bugs and is too complicated. This solution isn't more efficient than the original, and only reduces code duplication.
             Func<int, int, int, bool> noBoundaryToLeft = (int x_pivot, int x, int disp) => x_pivot < x && x_pivot - disp > 0;
-            Func<int, int, int, bool> noBoundaryToRight = (int x_pivot, int x, int disp) => x_pivot > x && x_pivot + disp < BoundsDim.X - 1;
+            Func<int, int, int, bool> noBoundaryToRight = (int x_pivot, int x, int disp) => x_pivot > x && x_pivot + disp < _Grid.BoundsDim.X - 1;
 
             int x_pivot, y_pivot;
-            _Tracker.GridPosition(piece.Position, out x_pivot, out y_pivot);
+            _Grid.GridPosition(piece.Position, out x_pivot, out y_pivot);
 
             bool undoMove = true;
             foreach ((int vertical, int horizontal) in options)
@@ -306,7 +301,7 @@ namespace Lechliter.Tetris_Console
                 Dictionary<eDirection, bool> possibleDirections = new Dictionary<eDirection, bool>()
                 {
                     { eDirection.Up,  vertical > 0 && y - vertical > 0 },
-                    { eDirection.Down, vertical > 0 && y + vertical < BoundsDim.Y - 1 },
+                    { eDirection.Down, vertical > 0 && y + vertical < _Grid.BoundsDim.Y - 1 },
                     { eDirection.Left, horizontal > 0 && noBoundaryToLeft(x_pivot, x, horizontal) },
                     { eDirection.Right, horizontal > 0 && noBoundaryToRight(x_pivot, x, horizontal) }
                 };

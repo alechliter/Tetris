@@ -31,9 +31,7 @@ namespace Lechliter.Tetris_Console
         {
             if (component.Position.X > Dimensions.X || component.Position.Y > Dimensions.Y)
             {
-
-                Dimensions.X = component.Position.X + component.Size.X;
-                Dimensions.Y = component.Position.Y + component.Size.Y;
+                Dimensions = new IntDimensions(component.Position.X + component.Size.X, component.Position.Y + component.Size.Y);
             }
         }
 

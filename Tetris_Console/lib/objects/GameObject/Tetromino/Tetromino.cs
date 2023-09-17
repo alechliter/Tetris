@@ -90,7 +90,7 @@ namespace Lechliter.Tetris_Console
 
         public void Drop(ITracker<ePieceType, eDirection, eMoveType> tracker)
         {
-            while (!tracker.isCollision(eMoveType.Translation))
+            while (!tracker.IsCollision(eMoveType.Translation))
             {
                 move_blocks(eDirection.Down);
             }
