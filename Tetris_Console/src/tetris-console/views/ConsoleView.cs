@@ -1,34 +1,31 @@
-﻿using System;
+﻿using Lechliter.Tetris_Console.src.tetris_console.views;
+using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace Lechliter.Tetris_Console
 {
     public class ConsoleView : IView<eTextColor, ePieceType>
     {
-        /* Private Members */
-
-        /* Public Members */
-        public static DynamicConsoleLayout Layout;
-
         public static eTextColor Color { get; protected set; } // current text color
 
-        /* Constructor */
+        private readonly ITetrisConsoleLayout<DynamicComponent, List<DynamicComponent>, IntPoint> _Layout;
+
         static ConsoleView()
         {
             Console.Clear();
             Console.CursorVisible = false;
             Console.SetWindowSize(100, 40);
             Console.Title = "Console Tetris";
-            Layout = new DynamicConsoleLayout();
         }
 
-        /* Private Methods */
+        public ConsoleView(ITetrisConsoleLayout<DynamicComponent, List<DynamicComponent>, IntPoint> layout)
+        {
+            _Layout = layout;
+        }
 
-        /* Public Method */
         public void Display()
         {
-            Layout.DisplayAll();
+            _Layout.DisplayAll();
         }
 
         public static ComponentContent[,] ConvertPieceGridToContentGrid(ePieceType[,] blocks)

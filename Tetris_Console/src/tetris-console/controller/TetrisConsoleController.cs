@@ -1,14 +1,14 @@
 using Lechliter.Tetris_Console.lib.objects.Grid;
+using Lechliter.Tetris_Console.src.tetris_console.views;
 using LechliterTetris_Console.Interfaces;
 using System;
+using System.Collections.Generic;
 
 namespace Lechliter.Tetris_Console
 {
     public class TetrisConsoleController : ITetrisConsoleController
     {
         private IGrid<IntDimensions, Point> grid;
-        private Point spawnPoint;
-        private ITetromino<ePieceType, eDirection, eMoveType> tetromino;
         private ICollisionDetector<ePieceType, eDirection, eMoveType> collisionDetector;
         private ITracker<ePieceType, eDirection, eMoveType> tracker;
         private IView<eTextColor, ePieceType> view;
@@ -16,6 +16,7 @@ namespace Lechliter.Tetris_Console
         private IInputHandler<ConsoleKey, Action> inputHandler;
         private IScore scoreBoard;
         private ISoundEffect soundEffect;
+        private ITetrisConsoleLayout<DynamicComponent, List<DynamicComponent>, IntPoint> layout;
         private bool isDone = false;
         private bool isDev = false;
 
@@ -27,15 +28,15 @@ namespace Lechliter.Tetris_Console
 
         private void InitializeInputHandler()
         {
-            inputHandler.KeyEvent[ConsoleKey.UpArrow] = () => tetromino.Drop(tracker);
-            inputHandler.KeyEvent[ConsoleKey.DownArrow] = () => tetromino.Move(eDirection.Down);
-            inputHandler.KeyEvent[ConsoleKey.LeftArrow] = () => tetromino.Move(eDirection.Left);
-            inputHandler.KeyEvent[ConsoleKey.RightArrow] = () => tetromino.Move(eDirection.Right);
+            inputHandler.KeyEvent[ConsoleKey.UpArrow] = () => tracker.CurrentPiece.Drop(tracker);
+            inputHandler.KeyEvent[ConsoleKey.DownArrow] = () => tracker.CurrentPiece.Move(eDirection.Down);
+            inputHandler.KeyEvent[ConsoleKey.LeftArrow] = () => tracker.CurrentPiece.Move(eDirection.Left);
+            inputHandler.KeyEvent[ConsoleKey.RightArrow] = () => tracker.CurrentPiece.Move(eDirection.Right);
 
-            inputHandler.KeyEvent[ConsoleKey.S] = () => tetromino.Rotate(eDirection.Left);
-            inputHandler.KeyEvent[ConsoleKey.D] = () => tetromino.Rotate(eDirection.Right);
+            inputHandler.KeyEvent[ConsoleKey.S] = () => tracker.CurrentPiece.Rotate(eDirection.Left);
+            inputHandler.KeyEvent[ConsoleKey.D] = () => tracker.CurrentPiece.Rotate(eDirection.Right);
 
-            inputHandler.KeyEvent[ConsoleKey.N] = () => { tracker.LockPiece(); tetromino.NewPiece(); };
+            inputHandler.KeyEvent[ConsoleKey.N] = () => { tracker.LockPiece(); tracker.CurrentPiece.NewPiece(); };
             inputHandler.KeyEvent[ConsoleKey.Q] = () => isDone = true;
 
             inputHandler.KeyEvent[ConsoleKey.R] = () => { Console.Clear(); Display(); };
@@ -45,26 +46,20 @@ namespace Lechliter.Tetris_Console
 
         private void InitializeEventListeners()
         {
-            frame.FrameAction += () => tetromino.Move(eDirection.Down); // move the tetromino down each frame
-            frame.FrameAction += tracker.NextFrame;        // advance frame timers
-            inputHandler.AnyKeyEvent += tracker.ResetStationaryTimer;
             tracker.GameOver += () => isDone = true;
-            tracker.LinesCleared += scoreBoard.Increase;
-            scoreBoard.NextLevel += frame.SpeedUp;
         }
 
         private void StartGame()
         {
             grid = new Grid();
-            spawnPoint = new Point(grid.BoundsDim.X / 2 - 1, 0);
-            tetromino = new Tetromino(spawnPoint);
-            collisionDetector = new CollisionDetector(grid);
-            tracker = new Tracker(tetromino, grid, collisionDetector);
-            soundEffect = new SimpleSoundEffect(tracker);
-            view = new ConsoleView();
             frame = new Frame();
+            collisionDetector = new CollisionDetector(grid);
             inputHandler = new InputHandler();
             scoreBoard = new ScoreBoard();
+            tracker = new Tracker(grid, collisionDetector, frame, inputHandler, scoreBoard);
+            soundEffect = new SimpleSoundEffect(tracker);
+            layout = new TetrisConsoleLayout(collisionDetector, tracker, scoreBoard, frame);
+            view = new ConsoleView(layout);
 
             InitializeInputHandler();
 
@@ -106,45 +101,7 @@ namespace Lechliter.Tetris_Console
 
         private void AddComponents()
         {
-            // Add Grid to Layout
-            DynamicComponent gridComponent = new DynamicComponent(1, new IntPoint(0, 0), 2);
-            gridComponent.Grid = ConsoleView.ConvertPieceGridToContentGrid(tracker.AllPieces);
-            tracker.GridUpdate += () => gridComponent.OnUpdate(ConsoleView.ConvertPieceGridToContentGrid(tracker.AllPieces));
-            ConsoleView.Layout.AddComponent(gridComponent);
-
-            // ScoreBoard
-            IntPoint scorePosition = gridComponent.Origin + new IntPoint(gridComponent.Dimensions.X * 2, 0);
-            ScoreBoardView scoreBoardView = new ScoreBoardView(2, scorePosition);
-            scoreBoard.UpdatedScore += (score) => scoreBoardView.OnUpdate(score: score);
-            scoreBoard.NextLevel += (level) => scoreBoardView.OnUpdate(level: level);
-            ConsoleView.Layout.AddComponent(scoreBoardView.ScoreBoard);
-
-            // Next Tetromino Preview
-            IntPoint nextPosition = gridComponent.Origin + new IntPoint(gridComponent.Dimensions.X * 2 + 2, 3 + scoreBoardView.Dim.Y);
-            PreviewPieceView nextPiece = new PreviewPieceView(2, nextPosition, tracker.NextPiece);
-            ConsoleView.Layout.AddComponent(nextPiece.Component);
-
-            // Held Tetromino Preview
-            IntPoint heldPosition = nextPosition + new IntPoint(0, nextPiece.Dim.Y + 2);
-            PreviewPieceView heldPiece = new PreviewPieceView(2, heldPosition, tracker.HeldPiece);
-            ConsoleView.Layout.AddComponent(heldPiece.Component);
-
-
-            // Timer Display
-            if (isDev)
-            {
-                IntPoint timerPosition = heldPosition + new IntPoint(0, heldPiece.Dim.Y + 2);
-                DynamicComponent timerComponent = new DynamicComponent(1, timerPosition);
-                timerComponent.Grid = tracker.DisplayTimer();
-                frame.FrameAction += () => timerComponent.OnUpdate(tracker.DisplayTimer());
-                ConsoleView.Layout.AddComponent(timerComponent);
-            }
-
-            // Error Messages
-            IntPoint errorPosition = gridComponent.Origin + new IntPoint(gridComponent.Dimensions.X * 2, heldPosition.Y + heldPiece.Dim.Y + 2);
-            DynamicComponent errorComponent = new DynamicComponent(0, errorPosition);
-            ErrorMessageHandler.NewErrorMessage += (ComponentContent[,] content) => errorComponent.OnUpdate(content);
-            ConsoleView.Layout.AddComponent(errorComponent);
+            layout.AddComponents(isDev);
         }
     }
 }

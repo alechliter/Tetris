@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace Lechliter.Tetris_Console
 {
@@ -33,11 +32,20 @@ namespace Lechliter.Tetris_Console
         private static Random rand;
         private static readonly int NUM_TYPES = 7;
         private static readonly int NUM_BLOCKS = 4;
+
+        IFrame _Frame;
         #endregion
 
         public Tetromino(Point initialPos)
         {
             Initialize(initialPos);
+        }
+
+        public Tetromino(IFrame frame, Point initialPos)
+        {
+            _Frame = frame;
+            Initialize(initialPos);
+            StartSubscriptions();
         }
 
         #region  Public Methods
@@ -160,6 +168,12 @@ namespace Lechliter.Tetris_Console
             velocity = new Point();
             NewPiece();
         }
+
+        private void StartSubscriptions()
+        {
+            _Frame.FrameAction += () => Move(eDirection.Down);
+        }
+
         private void MoveBlocksBy(Point vector)
         {
             pivot += vector;

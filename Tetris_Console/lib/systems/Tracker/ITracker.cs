@@ -71,7 +71,5 @@ namespace Lechliter.Tetris_Console
         public void ResetStationaryTimer();
 
         public void NextFrame();
-
-        public ComponentContent[,] DisplayTimer();
     }
 }

@@ -23,18 +23,35 @@ namespace Lechliter.Tetris_Console
 
         public event Action PieceLocked;
 
-        private ICollisionDetector<ePieceType, eDirection, eMoveType> _CollisionDetector;
+        private readonly Point SpawnPoint;
 
-        private IGrid<IntDimensions, Point> _Grid;
+        private readonly ICollisionDetector<ePieceType, eDirection, eMoveType> _CollisionDetector;
+
+        private readonly IGrid<IntDimensions, Point> _Grid;
+
+        private readonly IFrame _Frame;
+
+        private readonly IInputHandler<ConsoleKey, Action> _InputHandler;
+
+        private readonly IScore _Score;
 
         private bool CanHoldPiece = true;
 
-        public Tracker(ITetromino<ePieceType, eDirection, eMoveType> newPiece, IGrid<IntDimensions, Point> grid, ICollisionDetector<ePieceType, eDirection, eMoveType> collisionDetector)
+        public Tracker(
+            IGrid<IntDimensions, Point> grid,
+            ICollisionDetector<ePieceType, eDirection, eMoveType> collisionDetector,
+            IFrame frame,
+            IInputHandler<ConsoleKey, Action> inputHandler,
+            IScore score)
         {
             _CollisionDetector = collisionDetector;
             _Grid = grid;
+            _Frame = frame;
+            _InputHandler = inputHandler;
+            _Score = score;
 
-            CurrentPiece = newPiece;
+            SpawnPoint = new Point(grid.BoundsDim.X / 2 - 1, 0);
+            CurrentPiece = new Tetromino(_Frame, SpawnPoint);
             NextPiece = new Preview();
             HeldPiece = new Preview(ePieceType.NotSet);
 
@@ -133,6 +150,14 @@ namespace Lechliter.Tetris_Console
 
             // Subscribe to timer events
             _CollisionDetector.LockPiece += LockPiece;
+
+            // advance frame timers
+            _Frame.FrameAction += NextFrame;
+
+            _InputHandler.AnyKeyEvent += ResetStationaryTimer;
+
+            _Score.NextLevel += _Frame.SpeedUp;
+            LinesCleared += _Score.Increase;
         }
 
         private ePieceType[,] AddPieceToGrid(ePieceType[,] pieces, ITetromino<ePieceType, eDirection, eMoveType> piece)
