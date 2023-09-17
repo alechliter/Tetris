@@ -37,7 +37,7 @@ namespace Lechliter.Tetris_Console
 
         public void NewPiece(ePieceType type)
         {
-            (Piece as Tetromino).NewPiece(type);
+            Piece.NewPiece(type);
             AddPieceToGrid();
             PieceUpdated?.Invoke();
         }

@@ -6,7 +6,11 @@ namespace Lechliter.Tetris_Console
 {
     public class LockTimer : IFrameTimer
     {
-        /* Private Members */
+        public int FramesRemaining { get { return remaining_frames; } }
+
+        public bool IsRunning { get { return isCounting; } }
+
+        public event Action TimerFinished;
 
         private int remaining_frames;
 
@@ -16,28 +20,10 @@ namespace Lechliter.Tetris_Console
 
         private const int DEFAULT_FRAME_COUNT = 5;
 
-        /* Public Members*/
-        public int FramesRemaining { get { return remaining_frames; } }
-
-        public bool IsRunning { get { return isCounting; } }
-
-        public event Action TimerFinished;
-
-        /* Constructors */
         public LockTimer(int frame_count = DEFAULT_FRAME_COUNT)
         {
             Initialize(frame_count);
         }
-
-        /* Private Methods */
-        private void Initialize(int frame_count)
-        {
-            SetTimer(frame_count);
-            Reset();
-            isCounting = false;
-        }
-
-        /* Public Methods */
 
         public void Start()
         {
@@ -71,6 +57,13 @@ namespace Lechliter.Tetris_Console
         public void SetTimer(int numFrames)
         {
             initial_frame_count = numFrames;
+        }
+
+        private void Initialize(int frame_count)
+        {
+            SetTimer(frame_count);
+            Reset();
+            isCounting = false;
         }
     }
 }

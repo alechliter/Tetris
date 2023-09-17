@@ -6,7 +6,24 @@ namespace Lechliter.Tetris_Console
 {
     public class Tetromino : ITetromino<ePieceType, eDirection, eMoveType>
     {
-        /* Private members */
+
+        #region Public Members
+
+        public ICollection<IBlock> Blocks { get; set; }
+
+        public Point Position { get { return pivot; } }
+
+        public ePieceType Type { get { return type; } }
+
+        public Point Velocity { get { return velocity; } }
+
+        public eDirection Rotation { get { return rotation_direction; } }
+
+        public event Action<eMoveType> UpdatePosition;
+
+        #endregion
+
+        #region Private Members
         private Point pivot;
         private Point initialPos;
         private Point velocity;
@@ -16,25 +33,127 @@ namespace Lechliter.Tetris_Console
         private static Random rand;
         private static readonly int NUM_TYPES = 7;
         private static readonly int NUM_BLOCKS = 4;
+        #endregion
 
-        /* Public members */
-        public ICollection<IBlock> Blocks { get; set; }
-        public Point Position { get { return pivot; } }
-        public ePieceType Type { get { return type; } }
-
-        public Point Velocity { get { return velocity; } }
-
-        public eDirection Rotation {  get { return rotation_direction; } }
-
-        public event Action<eMoveType> UpdatePosition;
-
-        /* Constructor ------------------------------------------------------------------------*/
         public Tetromino(Point initialPos)
         {
             Initialize(initialPos);
         }
 
-        /* Private Methods --------------------------------------------------------------------*/
+        #region  Public Methods
+
+        /*  Public Methods --------------------------------------------------------------------*/
+
+        public ITetromino<ePieceType, eDirection, eMoveType> CreatePiece()
+        {
+            return new Tetromino(initialPos);
+        }
+
+        public void Move(eDirection direction)
+        {
+            Move(direction, eMoveType.Translation);
+        }
+
+        public void Move(eDirection direction, eMoveType moveType)
+        {
+            move_blocks(direction);
+            UpdatePosition?.Invoke(moveType);
+        }
+
+        public void Rotate(eDirection direction)
+        {
+            double angle = 0.0;
+
+            switch (direction)
+            {
+                case eDirection.Left:
+                    angle = -Math.PI / 2.0; // Rotate 90 degrees to the left
+                    break;
+                case eDirection.Right:
+                    angle = Math.PI / 2.0; // Rotate 90 degrees to the right
+                    break;
+                default:
+                    ErrorMessageHandler.DisplayMessage("ERROR: Invalid rotation direction.");
+                    break;
+            }
+
+            foreach (IBlock block in Blocks)
+            {
+                RotateAboutPivot(block, angle);
+            }
+
+            rotation_direction = direction;
+            this.angle = angle;
+            UpdatePosition?.Invoke(eMoveType.Rotation);
+
+        }
+
+        public void Drop(ITracker<ePieceType, eDirection, eMoveType> tracker)
+        {
+            while (!tracker.isCollision(eMoveType.Translation))
+            {
+                move_blocks(eDirection.Down);
+            }
+        }
+
+        public void UndoMove(eMoveType moveType)
+        {
+            switch (moveType)
+            {
+                case eMoveType.Translation:
+                    velocity = -1 * velocity;
+                    MoveBlocksBy(velocity);
+                    UpdatePosition?.Invoke(eMoveType.Undo);
+                    break;
+                case eMoveType.Rotation:
+                    foreach (IBlock block in Blocks)
+                    {
+                        RotateAboutPivot(block, -angle);
+                    }
+                    UpdatePosition?.Invoke(eMoveType.Undo);
+                    break;
+            }
+        }
+
+        public void NewPiece()
+        {
+            rand = new Random(DateTime.Now.GetHashCode());
+            NewPiece(RandType());
+        }
+
+        public void NewPiece(ePieceType type)
+        {
+            pivot = this.initialPos;
+
+            this.type = type;
+
+            Blocks = new List<IBlock>(NUM_BLOCKS);
+            ConstructTetromino(Blocks, type, ref pivot);
+
+            UpdatePosition?.Invoke(eMoveType.Spawn);
+        }
+
+        public IGameObject Copy()
+        {
+            Tetromino copy_piece = new Tetromino(Position);
+
+            copy_piece.type = type;
+            copy_piece.pivot = pivot.Copy();
+            copy_piece.Blocks = new List<IBlock>();
+            foreach (IBlock block in Blocks)
+            {
+                copy_piece.Blocks.Add(block.Copy() as IBlock);
+            }
+            copy_piece.velocity = velocity.Copy();
+            copy_piece.rotation_direction = rotation_direction;
+            copy_piece.angle = angle;
+
+            return copy_piece;
+        }
+        #endregion
+
+        #region  Private Methods
+
         private void Initialize(Point initialPos)
         {
             this.initialPos = initialPos;
@@ -44,12 +163,14 @@ namespace Lechliter.Tetris_Console
         private void MoveBlocksBy(Point vector)
         {
             pivot += vector;
-            foreach (IBlock block in Blocks){
+            foreach (IBlock block in Blocks)
+            {
                 block.MoveBy(vector);
             }
         }
 
-        private void RotateAboutPivot(IBlock block, double angle) {
+        private void RotateAboutPivot(IBlock block, double angle)
+        {
             // Rotation axis vector
             Point vector = block.Position - pivot;
 
@@ -57,7 +178,7 @@ namespace Lechliter.Tetris_Console
             float newX, newY;
             newX = vector.x * (float)Math.Cos(angle) - vector.y * (float)Math.Sin(angle);
             newY = vector.x * (float)Math.Sin(angle) + vector.y * (float)Math.Cos(angle);
-            
+
             vector.x = newX;
             vector.y = newY;
 
@@ -83,7 +204,7 @@ namespace Lechliter.Tetris_Console
                     break;
                 case ePieceType.T:
                     blocks.Add(new Block(pivot));
-                    blocks.Add(new Block(pivot + new Point(Block.StandardDim.X , 0.0f)));
+                    blocks.Add(new Block(pivot + new Point(Block.StandardDim.X, 0.0f)));
                     blocks.Add(new Block(pivot + new Point(-Block.StandardDim.X, 0.0f)));
                     blocks.Add(new Block(pivot + new Point(0.0f, -Block.StandardDim.Y)));
                     break;
@@ -147,8 +268,7 @@ namespace Lechliter.Tetris_Console
             this.velocity = velocity;
         }
 
-        /*  Public Methods --------------------------------------------------------------------*/
-        public static ePieceType RandType()
+        private static ePieceType RandType()
         {
             ePieceType newType = ePieceType.O;
             int randomType = rand.Next(NUM_TYPES);
@@ -181,128 +301,6 @@ namespace Lechliter.Tetris_Console
             }
             return newType;
         }
-
-        /// <summary>
-        /// Creates a new instance of a tetromino with the same initial position.
-        /// </summary>
-        /// <returns> A new instances of Tetromino at intialPos. </returns>
-        public Tetromino CreatePiece()
-        {
-            return new Tetromino(initialPos);
-        }
-
-        public void Move(eDirection direction)
-        {
-            move_blocks(direction);
-            // Broadcasts change to every subscriber
-            UpdatePosition?.Invoke(eMoveType.Translation);
-        }
-
-        public void Move(eDirection direction, eMoveType moveType = eMoveType.Translation)
-        {
-            move_blocks(direction);
-            UpdatePosition?.Invoke(moveType);
-        }
-
-        public void Rotate(eDirection direction)
-        {
-            double angle = 0.0;
-            
-            switch (direction)
-	        {
-	            case eDirection.Left:
-	            	angle = -Math.PI / 2.0; // Rotate 90 degrees to the left
-	            	break;
-	            case eDirection.Right:
-	            	angle = Math.PI / 2.0; // Rotate 90 degrees to the right
-	            	break; 
-	            default:
-	            	ErrorMessageHandler.DisplayMessage("ERROR: Invalid rotation direction.");
-	            	break;
-	        }
-            
-            foreach(IBlock block in Blocks){
-                RotateAboutPivot(block, angle);
-            }
-
-            rotation_direction = direction;
-            this.angle = angle;
-            UpdatePosition?.Invoke(eMoveType.Rotation);
-            
-        }
-
-        public void Drop(ITracker<ePieceType, eDirection, eMoveType> tracker)
-        {
-            while (!(tracker as Tracker).isCollision(eMoveType.Translation))
-            {
-                move_blocks(eDirection.Down);
-            }
-        }
-
-        public void UndoMove(eMoveType moveType)
-        {
-            switch (moveType)
-            {
-                case eMoveType.Translation:
-                    velocity = -1 * velocity;
-                    MoveBlocksBy(velocity);
-                    UpdatePosition?.Invoke(eMoveType.Undo);
-                    break;
-                case eMoveType.Rotation:
-                    foreach (IBlock block in Blocks)
-                    {
-                        RotateAboutPivot(block, -angle);
-                    }
-                    UpdatePosition?.Invoke(eMoveType.Undo);
-                    break;
-            }
-        }
-
-        public void NewPiece(){
-            pivot = this.initialPos;
-
-            /* Picks a random type for the tetromino piece*/
-            rand = new Random(DateTime.Now.GetHashCode()); // Creates a random object with a random seed
-            type = RandType();
-            
-            /* Creates a list of blocks and positions them according to the type */
-            Blocks = new List<IBlock>(NUM_BLOCKS);
-            ConstructTetromino(Blocks, type, ref pivot);
-            
-            UpdatePosition?.Invoke(eMoveType.Spawn);
-        }
-
-        public void NewPiece(ePieceType type)
-        {
-            pivot = this.initialPos;
-
-            /* Picks a random type for the tetromino piece*/
-            this.type = type;
-
-            /* Creates a list of blocks and positions them according to the type */
-            Blocks = new List<IBlock>(NUM_BLOCKS);
-            ConstructTetromino(Blocks, type, ref pivot);
-
-            UpdatePosition?.Invoke(eMoveType.Spawn);
-        }
-
-        public Tetromino Copy()
-        {
-            Tetromino copy_piece = new Tetromino(Position);
-
-            copy_piece.type = type;
-            copy_piece.pivot = pivot.Copy();
-            copy_piece.Blocks = new List<IBlock>();
-            foreach (Block block in Blocks)
-            {
-                copy_piece.Blocks.Add(block.Copy());
-            }
-            copy_piece.velocity = velocity.Copy();
-            copy_piece.rotation_direction = rotation_direction;
-            copy_piece.angle = angle;
-
-            return copy_piece;
-        }
-        
+        #endregion
     }
 }

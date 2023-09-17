@@ -7,19 +7,12 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="lib\" />
-    <Folder Include="lib\Effects\" />
-    <Folder Include="lib\Effects\Logic\" />
-    <Folder Include="lib\Effects\Sound\" />
-    <Folder Include="lib\Objects\" />
-    <Folder Include="lib\Objects\Block\" />
-    <Folder Include="lib\Objects\CollisionDetector\" />
-    <Folder Include="lib\Objects\FrameTimer\" />
-    <Folder Include="lib\Objects\Frame\" />
-    <Folder Include="lib\Objects\GameObject\" />
-    <Folder Include="lib\Objects\InputHandler\" />
-    <Folder Include="lib\Views\" />
-    <Folder Include="lib\Views\Preview\" />
+    <Folder Include="lib\definitions\"/>
+    <Folder Include="lib\effects\" />
+    <Folder Include="lib\effects\Sound\" />
+    <Folder Include="lib\objects\Frame\" />
+    <Folder Include="lib\objects\GameObject\" />
+    <Folder Include="lib\systems\"/>
   </ItemGroup>
 
 </Project>

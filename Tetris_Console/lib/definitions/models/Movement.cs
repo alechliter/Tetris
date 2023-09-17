@@ -17,7 +17,7 @@
         {
             for (int i = 0; i < num_times; i++)
             {
-                (piece as Tetromino).Move(direction, eMoveType.Undo);
+                piece.Move(direction, eMoveType.Undo);
             }
         }
     }

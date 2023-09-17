@@ -12,6 +12,12 @@ namespace Lechliter.Tetris_Console
         public int FramesRemaining { get; }
 
         /// <summary>
+        /// Returns true when the timer is counting down.
+        /// </summary>
+        /// <value></value> 
+        public bool IsRunning { get; }
+
+        /// <summary>
         /// Action that emits once the timer has reached 0 frames left.
         /// </summary>
         public event Action TimerFinished;

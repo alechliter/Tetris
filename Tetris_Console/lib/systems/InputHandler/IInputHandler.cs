@@ -11,5 +11,7 @@ namespace Lechliter.Tetris_Console
         public TEvent AnyKeyEvent { get; set; }
 
         void HandleInput();
+
+        public void AddKey(ConsoleKey key, Action action);
     }
 }

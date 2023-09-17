@@ -16,6 +16,17 @@ namespace Lechliter.Tetris_Console
         private bool isDone = false;
         private bool isDev = false;
 
+        private static readonly IntDimensions BOUNDS_DIM;
+
+        private static readonly IntDimensions GRID_DIM;
+
+        static TetrisConsoleController()
+        {
+            const int WIDTH = 12, HEIGHT = 22;
+            BOUNDS_DIM = new IntDimensions(WIDTH, HEIGHT);
+            GRID_DIM = new IntDimensions(WIDTH - 2, HEIGHT - 2);
+        }
+
         public void Run(string[] args)
         {
             SetFlags(args);
@@ -24,7 +35,7 @@ namespace Lechliter.Tetris_Console
 
         private void InitializeInputHandler()
         {
-            inputHandler.KeyEvent[ConsoleKey.UpArrow] = () => (tetromino as Tetromino).Drop(tracker);//tetromino.Move(Direction.Up);
+            inputHandler.KeyEvent[ConsoleKey.UpArrow] = () => tetromino.Drop(tracker);
             inputHandler.KeyEvent[ConsoleKey.DownArrow] = () => tetromino.Move(eDirection.Down);
             inputHandler.KeyEvent[ConsoleKey.LeftArrow] = () => tetromino.Move(eDirection.Left);
             inputHandler.KeyEvent[ConsoleKey.RightArrow] = () => tetromino.Move(eDirection.Right);
@@ -37,14 +48,14 @@ namespace Lechliter.Tetris_Console
 
             inputHandler.KeyEvent[ConsoleKey.R] = () => { Console.Clear(); Display(); };
             inputHandler.KeyEvent[ConsoleKey.H] = () => Console.CursorVisible = false;
-            inputHandler.KeyEvent[ConsoleKey.Spacebar] = () => (tracker as Tracker).HoldPiece();
+            inputHandler.KeyEvent[ConsoleKey.Spacebar] = () => tracker.HoldPiece();
         }
 
         private void InitializeEventListeners()
         {
             frame.FrameAction += () => tetromino.Move(eDirection.Down); // move the tetromino down each frame
-            frame.FrameAction += (tracker as Tracker).NextFrame;        // advance frame timers
-            inputHandler.AnyKeyEvent += (tracker as Tracker).ResetStationaryTimer;
+            frame.FrameAction += tracker.NextFrame;        // advance frame timers
+            inputHandler.AnyKeyEvent += tracker.ResetStationaryTimer;
             tracker.GameOver += () => isDone = true;
             tracker.LinesCleared += scoreBoard.Increase;
             scoreBoard.NextLevel += (level) => frame.SpeedUp(level);
@@ -52,9 +63,9 @@ namespace Lechliter.Tetris_Console
 
         private void StartGame()
         {
-            spawnPoint = new Point(Tracker.BOUNDS_DIM.X / 2 - 1, 0);
+            spawnPoint = new Point(BOUNDS_DIM.X / 2 - 1, 0);
             tetromino = new Tetromino(spawnPoint);
-            tracker = new Tracker(tetromino);
+            tracker = new Tracker(tetromino, BOUNDS_DIM, GRID_DIM);
             view = new ConsoleView();
             frame = new Frame();
             inputHandler = new InputHandler();
@@ -115,12 +126,12 @@ namespace Lechliter.Tetris_Console
 
             // Next Tetromino Preview
             IntPoint nextPosition = gridComponent.Origin + new IntPoint(gridComponent.Dimensions.X * 2 + 2, 3 + scoreBoardView.Dim.Y);
-            PreviewPieceView nextPiece = new PreviewPieceView(2, nextPosition, (tracker as Tracker).NextPiece as Preview);
+            PreviewPieceView nextPiece = new PreviewPieceView(2, nextPosition, tracker.NextPiece);
             ConsoleView.Layout.AddComponent(nextPiece.Component);
 
             // Held Tetromino Preview
             IntPoint heldPosition = nextPosition + new IntPoint(0, nextPiece.Dim.Y + 2);
-            PreviewPieceView heldPiece = new PreviewPieceView(2, heldPosition, (tracker as Tracker).HeldPiece as Preview);
+            PreviewPieceView heldPiece = new PreviewPieceView(2, heldPosition, tracker.HeldPiece);
             ConsoleView.Layout.AddComponent(heldPiece.Component);
 
 
@@ -129,8 +140,8 @@ namespace Lechliter.Tetris_Console
             {
                 IntPoint timerPosition = heldPosition + new IntPoint(0, heldPiece.Dim.Y + 2);
                 DynamicComponent timerComponent = new DynamicComponent(1, timerPosition);
-                timerComponent.Grid = (tracker as Tracker).DisplayTimer();
-                frame.FrameAction += () => timerComponent.OnUpdate((tracker as Tracker).DisplayTimer());
+                timerComponent.Grid = tracker.DisplayTimer();
+                frame.FrameAction += () => timerComponent.OnUpdate(tracker.DisplayTimer());
                 ConsoleView.Layout.AddComponent(timerComponent);
             }
 

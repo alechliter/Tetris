@@ -1,5 +1,5 @@
 ﻿namespace Lechliter.Tetris_Console
-{   
+{
     public struct Dimensions
     {
         public float X, Y;
@@ -15,5 +15,7 @@
 
         void MoveTo(Point newPoint);
         void MoveBy(Point vector);
+
+        public bool IsSamePosition(IBlock block);
     }
 }

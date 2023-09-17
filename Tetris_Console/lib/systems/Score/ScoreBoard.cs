@@ -10,15 +10,15 @@ namespace Lechliter.Tetris_Console
 
         public int Level { get; protected set; }
 
+        public event Action<int> NextLevel;
+
+        public event Action<int> UpdatedScore;
+
         private static readonly double K = 1.05;
 
         private static readonly double Scale = 15;
 
         private int NumClearedLines;
-
-        public event Action<int> NextLevel;
-
-        public event Action<int> UpdatedScore;
 
         public ScoreBoard()
         {

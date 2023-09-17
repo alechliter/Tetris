@@ -8,7 +8,7 @@ namespace Lechliter.Tetris_Console
     {
         public DynamicComponent Component { get; protected set; }
 
-        public Preview Preview { get; protected set; }
+        public IPreview<ePieceType, eDirection, eMoveType> Preview { get; protected set; }
 
         public IntDimensions Dim
         {
@@ -18,7 +18,7 @@ namespace Lechliter.Tetris_Console
             }
         }
 
-        public PreviewPieceView(int layer, IntPoint position, Preview preview)
+        public PreviewPieceView(int layer, IntPoint position, IPreview<ePieceType, eDirection, eMoveType> preview)
         {
             Preview = preview;
             preview.PieceUpdated += OnUpdate;

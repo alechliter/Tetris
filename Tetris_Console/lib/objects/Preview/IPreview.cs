@@ -29,9 +29,14 @@ namespace Lechliter.Tetris_Console
         public event Action PieceUpdated;
 
         /// <summary>
-        /// Gets a new piece and updates the grid.
+        /// Gets a new random piece and updates the grid.
         /// </summary>
         void NewPiece();
+
+        /// <summary>
+        /// Gets a new piece with the given type and updates the grid.
+        /// </summary>
+        /// <param name="type">Type of piece to create</param>
         void NewPiece(ePieceType type);
     }
 }

@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Lechliter.Tetris_Console
 {
-    public interface ICollisionDetector <TPieceType, TDirection, TMoveType> where TPieceType : System.Enum
+    public interface ICollisionDetector<TPieceType, TDirection, TMoveType> where TPieceType : System.Enum
                                                                      where TDirection : System.Enum
                                                                      where TMoveType : System.Enum
     {
@@ -37,5 +37,17 @@ namespace Lechliter.Tetris_Console
         /// <param name="moveType"></param>
         /// <returns></returns>
         public bool DetectCollisions(ITetromino<TPieceType, TDirection, TMoveType> piece, TPieceType[,] grid_pieces, TMoveType moveType);
+
+        /// <summary>
+        /// Determines whether the given list of moves for a piece on the grid is possible without causing any further collisions. 
+        /// </summary>
+        /// <param name="piece">Piece to check moves on.</param>
+        /// <param name="grid_pieces">Grid that contains the piece and locked pieces.</param>
+        /// <param name="moves">The list of movements to test on the piece.</param>
+        /// <returns>True if the list of movements is possible.</returns>
+        public bool TryMove(ITetromino<ePieceType, eDirection, eMoveType> piece, ePieceType[,] grid_pieces, params Movement[] moves);
+
+
+        public void StopAndResetStationaryTimer();
     }
 }

@@ -6,7 +6,18 @@ namespace Lechliter.Tetris_Console
 {
     public class CollisionDetector : ICollisionDetector<ePieceType, eDirection, eMoveType>
     {
-        /* Private Members */
+        public IFrameTimer LockTimerFalling { get; protected set; }
+
+        public IFrameTimer LockTimerStationary { get; protected set; }
+
+        public IntDimensions BoundsDim { get; protected set; }
+
+        public IntDimensions GridDim { get; protected set; }
+
+        public event Action CollisionDetected;
+
+        public event Action LockPiece;
+
         private static readonly int NUM_FALLING_FRAMES = 8;
 
         private static readonly int NUM_STATIONARY_FRAMES = 2;
@@ -15,21 +26,99 @@ namespace Lechliter.Tetris_Console
 
         private ePieceType[,] grid_pieces;
 
-        /* Public Members */
-        public IFrameTimer LockTimerFalling { get; protected set; }
-        public IFrameTimer LockTimerStationary { get; protected set; }
+        private ITracker<ePieceType, eDirection, eMoveType> _Tracker;
 
-        public event Action CollisionDetected;
-
-        public event Action LockPiece;
-
-        /* Constructors */
-        public CollisionDetector()
+        public CollisionDetector(ITracker<ePieceType, eDirection, eMoveType> tracker, IntDimensions boundsDim, IntDimensions gridDim)
         {
+            BoundsDim = boundsDim;
+            GridDim = gridDim;
+            _Tracker = tracker;
             Initialize();
         }
 
-        /* Private Methods */
+        public void StopAndResetStationaryTimer()
+        {
+            LockTimerStationary.Stop();
+            LockTimerStationary.Reset();
+        }
+
+        public bool DetectCollisions(ITetromino<ePieceType, eDirection, eMoveType> piece, ePieceType[,] grid_pieces, eMoveType moveType)
+        {
+            bool isCollisionDetected = false;
+
+            this.piece = piece;
+            this.grid_pieces = grid_pieces;
+
+            foreach (IBlock block in piece.Blocks)
+            {
+                int x, y;
+                _Tracker.GridPosition(block.Position, out x, out y);
+
+                isCollisionDetected = isInBounds(x, y) && grid_pieces[x, y] != ePieceType.Empty;
+                if (isCollisionDetected)
+                {
+                    switch (moveType)
+                    {
+                        case eMoveType.Translation:
+                            piece.UndoMove(moveType);
+                            RestartFallingTimerWhenFalling();
+                            RestartStationaryTimerWhenFalling();
+                            break;
+                        case eMoveType.Rotation:
+                            UndoRotation(x, y);
+                            break;
+                        default:
+                            ErrorMessageHandler.DisplayMessage($"Unhandled collision from move type: {moveType.ToString()}");
+                            break;
+                    }
+                    CollisionDetected?.Invoke();
+                    break;
+                }
+            }
+
+            if (!isCollisionDetected && piece.Velocity.y > 0)
+            {
+                LockTimerFalling.Stop();
+            }
+
+            return isCollisionDetected;
+        }
+
+        public bool TryMove(ITetromino<ePieceType, eDirection, eMoveType> piece, ePieceType[,] grid_pieces, params Movement[] moves)
+        {
+            bool isValidMove = true;
+
+            // Copy tetromino and move copy with specified movement
+            ITetromino<ePieceType, eDirection, eMoveType> potential_piece = piece.Copy() as ITetromino<ePieceType, eDirection, eMoveType>;
+            foreach (Movement movement in moves)
+            {
+                switch (movement.moveType)
+                {
+                    case eMoveType.Translation:
+                        for (int i = 0; i < movement.num_times; i++)
+                            potential_piece.Move(movement.direction);
+                        break;
+                    case eMoveType.Rotation:
+                        for (int i = 0; i < movement.num_times; i++)
+                            potential_piece.Rotate(movement.direction);
+                        break;
+                }
+            }
+            // Check if copy is colliding with any grid pieces
+            foreach (IBlock block in potential_piece.Blocks)
+            {
+                int x, y;
+                _Tracker.GridPosition(block.Position, out x, out y);
+                if (!isInBounds(x, y) || grid_pieces[x, y] != ePieceType.Empty)
+                {
+                    isValidMove = false;
+                    break;
+                }
+            }
+
+            return isValidMove;
+        }
+
         private void Initialize()
         {
             LockTimerFalling = new LockTimer(NUM_FALLING_FRAMES);
@@ -45,7 +134,7 @@ namespace Lechliter.Tetris_Console
                 LockTimerFalling.Stop();
             };
             LockTimerStationary.TimerFinished += () =>
-            {               
+            {
                 LockPiece?.Invoke();
                 LockTimerStationary.Reset();
                 LockTimerStationary.Stop();
@@ -54,7 +143,7 @@ namespace Lechliter.Tetris_Console
 
         private bool isInBounds(int x, int y)
         {
-            return x >= 0 && x < Tracker.BOUNDS_DIM.X && y >= 0 && y < Tracker.BOUNDS_DIM.Y;
+            return x >= 0 && x < BoundsDim.X && y >= 0 && y < BoundsDim.Y;
         }
 
 
@@ -72,10 +161,10 @@ namespace Lechliter.Tetris_Console
 
         private void RestartFallingTimerWhenFalling()
         {
-            if ((piece as Tetromino).Velocity.y < 0)
+            if (piece.Velocity.y < 0)
             {
                 // Restart falling timer when bottom of piece has been hit
-                if (!(LockTimerFalling as LockTimer).IsRunning)
+                if (!LockTimerFalling.IsRunning)
                 {
                     RestartFallingTimer();
                 }
@@ -84,9 +173,9 @@ namespace Lechliter.Tetris_Console
 
         private void RestartStationaryTimerWhenFalling()
         {
-            if ((piece as Tetromino).Velocity.y < 0)
+            if (piece.Velocity.y < 0)
             {
-                if (!(LockTimerStationary as LockTimer).IsRunning)
+                if (!LockTimerStationary.IsRunning)
                 {
                     RestartStationaryTimer();
                 }
@@ -107,12 +196,12 @@ namespace Lechliter.Tetris_Console
             bool isPossible = true;
 
             Func<int, int, int, bool> noBoundaryToLeft = (int x_pivot, int x, int disp) => x_pivot < x && x_pivot - disp > 0;
-            Func<int, int, int, bool> noBoundaryToRight = (int x_pivot, int x, int disp) => x_pivot > x && x_pivot + disp < Tracker.BOUNDS_DIM.X - 1;
+            Func<int, int, int, bool> noBoundaryToRight = (int x_pivot, int x, int disp) => x_pivot > x && x_pivot + disp < BoundsDim.X - 1;
             Func<int, int, bool> noBoundaryAbove = (int y, int disp) => y - disp > 0;
-            Func<int, int, bool> noBoundaryBelow = (int y, int disp) => y + disp < Tracker.BOUNDS_DIM.Y - 1;
+            Func<int, int, bool> noBoundaryBelow = (int y, int disp) => y + disp < BoundsDim.Y - 1;
 
             int x_pivot, y_pivot;
-            Tracker.GridPosition(piece.Position, out x_pivot, out y_pivot);
+            _Tracker.GridPosition(piece.Position, out x_pivot, out y_pivot);
 
             foreach (Movement move in moves)
             {
@@ -161,7 +250,7 @@ namespace Lechliter.Tetris_Console
 
             if (!foundPossibleMove)
             {
-                (piece as Tetromino).UndoMove(eMoveType.Rotation);
+                piece.UndoMove(eMoveType.Rotation);
             }
         }
 
@@ -206,10 +295,10 @@ namespace Lechliter.Tetris_Console
         {
             // TODO: This has many bugs and is too complicated. This solution isn't more efficient than the original, and only reduces code duplication.
             Func<int, int, int, bool> noBoundaryToLeft = (int x_pivot, int x, int disp) => x_pivot < x && x_pivot - disp > 0;
-            Func<int, int, int, bool> noBoundaryToRight = (int x_pivot, int x, int disp) => x_pivot > x && x_pivot + disp < Tracker.BOUNDS_DIM.X - 1;
+            Func<int, int, int, bool> noBoundaryToRight = (int x_pivot, int x, int disp) => x_pivot > x && x_pivot + disp < BoundsDim.X - 1;
 
             int x_pivot, y_pivot;
-            Tracker.GridPosition(piece.Position, out x_pivot, out y_pivot);
+            _Tracker.GridPosition(piece.Position, out x_pivot, out y_pivot);
 
             bool undoMove = true;
             foreach ((int vertical, int horizontal) in options)
@@ -217,7 +306,7 @@ namespace Lechliter.Tetris_Console
                 Dictionary<eDirection, bool> possibleDirections = new Dictionary<eDirection, bool>()
                 {
                     { eDirection.Up,  vertical > 0 && y - vertical > 0 },
-                    { eDirection.Down, vertical > 0 && y + vertical < Tracker.BOUNDS_DIM.Y - 1 },
+                    { eDirection.Down, vertical > 0 && y + vertical < BoundsDim.Y - 1 },
                     { eDirection.Left, horizontal > 0 && noBoundaryToLeft(x_pivot, x, horizontal) },
                     { eDirection.Right, horizontal > 0 && noBoundaryToRight(x_pivot, x, horizontal) }
                 };
@@ -229,7 +318,7 @@ namespace Lechliter.Tetris_Console
                 {
                     if (possibleDirection.Value)
                     {
-                        if(possibleDirection.Key == eDirection.Left)
+                        if (possibleDirection.Key == eDirection.Left)
                         {
                             vertical_left.Add(new Movement(eMoveType.Translation, possibleDirection.Key, num_times: horizontal));
                         }
@@ -256,7 +345,8 @@ namespace Lechliter.Tetris_Console
                     }
                     undoMove = false;
                     break;
-                }else if (canMoveUpRight)
+                }
+                else if (canMoveUpRight)
                 {
                     foreach (Movement movement in vertical_right)
                     {
@@ -268,105 +358,14 @@ namespace Lechliter.Tetris_Console
             }
             if (undoMove)
             {
-                (piece as Tetromino).UndoMove(eMoveType.Rotation);
+                piece.UndoMove(eMoveType.Rotation);
             }
         }
 
         private void UndoRotation(int x, int y)
         {
-            (int vertical, int horizontal)[] options = { (1, 0), (0, 1), (2, 0), (0, 2), (1, 1), (2, 1), (1, 2) , (2, 2) };
+            (int vertical, int horizontal)[] options = { (1, 0), (0, 1), (2, 0), (0, 2), (1, 1), (2, 1), (1, 2), (2, 2) };
             MoveToNextEmptySpace(x, y);
-        }
-
-        /* Public Methods */
-        public void StopAndResetStationaryTimer()
-        {
-            LockTimerStationary.Stop();
-            LockTimerStationary.Reset();
-        }
-
-        public bool DetectCollisions(ITetromino<ePieceType, eDirection, eMoveType> piece, ePieceType[,] grid_pieces, eMoveType moveType)
-        {
-            bool isCollisionDetected = false;
-
-            this.piece = piece;
-            this.grid_pieces = grid_pieces;
-
-            foreach (IBlock block in piece.Blocks)
-            {
-                int x, y;
-                Tracker.GridPosition(block.Position, out x, out y);
-
-                isCollisionDetected = isInBounds(x, y) && grid_pieces[x, y] != ePieceType.Empty;
-                if (isCollisionDetected)
-                {
-                    switch (moveType)
-                    {
-                        case eMoveType.Translation:
-                            (piece as Tetromino).UndoMove(moveType);
-                            RestartFallingTimerWhenFalling();
-                            RestartStationaryTimerWhenFalling();
-                            break;
-                        case eMoveType.Rotation:
-                            UndoRotation(x, y);
-                            break;
-                        default:
-                            ErrorMessageHandler.DisplayMessage($"Unhandled collision from move type: {moveType.ToString()}");
-                            break;
-                    }
-                    CollisionDetected?.Invoke();
-                    break;
-                }
-            }
-
-            if (!isCollisionDetected && (piece as Tetromino).Velocity.y > 0)
-            {
-                (LockTimerFalling as LockTimer).Stop();
-            }
-
-            return isCollisionDetected;
-        }
-
-        /// <summary>
-        /// Determines whether the given list of moves for a piece on the grid is possible without causing any further collisions. 
-        /// </summary>
-        /// <param name="piece">Piece to check moves on.</param>
-        /// <param name="grid_pieces">Grid that contains the piece and locked pieces.</param>
-        /// <param name="moves">The list of movements to test on the piece.</param>
-        /// <returns>True if the list of movements is possible.</returns>
-        public bool TryMove(ITetromino<ePieceType, eDirection, eMoveType> piece, ePieceType[,] grid_pieces, params Movement[] moves)
-        {
-            bool isValidMove = true;
-
-            // Copy tetromino and move copy with specified movement
-            Tetromino potential_piece = (piece as Tetromino).Copy();
-            foreach (Movement movement in moves)
-            {
-                switch (movement.moveType)
-                {
-                    case eMoveType.Translation:
-                        for(int i = 0; i < movement.num_times; i++)
-                            potential_piece.Move(movement.direction);
-                        break;
-                    case eMoveType.Rotation:
-                        for (int i = 0; i < movement.num_times; i++)
-                            potential_piece.Rotate(movement.direction);
-                        break;
-                }
-            }
-            // Check if copy is colliding with any grid pieces
-            foreach (IBlock block in potential_piece.Blocks)
-            {
-                int x, y;
-                Tracker.GridPosition(block.Position, out x, out y);
-                if (!isInBounds(x, y) || grid_pieces[x, y] != ePieceType.Empty)
-                {
-                    isValidMove = false;
-                    break;
-                }
-            }
-
-            return isValidMove;
         }
     }
 }
