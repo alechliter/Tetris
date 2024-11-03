@@ -17,7 +17,7 @@ namespace Lechliter.Tetris_Console
         /// The current tetromino piece being followed by the tracker.
         /// </summary>
         /// <value>Reference to the tetromino. </value>
-        public ITetromino<TPieceType, TPieceDirection, TMoveType> CurrentPiece { get; set; }
+        public ITetromino<TPieceType, TPieceDirection, TMoveType> CurrentPiece { get; }
 
         public IPreview<TPieceType, TPieceDirection, TMoveType> NextPiece { get; }
 
@@ -61,6 +61,14 @@ namespace Lechliter.Tetris_Console
         /// Convert tetromino piece to locked pieces
         /// </summary>
         public void LockPiece();
+
+        public void MovePiece(TPieceDirection direction);
+
+        public void RotatePiece(TPieceDirection direction);
+
+        public void DropPiece();
+
+        public void LoadNewPiece();
 
         public void UpdateGrid(eMoveType moveType);
 

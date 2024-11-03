@@ -5,7 +5,7 @@ namespace Lechliter.Tetris_Console
 {
     public class Tracker : ITracker<ePieceType, eDirection, eMoveType>
     {
-        public ITetromino<ePieceType, eDirection, eMoveType> CurrentPiece { get; set; }
+        public ITetromino<ePieceType, eDirection, eMoveType> CurrentPiece { get; protected set; }
 
         public IPreview<ePieceType, eDirection, eMoveType> NextPiece { get; }
 
@@ -101,6 +101,26 @@ namespace Lechliter.Tetris_Console
                 }
                 CanHoldPiece = false;
             }
+        }
+
+        public void MovePiece(eDirection direction)
+        {
+            CurrentPiece.Move(direction);
+        }
+
+        public void RotatePiece(eDirection direction)
+        {
+            CurrentPiece.Rotate(direction);
+        }
+
+        public void DropPiece()
+        {
+            CurrentPiece.Drop(this);
+        }
+
+        public void LoadNewPiece()
+        {
+            CurrentPiece.NewPiece();
         }
 
         public bool IsCollision(eMoveType moveType)

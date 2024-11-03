@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace Lechliter.Tetris_Console
 {
@@ -10,11 +9,11 @@ namespace Lechliter.Tetris_Console
 
         public Action AnyKeyEvent { get; set; }
 
-        private Queue<ConsoleKeyInfo> PressedKeys;
+        private readonly Queue<ConsoleKeyInfo> PressedKeys;
 
-        private IFrame Timer;
+        private readonly IFrame Timer;
 
-        private static readonly ConsoleKey[] DEFAULT_KEYS = { 
+        private static readonly ConsoleKey[] DEFAULT_KEYS = {
             ConsoleKey.UpArrow, ConsoleKey.DownArrow, ConsoleKey.LeftArrow, ConsoleKey.RightArrow,
             ConsoleKey.C, ConsoleKey.V,
             ConsoleKey.Q, ConsoleKey.N
@@ -29,10 +28,7 @@ namespace Lechliter.Tetris_Console
             Timer = new Frame(interval: 10);
             Timer.FrameAction += InvokeNextWaitingKey;
 
-            foreach (ConsoleKey key in DEFAULT_KEYS)
-            {
-                AddKey(key, () => {});
-            }
+            InitializeKeyEvents();
         }
 
         public void HandleInput()
@@ -45,7 +41,8 @@ namespace Lechliter.Tetris_Console
                 {
                     PressedKeys.Clear();
                     InvokeKeyAction(key);
-                } else
+                }
+                else
                 {
                     PressedKeys.Enqueue(key);
                     if (PressedKeys.Count > QUEUE_LIMIT)
@@ -61,6 +58,15 @@ namespace Lechliter.Tetris_Console
             if (!KeyEvent.ContainsKey(key))
             {
                 KeyEvent.Add(key, action);
+            }
+        }
+
+        private void InitializeKeyEvents()
+        {
+            KeyEvent.Clear();
+            foreach (ConsoleKey key in DEFAULT_KEYS)
+            {
+                AddKey(key, () => { });
             }
         }
 

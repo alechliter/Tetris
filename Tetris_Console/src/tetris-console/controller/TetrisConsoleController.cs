@@ -28,15 +28,15 @@ namespace Lechliter.Tetris_Console
 
         private void InitializeInputHandler()
         {
-            inputHandler.KeyEvent[ConsoleKey.UpArrow] = () => tracker.CurrentPiece.Drop(tracker);
-            inputHandler.KeyEvent[ConsoleKey.DownArrow] = () => tracker.CurrentPiece.Move(eDirection.Down);
-            inputHandler.KeyEvent[ConsoleKey.LeftArrow] = () => tracker.CurrentPiece.Move(eDirection.Left);
-            inputHandler.KeyEvent[ConsoleKey.RightArrow] = () => tracker.CurrentPiece.Move(eDirection.Right);
+            inputHandler.KeyEvent[ConsoleKey.UpArrow] = () => tracker.DropPiece();
+            inputHandler.KeyEvent[ConsoleKey.DownArrow] = () => tracker.MovePiece(eDirection.Down);
+            inputHandler.KeyEvent[ConsoleKey.LeftArrow] = () => tracker.MovePiece(eDirection.Left);
+            inputHandler.KeyEvent[ConsoleKey.RightArrow] = () => tracker.MovePiece(eDirection.Right);
 
-            inputHandler.KeyEvent[ConsoleKey.S] = () => tracker.CurrentPiece.Rotate(eDirection.Left);
-            inputHandler.KeyEvent[ConsoleKey.D] = () => tracker.CurrentPiece.Rotate(eDirection.Right);
+            inputHandler.KeyEvent[ConsoleKey.S] = () => tracker.RotatePiece(eDirection.Left);
+            inputHandler.KeyEvent[ConsoleKey.D] = () => tracker.RotatePiece(eDirection.Right);
 
-            inputHandler.KeyEvent[ConsoleKey.N] = () => { tracker.LockPiece(); tracker.CurrentPiece.NewPiece(); };
+            inputHandler.KeyEvent[ConsoleKey.N] = () => { tracker.LockPiece(); tracker.LoadNewPiece(); };
             inputHandler.KeyEvent[ConsoleKey.Q] = () => isDone = true;
 
             inputHandler.KeyEvent[ConsoleKey.R] = () => { Console.Clear(); Display(); };
