@@ -1,7 +1,7 @@
 ﻿using Lechliter.Tetris.Lib.Definitions;
 using Lechliter.Tetris.Lib.Types;
 
-namespace Lechliter.Tetris.Lib.Models
+namespace Lechliter.Tetris.TetrisConsole.Models
 {
     public struct StaticComponent
     {

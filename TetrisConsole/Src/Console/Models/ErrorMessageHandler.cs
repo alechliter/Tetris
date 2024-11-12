@@ -1,5 +1,5 @@
-﻿using Lechliter.Tetris.Lib.Definitions;
-using Lechliter.Tetris.Lib.Models;
+﻿using Lechliter.Tetris.TetrisConsole.Enumerations;
+using Lechliter.Tetris.TetrisConsole.Models;
 using System;
 
 namespace Lechliter.Tetris.TetrisConsole

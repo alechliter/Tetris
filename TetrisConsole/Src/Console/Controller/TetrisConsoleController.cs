@@ -3,6 +3,7 @@ using Lechliter.Tetris.Lib.Effects;
 using Lechliter.Tetris.Lib.Objects;
 using Lechliter.Tetris.Lib.Systems;
 using Lechliter.Tetris.Lib.Types;
+using Lechliter.Tetris.TetrisConsole.Enumerations;
 using System;
 using System.Collections.Generic;
 

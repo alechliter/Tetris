@@ -1,10 +1,7 @@
-﻿using Lechliter.Tetris.Lib.Definitions;
+﻿using Lechliter.Tetris.TetrisConsole.Enumerations;
 
-namespace Lechliter.Tetris.Lib.Models
+namespace Lechliter.Tetris.TetrisConsole.Models
 {
-    /// <summary>
-    /// TODO: Remove from library. This should be a view specific concept.
-    /// </summary>
     public struct ComponentContent
     {
         public char Value;

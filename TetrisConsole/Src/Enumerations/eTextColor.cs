@@ -1,4 +1,4 @@
-﻿namespace Lechliter.Tetris.Lib.Definitions
+﻿namespace Lechliter.Tetris.TetrisConsole.Enumerations
 {
     public enum eTextColor
     {

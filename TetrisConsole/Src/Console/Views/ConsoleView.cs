@@ -1,7 +1,8 @@
 ﻿using Lechliter.Tetris.Lib.Definitions;
-using Lechliter.Tetris.Lib.Models;
 using Lechliter.Tetris.Lib.Types;
+using Lechliter.Tetris.TetrisConsole.Enumerations;
 using Lechliter.Tetris.TetrisConsole.Exceptions;
+using Lechliter.Tetris.TetrisConsole.Models;
 using System;
 using System.Collections.Generic;
 
