@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-
-namespace Lechliter.Tetris_Console
+﻿namespace Lechliter.Tetris.TetrisConsole
 {
     public class Program
     {

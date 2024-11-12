@@ -1,9 +1,8 @@
+using Lechliter.Tetris.Lib.Systems;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Lechliter.Tetris_Console;
-
 using System.IO;
 
-namespace TetrisConsoleTest
+namespace Lechliter.TetrisConsoleTest
 {
     [TestClass]
     public class KeyPressTest
