@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.11.35327.3
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TetrisConsole", "Tetris_Console\TetrisConsole.csproj", "{DBCBC38C-2FE9-4A2E-9FBB-BCE105B97DAD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TetrisConsole", "TetrisConsole\TetrisConsole.csproj", "{DBCBC38C-2FE9-4A2E-9FBB-BCE105B97DAD}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TetrisTest", "TetrisConsoleTest\TetrisTest.csproj", "{58D0BBBF-F7A0-4B01-AF63-E0D0AF120136}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TetrisTest", "TetrisTest\TetrisTest.csproj", "{58D0BBBF-F7A0-4B01-AF63-E0D0AF120136}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tetris", "Tetris\Tetris.csproj", "{F4B34B50-060F-45B3-A64E-7A2AEC1F14E2}"
 EndProject
