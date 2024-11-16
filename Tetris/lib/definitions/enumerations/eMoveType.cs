@@ -2,6 +2,14 @@
 {
     public enum eMoveType
     {
-        NotSet, Translation, Rotation, Spawn, Undo
+        NotSet = 0,
+
+        Translation = 1,
+
+        Rotation = 2,
+
+        Spawn = 3,
+
+        Undo = 4
     }
 }

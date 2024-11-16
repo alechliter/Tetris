@@ -6,10 +6,10 @@
 
         public int Y { get; private set; }
 
-        public IntDimensions(int width, int height)
+        public IntDimensions(int width = 0, int height = 0)
         {
-            this.X = width;
-            this.Y = height;
+            X = width;
+            Y = height;
         }
     }
 }

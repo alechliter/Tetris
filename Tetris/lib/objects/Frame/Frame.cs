@@ -5,45 +5,45 @@
 
         public event Action? FrameAction;
 
-        private long past;
+        private long Past;
 
-        private long now;
+        private long Now;
 
-        private long ticks_diff;
+        private long TicksDiff;
 
-        private long interval_ms;
+        private long IntervalMS;
 
-        private long initial_interval_ms;
+        private long InitialInteravalMS;
 
         private const long DEFAULT_INTERVAL = 1000;
 
         public Frame(long interval = DEFAULT_INTERVAL)
         {
-            past = DateTime.Now.Ticks;
-            now = past;
-            ticks_diff = now - past;
-            interval_ms = interval;
-            initial_interval_ms = interval_ms;
+            Past = DateTime.Now.Ticks;
+            Now = Past;
+            TicksDiff = Now - Past;
+            IntervalMS = interval;
+            InitialInteravalMS = IntervalMS;
         }
 
-        public bool nextFrame()
+        public bool NextFrame()
         {
-            now = DateTime.Now.Ticks;
-            ticks_diff = now - past;
+            Now = DateTime.Now.Ticks;
+            TicksDiff = Now - Past;
 
-            bool isNewFrame = ticks_diff >= interval_ms * TimeSpan.TicksPerMillisecond;
+            bool isNewFrame = TicksDiff >= IntervalMS * TimeSpan.TicksPerMillisecond;
 
             if (isNewFrame)
             {
                 FrameAction?.Invoke();
-                past = now;
+                Past = Now;
             }
             return isNewFrame;
         }
 
         public void SpeedUp(int ms)
         {
-            interval_ms = initial_interval_ms - ms * 100;
+            IntervalMS = InitialInteravalMS - ms * 100;
         }
     }
 }

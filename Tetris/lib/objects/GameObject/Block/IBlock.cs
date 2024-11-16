@@ -1,19 +1,12 @@
 ﻿using Lechliter.Tetris.Lib.Types;
+using Tetris.Lib.Definitions.Types;
+using Tetris.Lib.Objects.GameObject;
 
 namespace Lechliter.Tetris.Lib.Objects
 {
-    public struct Dimensions
+    public interface IBlock : IGameObject, ICopyObject<IBlock>
     {
-        public float X, Y;
-        public Dimensions(float width, float height)
-        {
-            this.X = width;
-            this.Y = height;
-        }
-    }
-    public interface IBlock : IGameObject
-    {
-        Dimensions Dim { get; }
+        FloatDimensions Dim { get; }
 
         void MoveTo(Point newPoint);
         void MoveBy(Point vector);

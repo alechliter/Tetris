@@ -6,22 +6,24 @@ namespace Lechliter.Tetris.Lib.Models
 {
     public struct Movement
     {
-        public eMoveType moveType;
-        public eDirection direction;
-        public int num_times;
+        public eMoveType MoveType;
 
-        public Movement(eMoveType moveType = eMoveType.NotSet, eDirection direction = eDirection.NotSet, int num_times = 1)
+        public eDirection Direction;
+
+        public int Count;
+
+        public Movement(eMoveType moveType = eMoveType.NotSet, eDirection direction = eDirection.NotSet, int count = 1)
         {
-            this.moveType = moveType;
-            this.direction = direction;
-            this.num_times = num_times;
+            this.MoveType = moveType;
+            this.Direction = direction;
+            this.Count = count;
         }
 
         public void ExecuteMove(ITetromino<ePieceType, eDirection, eMoveType> piece)
         {
-            for (int i = 0; i < num_times; i++)
+            for (int i = 0; i < Count; i++)
             {
-                piece.Move(direction);
+                piece.Move(Direction);
             }
         }
     }

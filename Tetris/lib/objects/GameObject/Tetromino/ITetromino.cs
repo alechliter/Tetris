@@ -1,14 +1,16 @@
 ﻿using Lechliter.Tetris.Lib.Definitions;
 using Lechliter.Tetris.Lib.Systems;
 using Lechliter.Tetris.Lib.Types;
+using Tetris.Lib.Objects.GameObject;
 
 namespace Lechliter.Tetris.Lib.Objects
 {
-    public interface ITetromino<TPieceType, TDirection, TMoveType> : IGameObject where TPieceType : System.Enum
-                                                                where TDirection : System.Enum
-                                                                where TMoveType : System.Enum
+    public interface ITetromino<TPieceType, TDirection, TMoveType> : IGameObject, ICopyObject<ITetromino<TPieceType, TDirection, TMoveType>>
+        where TPieceType : System.Enum
+        where TDirection : System.Enum
+        where TMoveType : System.Enum
     {
-        ICollection<IBlock> Blocks { get; set; }
+        ICollection<IBlock> Blocks { get; }
 
         TPieceType Type { get; }
 

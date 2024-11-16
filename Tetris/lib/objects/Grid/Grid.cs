@@ -75,6 +75,11 @@ namespace Lechliter.Tetris.Lib.Objects
             return isEmpty;
         }
 
+        public bool IsInBounds(int x, int y)
+        {
+            return x >= 0 && x < BoundsDim.X && y >= 0 && y < BoundsDim.Y;
+        }
+
         public int ClearLines()
         {
             int numLines = 0;

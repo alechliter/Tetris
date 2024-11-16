@@ -10,7 +10,7 @@
         /// <summary>
         /// Determines if the next frame is reached. Invokes [frameAction] for each frame.
         /// </summary>
-        bool nextFrame();
+        bool NextFrame();
 
         /// <summary>
         /// Decreases the time between frames;

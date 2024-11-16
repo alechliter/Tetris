@@ -2,10 +2,17 @@
 {
     /// <summary>
     /// Direction of travel.
-    /// Directions: Up, Down, Left, Right
     /// </summary>
     public enum eDirection
     {
-        NotSet, Up, Down, Left, Right
+        NotSet = 0,
+
+        Up = 1,
+
+        Down = 2,
+
+        Left = 3,
+
+        Right = 4
     }
 }

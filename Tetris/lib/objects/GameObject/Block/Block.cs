@@ -1,44 +1,39 @@
 ﻿using Lechliter.Tetris.Lib.Types;
+using Tetris.Lib.Definitions.Types;
 
 namespace Lechliter.Tetris.Lib.Objects
 {
     public class Block : IBlock
     {
-        public Dimensions Dim { get { return dim; } protected set { dim = value; } }
+        public FloatDimensions Dim { get; private set; }
 
-        public Point Position { get { return origin; } }
+        public Point Position { get; private set; }
 
-        public static readonly Dimensions StandardDim = new Dimensions(1.0f, 1.0f);
+        public static readonly FloatDimensions StandardDim = new FloatDimensions(1.0f, 1.0f);
 
-        private Point origin;
-
-        private Dimensions dim;
-
-        public Block()
+        public Block() : this(new Point())
         {
-            origin.x = 0.0f;
-            origin.y = 0.0f;
-            this.dim = StandardDim;
         }
 
         public Block(Point initialPos)
         {
-            origin = initialPos;
-            this.dim = StandardDim;
+            Position = initialPos;
+            Dim = StandardDim;
         }
 
         public void MoveTo(Point newPoint)
         {
-            origin = newPoint;
-        }
-        public void MoveBy(Point vector)
-        {
-            origin += vector;
+            Position = newPoint;
         }
 
-        public IGameObject Copy()
+        public void MoveBy(Point vector)
         {
-            return new Block(origin.Copy());
+            Position += vector;
+        }
+
+        public IBlock Copy()
+        {
+            return new Block(Position.Copy());
         }
 
         public bool IsSamePosition(IBlock block)

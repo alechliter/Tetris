@@ -77,7 +77,7 @@ namespace Lechliter.Tetris.TetrisConsole
                 try
                 {
                     inputHandler.HandleInput();
-                    frame.nextFrame();
+                    frame.NextFrame();
                 }
                 catch (Exception e)
                 {

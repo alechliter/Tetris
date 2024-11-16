@@ -19,7 +19,7 @@ namespace Lechliter.Tetris.Lib.Systems
 
         #endregion
 
-        private ITetromino<ePieceType, eDirection, eMoveType>? piece;
+        private ITetromino<ePieceType, eDirection, eMoveType>? Piece;
 
         private IGrid<ePieceType, eDirection, eMoveType> _Grid;
 
@@ -41,13 +41,13 @@ namespace Lechliter.Tetris.Lib.Systems
         {
             bool isCollisionDetected = false;
 
-            this.piece = piece;
+            this.Piece = piece;
 
             foreach (IBlock block in piece.Blocks)
             {
                 _Grid.GridPosition(block.Position, out int x, out int y);
 
-                isCollisionDetected = isInBounds(x, y) && _Grid.LockedPieces[x, y] != ePieceType.Empty;
+                isCollisionDetected = _Grid.IsInBounds(x, y) && _Grid.LockedPieces[x, y] != ePieceType.Empty;
                 if (isCollisionDetected)
                 {
                     switch (moveType)
@@ -84,24 +84,29 @@ namespace Lechliter.Tetris.Lib.Systems
             ITetromino<ePieceType, eDirection, eMoveType> potential_piece = piece.Copy() as ITetromino<ePieceType, eDirection, eMoveType>;
             foreach (Movement movement in moves)
             {
-                switch (movement.moveType)
+                switch (movement.MoveType)
                 {
                     case eMoveType.Translation:
-                        for (int i = 0; i < movement.num_times; i++)
-                            potential_piece.Move(movement.direction);
+                        for (int i = 0; i < movement.Count; i++)
+                        {
+                            potential_piece.Move(movement.Direction);
+                        }
                         break;
                     case eMoveType.Rotation:
-                        for (int i = 0; i < movement.num_times; i++)
-                            potential_piece.Rotate(movement.direction);
+                        for (int i = 0; i < movement.Count; i++)
+                        {
+                            potential_piece.Rotate(movement.Direction);
+                        }
                         break;
                 }
             }
+
             // Check if copy is colliding with any grid pieces
             foreach (IBlock block in potential_piece.Blocks)
             {
                 int x, y;
                 _Grid.GridPosition(block.Position, out x, out y);
-                if (!isInBounds(x, y) || grid_pieces[x, y] != ePieceType.Empty)
+                if (!_Grid.IsInBounds(x, y) || grid_pieces[x, y] != ePieceType.Empty)
                 {
                     isValidMove = false;
                     break;
@@ -127,11 +132,6 @@ namespace Lechliter.Tetris.Lib.Systems
             };
         }
 
-        private bool isInBounds(int x, int y)
-        {
-            return x >= 0 && x < _Grid.BoundsDim.X && y >= 0 && y < _Grid.BoundsDim.Y;
-        }
-
 
         private void RestartFallingTimer()
         {
@@ -147,7 +147,7 @@ namespace Lechliter.Tetris.Lib.Systems
 
         private void RestartFallingTimerWhenFalling()
         {
-            if (piece.Velocity.y < 0)
+            if (Piece.Velocity.y < 0)
             {
                 // Restart falling timer when bottom of piece has been hit
                 if (!LockTimerFalling.IsRunning)
@@ -159,7 +159,7 @@ namespace Lechliter.Tetris.Lib.Systems
 
         private void RestartStationaryTimerWhenFalling()
         {
-            if (piece.Velocity.y < 0)
+            if (Piece.Velocity.y < 0)
             {
                 if (!LockTimerStationary.IsRunning)
                 {
@@ -187,30 +187,30 @@ namespace Lechliter.Tetris.Lib.Systems
             Func<int, int, bool> noBoundaryBelow = (int y, int disp) => y + disp < _Grid.BoundsDim.Y - 1;
 
             int x_pivot, y_pivot;
-            _Grid.GridPosition(piece.Position, out x_pivot, out y_pivot);
+            _Grid.GridPosition(Piece.Position, out x_pivot, out y_pivot);
 
             foreach (Movement move in moves)
             {
-                switch (move.direction)
+                switch (move.Direction)
                 {
                     case eDirection.Up:
-                        isPossible &= noBoundaryAbove(y, move.num_times);
+                        isPossible &= noBoundaryAbove(y, move.Count);
                         break;
                     case eDirection.Down:
-                        isPossible &= noBoundaryBelow(y, move.num_times);
+                        isPossible &= noBoundaryBelow(y, move.Count);
                         break;
                     case eDirection.Left:
-                        isPossible &= noBoundaryToLeft(x_pivot, x, move.num_times);
+                        isPossible &= noBoundaryToLeft(x_pivot, x, move.Count);
                         break;
                     case eDirection.Right:
-                        isPossible &= noBoundaryToRight(x_pivot, x, move.num_times);
+                        isPossible &= noBoundaryToRight(x_pivot, x, move.Count);
                         break;
                 }
             }
 
             if (isPossible)
             {
-                isPossible = TryMove(piece, _Grid.LockedPieces, moves);
+                isPossible = TryMove(Piece, _Grid.LockedPieces, moves);
             }
 
             return isPossible;
@@ -228,7 +228,7 @@ namespace Lechliter.Tetris.Lib.Systems
                 {
                     foreach (Movement move in moveSet)
                     {
-                        move.ExecuteMove(piece);
+                        move.ExecuteMove(Piece);
                     }
                     break;
                 }
@@ -278,7 +278,7 @@ namespace Lechliter.Tetris.Lib.Systems
 
             if (!foundPossibleMove)
             {
-                piece.UndoMove(eMoveType.Rotation);
+                Piece.UndoMove(eMoveType.Rotation);
             }
         }
 
@@ -289,5 +289,10 @@ namespace Lechliter.Tetris.Lib.Systems
         private const int NUM_STATIONARY_FRAMES = 2;
 
         #endregion
+    }
+
+    class CollisionPlayGround
+    {
+        // TODO: Move piece mpve testing here
     }
 }

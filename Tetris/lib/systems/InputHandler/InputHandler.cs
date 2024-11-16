@@ -36,7 +36,7 @@ namespace Lechliter.Tetris.Lib.Systems
             if (Console.KeyAvailable)
             {
                 key = Console.ReadKey(true);
-                if (Timer.nextFrame())
+                if (Timer.NextFrame())
                 {
                     PressedKeys.Clear();
                     InvokeKeyAction(key);

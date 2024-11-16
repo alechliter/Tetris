@@ -5,7 +5,5 @@ namespace Lechliter.Tetris.Lib.Objects
     public interface IGameObject
     {
         public Point Position { get; }
-
-        public IGameObject Copy();
     }
 }

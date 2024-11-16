@@ -65,6 +65,8 @@ namespace Lechliter.Tetris.Lib.Objects
         /// <returns>True if there are 0 non-empty pieces in the row.</returns>
         public bool IsLineEmpty(int row_number);
 
+        public bool IsInBounds(int x, int y);
+
         /// <summary>
         /// Removes all full lines from the grid and moves all pieces above empty lines down.
         /// </summary>
