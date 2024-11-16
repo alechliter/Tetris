@@ -21,7 +21,7 @@ namespace Lechliter.Tetris.Lib.Models
         {
             for (int i = 0; i < num_times; i++)
             {
-                piece.Move(direction, eMoveType.Undo);
+                piece.Move(direction);
             }
         }
     }

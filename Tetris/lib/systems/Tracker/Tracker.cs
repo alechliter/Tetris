@@ -1,5 +1,4 @@
 ﻿using Lechliter.Tetris.Lib.Definitions;
-using Lechliter.Tetris.Lib.Exceptions;
 using Lechliter.Tetris.Lib.Objects;
 using Lechliter.Tetris.Lib.Types;
 
@@ -13,12 +12,6 @@ namespace Lechliter.Tetris.Lib.Systems
 
         public IPreview<ePieceType, eDirection, eMoveType> HeldPiece { get; }
 
-        public ePieceType[,] LockedPieces { get; protected set; }
-
-        public ePieceType[,] AllPieces { get; protected set; }
-
-        public event Action GridUpdate;
-
         public event Action GameOver;
 
         public event Action<int> LinesCleared;
@@ -29,7 +22,7 @@ namespace Lechliter.Tetris.Lib.Systems
 
         private readonly ICollisionDetector<ePieceType, eDirection, eMoveType> _CollisionDetector;
 
-        private readonly IGrid<IntDimensions, Point> _Grid;
+        private readonly IGrid<ePieceType, eDirection, eMoveType> _Grid;
 
         private readonly IFrame _Frame;
 
@@ -40,7 +33,7 @@ namespace Lechliter.Tetris.Lib.Systems
         private bool CanHoldPiece = true;
 
         public Tracker(
-            IGrid<IntDimensions, Point> grid,
+            IGrid<ePieceType, eDirection, eMoveType> grid,
             ICollisionDetector<ePieceType, eDirection, eMoveType> collisionDetector,
             IFrame frame,
             IInputHandler<ConsoleKey, Action> inputHandler,
@@ -57,23 +50,21 @@ namespace Lechliter.Tetris.Lib.Systems
             NextPiece = new Preview();
             HeldPiece = new Preview(ePieceType.NotSet);
 
-            LockedPieces = NewGrid();
-            AllPieces = AddPieceToGrid(LockedPieces, CurrentPiece);
+            _Grid.AddTetromino(CurrentPiece);
 
             StartSubscriptions();
         }
 
         #region Public Methods
 
-        public void UpdateGrid(eMoveType moveType)
+        public void UpdateGrid(eMoveType _moveType)
         {
-            this.AllPieces = AddPieceToGrid(this.LockedPieces, this.CurrentPiece);
-            GridUpdate?.Invoke();
+            _Grid.AddTetromino(CurrentPiece);
         }
 
         public void LockPiece()
         {
-            LockedPieces = AllPieces;
+            _Grid.LockPieces();
             PieceLocked?.Invoke();
             ClearLines();
             ResetStationaryTimer();
@@ -127,7 +118,7 @@ namespace Lechliter.Tetris.Lib.Systems
 
         public bool IsCollision(eMoveType moveType)
         {
-            return _CollisionDetector.DetectCollisions(CurrentPiece, LockedPieces, moveType);
+            return _CollisionDetector.DetectCollisions(CurrentPiece, moveType);
         }
 
         public void ResetStationaryTimer()
@@ -163,135 +154,18 @@ namespace Lechliter.Tetris.Lib.Systems
             LinesCleared += _Score.Increase;
         }
 
-        private ePieceType[,] AddPieceToGrid(ePieceType[,] pieces, ITetromino<ePieceType, eDirection, eMoveType> piece)
-        {
-            ePieceType[,] newGrid = (ePieceType[,])pieces.Clone();
-
-            foreach (IBlock block in piece.Blocks)
-            {
-                int x, y;
-                _Grid.GridPosition(block.Position, out x, out y);
-                if (x < _Grid.BoundsDim.X - 1 && x > 0 && y < _Grid.BoundsDim.Y - 1 && y >= 0)
-                {
-                    if (pieces[x, y] == ePieceType.Empty)
-                    {
-                        newGrid[x, y] = piece.Type;
-                    }
-                    else
-                    {
-                        throw new TetrisLibException($"Tracker: Piece Collision Detected But Not Handled. Position - X:{x}, Y:{y}");
-                    }
-                }
-            }
-            return newGrid;
-        }
-        private ePieceType[,] NewGrid()
-        {
-            ePieceType[,] grid = new ePieceType[_Grid.BoundsDim.X, _Grid.BoundsDim.Y];
-
-            // Fills the buffer area (perimeter) of the grid with locked markers
-            for (int x = 0; x < _Grid.BoundsDim.X; x++)
-            {
-                grid[x, 0] = ePieceType.Empty;
-                grid[x, _Grid.BoundsDim.Y - 1] = ePieceType.Locked;
-            }
-            for (int y = 0; y < _Grid.BoundsDim.Y - 1; y++)
-            {
-                grid[0, y] = ePieceType.Locked;
-                // Fills the remaining grid area with empty markers
-                for (int x = 1; x < _Grid.BoundsDim.X - 1; x++)
-                {
-                    grid[x, y] = ePieceType.Empty;
-                }
-                grid[_Grid.BoundsDim.X - 1, y] = ePieceType.Locked;
-            }
-
-            return grid;
-        }
-
         private void DetectCollisions(eMoveType moveType)
         {
-            _CollisionDetector.DetectCollisions(CurrentPiece, LockedPieces, moveType);
-        }
-
-        private bool isLineFull(int row_number)
-        {
-            bool isFull = true;
-            int x = 1;
-            while (isFull && x < _Grid.BoundsDim.X - 1)
-            {
-                isFull = this.LockedPieces[x, row_number] != ePieceType.Empty;
-                x++;
-            }
-            return isFull;
-        }
-
-        private bool isLineEmpty(int row_number)
-        {
-            bool isEmpty = true;
-            int x = 1;
-            while (isEmpty && x < _Grid.BoundsDim.X - 1)
-            {
-                isEmpty = this.LockedPieces[x, row_number] == ePieceType.Empty;
-                x++;
-            }
-            return isEmpty;
-        }
-
-        private void EraseRow(int row_number)
-        {
-            for (int x = 1; x < _Grid.BoundsDim.X - 1; x++)
-            {
-                this.LockedPieces[x, row_number] = ePieceType.Empty;
-            }
-        }
-
-        private void CopyRowTo(int src_row, int dest_row)
-        {
-            for (int x = 1; x < _Grid.BoundsDim.X - 1; x++)
-            {
-                this.LockedPieces[x, dest_row] = this.LockedPieces[x, src_row];
-            }
-        }
-
-        private void MoveLinesDown(int row_number)
-        {
-            if (row_number < _Grid.BoundsDim.Y - 1)
-            {
-                if (row_number < _Grid.BoundsDim.Y - 2)
-                {
-                    CopyRowTo(row_number, row_number + 1);
-                }
-
-                EraseRow(row_number);
-
-                if (row_number - 1 > 0 && !isLineEmpty(row_number - 1))
-                {
-                    MoveLinesDown(row_number - 1);
-                }
-            }
+            _CollisionDetector.DetectCollisions(CurrentPiece, moveType);
         }
 
         private void ClearLines()
         {
-            int numLines = 0;
-            for (int row_number = _Grid.BoundsDim.Y - 2; row_number > 0; row_number--)
-            {
-                while (isLineFull(row_number))
-                {
-                    MoveLinesDown(row_number - 1);
-                    numLines++;
-                }
-                if (isLineEmpty(row_number - 1))
-                {
-                    break;
-                }
-            }
+            int numLines = _Grid.ClearLines();
             if (numLines > 0)
             {
                 LinesCleared?.Invoke(numLines);
             }
-            AllPieces = LockedPieces;
         }
 
         /// <summary>
@@ -300,7 +174,7 @@ namespace Lechliter.Tetris.Lib.Systems
         /// <returns>True if the game is over.</returns>
         private bool IsGameOver()
         {
-            bool isOver = !isLineEmpty(0);
+            bool isOver = !_Grid.IsLineEmpty(0);
             if (isOver)
             {
                 GameOver?.Invoke();

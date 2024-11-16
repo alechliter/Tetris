@@ -2,7 +2,6 @@
 using Lechliter.Tetris.Lib.Exceptions;
 using Lechliter.Tetris.Lib.Models;
 using Lechliter.Tetris.Lib.Objects;
-using Lechliter.Tetris.Lib.Types;
 
 namespace Lechliter.Tetris.Lib.Systems
 {
@@ -12,24 +11,24 @@ namespace Lechliter.Tetris.Lib.Systems
 
         public IFrameTimer LockTimerStationary { get; protected set; }
 
-        public event Action CollisionDetected;
+        #region Events
 
-        public event Action LockPiece;
+        public event Action? CollisionDetected;
 
-        private static readonly int NUM_FALLING_FRAMES = 8;
+        public event Action? LockPiece;
 
-        private static readonly int NUM_STATIONARY_FRAMES = 2;
+        #endregion
 
-        private ITetromino<ePieceType, eDirection, eMoveType> piece;
+        private ITetromino<ePieceType, eDirection, eMoveType>? piece;
 
-        private ePieceType[,] grid_pieces;
+        private IGrid<ePieceType, eDirection, eMoveType> _Grid;
 
-        private IGrid<IntDimensions, Point> _Grid;
-
-        public CollisionDetector(IGrid<IntDimensions, Point> grid)
+        public CollisionDetector(IGrid<ePieceType, eDirection, eMoveType> grid)
         {
+            LockTimerFalling = new LockTimer(NUM_FALLING_FRAMES);
+            LockTimerStationary = new LockTimer(NUM_STATIONARY_FRAMES);
             _Grid = grid;
-            Initialize();
+            InitializeLockPieceWatcher();
         }
 
         public void StopAndResetStationaryTimer()
@@ -38,19 +37,17 @@ namespace Lechliter.Tetris.Lib.Systems
             LockTimerStationary.Reset();
         }
 
-        public bool DetectCollisions(ITetromino<ePieceType, eDirection, eMoveType> piece, ePieceType[,] grid_pieces, eMoveType moveType)
+        public bool DetectCollisions(ITetromino<ePieceType, eDirection, eMoveType> piece, eMoveType moveType)
         {
             bool isCollisionDetected = false;
 
             this.piece = piece;
-            this.grid_pieces = grid_pieces;
 
             foreach (IBlock block in piece.Blocks)
             {
-                int x, y;
-                _Grid.GridPosition(block.Position, out x, out y);
+                _Grid.GridPosition(block.Position, out int x, out int y);
 
-                isCollisionDetected = isInBounds(x, y) && grid_pieces[x, y] != ePieceType.Empty;
+                isCollisionDetected = isInBounds(x, y) && _Grid.LockedPieces[x, y] != ePieceType.Empty;
                 if (isCollisionDetected)
                 {
                     switch (moveType)
@@ -112,13 +109,6 @@ namespace Lechliter.Tetris.Lib.Systems
             }
 
             return isValidMove;
-        }
-
-        private void Initialize()
-        {
-            LockTimerFalling = new LockTimer(NUM_FALLING_FRAMES);
-            LockTimerStationary = new LockTimer(NUM_STATIONARY_FRAMES);
-            InitializeLockPieceWatcher();
         }
 
         private void InitializeLockPieceWatcher()
@@ -220,13 +210,13 @@ namespace Lechliter.Tetris.Lib.Systems
 
             if (isPossible)
             {
-                isPossible = TryMove(piece, grid_pieces, moves);
+                isPossible = TryMove(piece, _Grid.LockedPieces, moves);
             }
 
             return isPossible;
         }
 
-        private void MoveToNextEmptySpace(int x, int y)
+        private bool MoveToNextEmptySpace(int x, int y)
         {
             List<List<Movement>> possibleMoves = GeneratePossibleMoves();
 
@@ -243,11 +233,7 @@ namespace Lechliter.Tetris.Lib.Systems
                     break;
                 }
             }
-
-            if (!foundPossibleMove)
-            {
-                piece.UndoMove(eMoveType.Rotation);
-            }
+            return foundPossibleMove;
         }
 
         private static List<List<Movement>> GeneratePossibleMoves()
@@ -286,82 +272,22 @@ namespace Lechliter.Tetris.Lib.Systems
             };
         }
 
-        [Obsolete]
-        private void ParseMovementDirections((int vertical, int horizontal)[] options, int x, int y)
+        private void UndoRotation(int x, int y)
         {
-            // TODO: This has many bugs and is too complicated. This solution isn't more efficient than the original, and only reduces code duplication.
-            Func<int, int, int, bool> noBoundaryToLeft = (int x_pivot, int x, int disp) => x_pivot < x && x_pivot - disp > 0;
-            Func<int, int, int, bool> noBoundaryToRight = (int x_pivot, int x, int disp) => x_pivot > x && x_pivot + disp < _Grid.BoundsDim.X - 1;
+            bool foundPossibleMove = MoveToNextEmptySpace(x, y);
 
-            int x_pivot, y_pivot;
-            _Grid.GridPosition(piece.Position, out x_pivot, out y_pivot);
-
-            bool undoMove = true;
-            foreach ((int vertical, int horizontal) in options)
-            {
-                Dictionary<eDirection, bool> possibleDirections = new Dictionary<eDirection, bool>()
-                {
-                    { eDirection.Up,  vertical > 0 && y - vertical > 0 },
-                    { eDirection.Down, vertical > 0 && y + vertical < _Grid.BoundsDim.Y - 1 },
-                    { eDirection.Left, horizontal > 0 && noBoundaryToLeft(x_pivot, x, horizontal) },
-                    { eDirection.Right, horizontal > 0 && noBoundaryToRight(x_pivot, x, horizontal) }
-                };
-
-                List<Movement> vertical_left = new List<Movement>();
-                List<Movement> vertical_right = new List<Movement>();
-
-                foreach (KeyValuePair<eDirection, bool> possibleDirection in possibleDirections)
-                {
-                    if (possibleDirection.Value)
-                    {
-                        if (possibleDirection.Key == eDirection.Left)
-                        {
-                            vertical_left.Add(new Movement(eMoveType.Translation, possibleDirection.Key, num_times: horizontal));
-                        }
-                        else if (possibleDirection.Key == eDirection.Right)
-                        {
-                            vertical_right.Add(new Movement(eMoveType.Translation, possibleDirection.Key, num_times: horizontal));
-                        }
-                        else
-                        {
-                            vertical_left.Add(new Movement(eMoveType.Translation, possibleDirection.Key, num_times: vertical));
-                            vertical_right.Add(new Movement(eMoveType.Translation, possibleDirection.Key, num_times: vertical));
-                        }
-                    }
-                }
-
-                bool canMoveUpLeft = TryMove(piece, grid_pieces, vertical_left.ToArray());
-                bool canMoveUpRight = TryMove(piece, grid_pieces, vertical_right.ToArray());
-
-                if (canMoveUpLeft)
-                {
-                    foreach (Movement movement in vertical_left)
-                    {
-                        movement.ExecuteMove(piece);
-                    }
-                    undoMove = false;
-                    break;
-                }
-                else if (canMoveUpRight)
-                {
-                    foreach (Movement movement in vertical_right)
-                    {
-                        movement.ExecuteMove(piece);
-                    }
-                    undoMove = false;
-                    break;
-                }
-            }
-            if (undoMove)
+            if (!foundPossibleMove)
             {
                 piece.UndoMove(eMoveType.Rotation);
             }
         }
 
-        private void UndoRotation(int x, int y)
-        {
-            (int vertical, int horizontal)[] options = { (1, 0), (0, 1), (2, 0), (0, 2), (1, 1), (2, 1), (1, 2), (2, 2) };
-            MoveToNextEmptySpace(x, y);
-        }
+        #region Constants
+
+        private const int NUM_FALLING_FRAMES = 8;
+
+        private const int NUM_STATIONARY_FRAMES = 2;
+
+        #endregion
     }
 }

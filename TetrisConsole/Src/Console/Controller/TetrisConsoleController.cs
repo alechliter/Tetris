@@ -11,7 +11,7 @@ namespace Lechliter.Tetris.TetrisConsole
 {
     public class TetrisConsoleController : ITetrisConsoleController
     {
-        private IGrid<IntDimensions, Point> grid;
+        private IGrid<ePieceType, eDirection, eMoveType> grid;
         private ICollisionDetector<ePieceType, eDirection, eMoveType> collisionDetector;
         private ITracker<ePieceType, eDirection, eMoveType> tracker;
         private IView<eTextColor, ePieceType> view;
@@ -61,7 +61,7 @@ namespace Lechliter.Tetris.TetrisConsole
             scoreBoard = new ScoreBoard();
             tracker = new Tracker(grid, collisionDetector, frame, inputHandler, scoreBoard);
             soundEffect = new SimpleSoundEffect(tracker);
-            layout = new TetrisConsoleLayout(collisionDetector, tracker, scoreBoard, frame);
+            layout = new TetrisConsoleLayout(collisionDetector, tracker, grid, scoreBoard, frame);
             view = new ConsoleView(layout);
 
             InitializeInputHandler();
@@ -74,8 +74,15 @@ namespace Lechliter.Tetris.TetrisConsole
 
             while (!isDone)
             {
-                inputHandler.HandleInput();
-                frame.nextFrame();
+                try
+                {
+                    inputHandler.HandleInput();
+                    frame.nextFrame();
+                }
+                catch (Exception e)
+                {
+                    ErrorMessageHandler.DisplayMessage(e.Message);
+                }
             }
 
             Console.WriteLine("Done.");

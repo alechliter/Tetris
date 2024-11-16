@@ -15,6 +15,8 @@ namespace Lechliter.Tetris.TetrisConsole
 
         private readonly ITracker<ePieceType, eDirection, eMoveType> _Tracker;
 
+        private readonly IGrid<ePieceType, eDirection, eMoveType> _Grid;
+
         private readonly IScore _ScoreBoard;
 
         private readonly IFrame _Frame;
@@ -22,11 +24,13 @@ namespace Lechliter.Tetris.TetrisConsole
         public TetrisConsoleLayout(
             ICollisionDetector<ePieceType, eDirection, eMoveType> collisionDetector,
             ITracker<ePieceType, eDirection, eMoveType> tracker,
+            IGrid<ePieceType, eDirection, eMoveType> grid,
             IScore scoreBoard,
             IFrame frame)
         {
             _CollisionDetector = collisionDetector;
             _Tracker = tracker;
+            _Grid = grid;
             _ScoreBoard = scoreBoard;
             _Frame = frame;
         }
@@ -35,8 +39,8 @@ namespace Lechliter.Tetris.TetrisConsole
         {
             // Add Grid to Layout
             DynamicComponent gridComponent = new DynamicComponent(1, new IntPoint(0, 0), 2);
-            gridComponent.Grid = ConsoleView.ConvertPieceGridToContentGrid(_Tracker.AllPieces);
-            _Tracker.GridUpdate += () => gridComponent.OnUpdate(ConsoleView.ConvertPieceGridToContentGrid(_Tracker.AllPieces));
+            gridComponent.Grid = ConsoleView.ConvertPieceGridToContentGrid(_Grid.Pieces);
+            _Grid.Update += () => gridComponent.OnUpdate(ConsoleView.ConvertPieceGridToContentGrid(_Grid.Pieces));
             AddComponent(gridComponent);
 
             // ScoreBoard

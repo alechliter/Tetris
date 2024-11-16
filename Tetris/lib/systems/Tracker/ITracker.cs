@@ -25,25 +25,6 @@ namespace Lechliter.Tetris.Lib.Systems
         public IPreview<TPieceType, TPieceDirection, TMoveType> HeldPiece { get; }
 
         /// <summary>
-        /// Matrix of stationary blocks and boundaries, with the origin (LockedPieces[0, 0]) in the 
-        /// top left corner of the grid.
-        /// </summary>
-        /// <value>Matrix of TPieceType values.</value>
-        public TPieceType[,] LockedPieces { get; }
-
-        /// <summary>
-        /// Matrix of stationary blocks, boundaries, and the current tetromino blocks, with the origin (LockedPieces[0, 0]) in the 
-        /// top left corner of the grid.
-        /// </summary>
-        /// <value>Matrix of TPieceType values.</value>
-        public TPieceType[,] AllPieces { get; }
-
-        /// <summary>
-        /// Subscriber event for when the grid updates. Alert all subscribers when the grid updates.
-        /// </summary>
-        public event Action GridUpdate;
-
-        /// <summary>
         /// Subscriber event for when the game ends. Alerts all subscribers when a tetromino locks at the very top.
         /// </summary>
         public event Action GameOver;

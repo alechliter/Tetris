@@ -36,7 +36,7 @@ namespace Lechliter.Tetris.Lib.Systems
         /// <param name="grid_pieces"></param>
         /// <param name="moveType"></param>
         /// <returns></returns>
-        public bool DetectCollisions(ITetromino<TPieceType, TDirection, TMoveType> piece, TPieceType[,] grid_pieces, TMoveType moveType);
+        public bool DetectCollisions(ITetromino<TPieceType, TDirection, TMoveType> piece, TMoveType moveType);
 
         /// <summary>
         /// Determines whether the given list of moves for a piece on the grid is possible without causing any further collisions. 
