@@ -1,4 +1,6 @@
-﻿namespace Lechliter.Tetris.Lib.Objects
+﻿using Tetris.lib.Design.Helpers;
+
+namespace Lechliter.Tetris.Lib.Objects
 {
     public class Frame : IFrame
     {
@@ -15,14 +17,20 @@
 
         private long InitialInteravalMS;
 
-        private const long DEFAULT_INTERVAL = 1000;
+        private static int DefaultInterval
+        {
+            get
+            {
+                return ConfigurationHelper.GetInt("FrameIntervalDefault", DEFAULT_INTERVAL);
+            }
+        }
 
-        public Frame(long interval = DEFAULT_INTERVAL)
+        public Frame(long? interval = null)
         {
             Past = DateTime.Now.Ticks;
             Now = Past;
             TicksDiff = Now - Past;
-            IntervalMS = interval;
+            IntervalMS = interval.HasValue ? interval.Value : DefaultInterval;
             InitialInteravalMS = IntervalMS;
         }
 
@@ -45,5 +53,11 @@
         {
             IntervalMS = InitialInteravalMS - ms * 100;
         }
+
+        #region Constants
+
+        private const int DEFAULT_INTERVAL = 1000;
+
+        #endregion
     }
 }

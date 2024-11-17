@@ -2,6 +2,7 @@
 using Lechliter.Tetris.Lib.Exceptions;
 using Lechliter.Tetris.Lib.Systems;
 using Lechliter.Tetris.Lib.Types;
+using Tetris.lib.Design.Helpers;
 
 namespace Lechliter.Tetris.Lib.Objects
 {
@@ -34,16 +35,24 @@ namespace Lechliter.Tetris.Lib.Objects
 
         private readonly IFrame? _Frame;
 
+        private static int BlocksCount
+        {
+            get
+            {
+                return ConfigurationHelper.GetInt("BlocksPerTetrominoCount", DEFAULT_BLOCKS_COUNT);
+            }
+        }
+
         private static readonly Random _Random;
 
-        private static readonly int StandardPieceCount;
+        private static readonly IEnumerable<ePieceType> StandardPieces;
 
         #endregion
 
         static Tetromino()
         {
             _Random = new Random(DateTime.Now.GetHashCode());
-            StandardPieceCount = PieceTypeExtensions.StandardPieceCount();
+            StandardPieces = PieceTypeExtensions.StandardPieces();
         }
 
         public Tetromino(Point initialPos)
@@ -142,7 +151,7 @@ namespace Lechliter.Tetris.Lib.Objects
 
             this.Type = type;
 
-            Blocks = new List<IBlock>(NUM_BLOCKS);
+            Blocks = new List<IBlock>(BlocksCount);
             ConstructTetromino(Blocks, type, ref Pivot);
 
             UpdatePosition?.Invoke(eMoveType.Spawn);
@@ -288,34 +297,14 @@ namespace Lechliter.Tetris.Lib.Objects
 
         private static ePieceType RandType()
         {
-            ePieceType newType = ePieceType.O;
-            int randomType = _Random.Next(StandardPieceCount);
+            int randomType = _Random.Next(StandardPieces.Count());
+            ePieceType newType = StandardPieces.ElementAtOrDefault(randomType);
 
-            switch (randomType)
+            if (newType == ePieceType.NotSet)
             {
-                case 0: // I
-                    newType = ePieceType.I;
-                    break;
-                case 1: // O
-                    break;
-                case 2: // T
-                    newType = ePieceType.T;
-                    break;
-                case 3: // J
-                    newType = ePieceType.J;
-                    break;
-                case 4: // L
-                    newType = ePieceType.L;
-                    break;
-                case 5: // S
-                    newType = ePieceType.S;
-                    break;
-                case 6: // Z
-                    newType = ePieceType.Z;
-                    break;
-                default:
-                    throw new TetrisLibException("Tetromino: Invalid Tetromino Type (RandType)");
+                throw new TetrisLibException("Tetromino: Invalid Tetromino Type (RandType)");
             }
+
             return newType;
         }
 
@@ -323,7 +312,7 @@ namespace Lechliter.Tetris.Lib.Objects
 
         #region Constants
 
-        private const int NUM_BLOCKS = 4;
+        private const int DEFAULT_BLOCKS_COUNT = 4;
 
         #endregion
     }

@@ -2,17 +2,13 @@
 {
     public class LockTimer : IFrameTimer
     {
-        public int FramesRemaining { get { return remaining_frames; } }
+        public int FramesRemaining { get; private set; }
 
-        public bool IsRunning { get { return isCounting; } }
+        public bool IsRunning { get; private set; }
 
-        public event Action TimerFinished;
+        public event Action? TimerFinished;
 
-        private int remaining_frames;
-
-        private int initial_frame_count;
-
-        private bool isCounting;
+        private int InitialFrameCount { get; set; }
 
         private const int DEFAULT_FRAME_COUNT = 5;
 
@@ -23,20 +19,20 @@
 
         public void Start()
         {
-            isCounting = true;
+            IsRunning = true;
         }
 
         public void Stop()
         {
-            isCounting = false;
+            IsRunning = false;
         }
 
         public void CountDown()
         {
-            if (isCounting)
+            if (IsRunning)
             {
-                remaining_frames--;
-                if (remaining_frames <= 0)
+                FramesRemaining--;
+                if (FramesRemaining <= 0)
                 {
                     Stop();
                     Reset();
@@ -47,19 +43,19 @@
 
         public void Reset()
         {
-            remaining_frames = initial_frame_count;
+            FramesRemaining = InitialFrameCount;
         }
 
         public void SetTimer(int numFrames)
         {
-            initial_frame_count = numFrames;
+            InitialFrameCount = numFrames;
         }
 
         private void Initialize(int frame_count)
         {
             SetTimer(frame_count);
             Reset();
-            isCounting = false;
+            IsRunning = false;
         }
     }
 }

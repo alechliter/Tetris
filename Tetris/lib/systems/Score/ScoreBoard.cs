@@ -1,4 +1,6 @@
-﻿namespace Lechliter.Tetris.Lib.Systems
+﻿using Tetris.lib.Design.Helpers;
+
+namespace Lechliter.Tetris.Lib.Systems
 {
     public class ScoreBoard : IScore
     {
@@ -10,11 +12,17 @@
 
         public event Action<int>? UpdatedScore;
 
-        private static readonly double K = 1.05;
+        private static readonly double LineMultiplier;
 
-        private static readonly double Scale = 15;
+        private static readonly double Scale;
 
         private int NumClearedLines;
+
+        static ScoreBoard()
+        {
+            LineMultiplier = ConfigurationHelper.GetFloat("ScoreLineMultiplier");
+            Scale = ConfigurationHelper.GetFloat("ScoreScale");
+        }
 
         public ScoreBoard()
         {
@@ -25,9 +33,16 @@
 
         public void Increase(int numLines)
         {
-            Score += (int)Math.Floor(Scale * Math.Exp(K * numLines)) * (Level + 1) / 10 * 10;
+            Score += CalculateScore(numLines);
             AdvanceLevel(numLines);
             UpdatedScore?.Invoke(Score);
+        }
+
+        private int CalculateScore(int numLines)
+        {
+            int levelMultiplier = Level + 1;
+            int lineScore = (int)Math.Floor(Scale * Math.Exp(LineMultiplier * numLines));
+            return levelMultiplier * lineScore / 10 * 10;
         }
 
         private void AdvanceLevel(int numLines)

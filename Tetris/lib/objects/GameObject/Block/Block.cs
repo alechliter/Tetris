@@ -1,4 +1,5 @@
 ﻿using Lechliter.Tetris.Lib.Types;
+using Tetris.lib.Design.Helpers;
 using Tetris.Lib.Definitions.Types;
 
 namespace Lechliter.Tetris.Lib.Objects
@@ -9,7 +10,28 @@ namespace Lechliter.Tetris.Lib.Objects
 
         public Point Position { get; private set; }
 
-        public static readonly FloatDimensions StandardDim = new FloatDimensions(1.0f, 1.0f);
+        public static readonly FloatDimensions StandardDim;
+
+        private static float StandardBlockWidth
+        {
+            get
+            {
+                return ConfigurationHelper.GetFloat("StandardBlockWidth", 1.0f);
+            }
+        }
+
+        private static float StandardBlockHeight
+        {
+            get
+            {
+                return ConfigurationHelper.GetFloat("StandardBlockHeight", 1.0f);
+            }
+        }
+
+        static Block()
+        {
+            StandardDim = new FloatDimensions(StandardBlockWidth, StandardBlockHeight);
+        }
 
         public Block() : this(new Point())
         {

@@ -1,6 +1,7 @@
 ﻿using Lechliter.Tetris.Lib.Definitions;
 using Lechliter.Tetris.Lib.Exceptions;
 using Lechliter.Tetris.Lib.Types;
+using Tetris.lib.Design.Helpers;
 
 namespace Lechliter.Tetris.Lib.Objects
 {
@@ -14,6 +15,22 @@ namespace Lechliter.Tetris.Lib.Objects
 
         public event Action? Update;
 
+        private static int GridWidth
+        {
+            get
+            {
+                return ConfigurationHelper.GetInt("GridWidth", DEFAULT_GRID_WIDTH);
+            }
+        }
+
+        private static int GridHeight
+        {
+            get
+            {
+                return ConfigurationHelper.GetInt("GridHeight", DEFAULT_GRID_HEIGHT);
+            }
+        }
+
         private ePieceType[,] LockedPieces { get; set; }
 
         private static readonly IntDimensions DefaultBounds;
@@ -22,8 +39,8 @@ namespace Lechliter.Tetris.Lib.Objects
 
         static Grid()
         {
-            DefaultBounds = new IntDimensions(GRID_WIDTH, GRID_HEIGHT);
-            DefaultGrid = new IntDimensions(GRID_WIDTH - 2, GRID_HEIGHT - 2);
+            DefaultBounds = new IntDimensions(GridWidth, GridHeight);
+            DefaultGrid = new IntDimensions(GridWidth - 2, GridHeight - 2);
         }
 
         public Grid()
@@ -194,9 +211,9 @@ namespace Lechliter.Tetris.Lib.Objects
 
         #region Constants
 
-        private const int GRID_WIDTH = 12;
+        private const int DEFAULT_GRID_WIDTH = 12;
 
-        private const int GRID_HEIGHT = 22;
+        private const int DEFAULT_GRID_HEIGHT = 22;
 
         #endregion
     }
