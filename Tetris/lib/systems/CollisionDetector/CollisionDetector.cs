@@ -2,6 +2,7 @@
 using Lechliter.Tetris.Lib.Exceptions;
 using Lechliter.Tetris.Lib.Models;
 using Lechliter.Tetris.Lib.Objects;
+using Tetris.lib.Design.Helpers;
 
 namespace Lechliter.Tetris.Lib.Systems
 {
@@ -23,8 +24,12 @@ namespace Lechliter.Tetris.Lib.Systems
 
         public CollisionDetector(IGrid<ePieceType, eDirection, eMoveType> grid)
         {
-            LockTimerFalling = new LockTimer(NUM_FALLING_FRAMES);
-            LockTimerStationary = new LockTimer(NUM_STATIONARY_FRAMES);
+            LockTimerFalling = new LockTimer(
+                frame_count: ConfigurationHelper.GetInt("LockTimerFallingFrameCount", DEFAULT_NUM_FALLING_FRAMES)
+            );
+            LockTimerStationary = new LockTimer(
+                frame_count: ConfigurationHelper.GetInt("LockTimerStationaryFrameCount", DEFAULT_NUM_STATIONARY_FRAMES)
+            );
             _Grid = grid;
             InitializeLockPieceWatcher();
         }
@@ -231,9 +236,9 @@ namespace Lechliter.Tetris.Lib.Systems
 
         #region Constants
 
-        private const int NUM_FALLING_FRAMES = 8;
+        private const int DEFAULT_NUM_FALLING_FRAMES = 8;
 
-        private const int NUM_STATIONARY_FRAMES = 2;
+        private const int DEFAULT_NUM_STATIONARY_FRAMES = 2;
 
         #endregion
     }

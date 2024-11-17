@@ -41,9 +41,9 @@ namespace Lechliter.Tetris.Lib.Definitions
 
     public static class PieceTypeExtensions
     {
-        public static int StandardPieceCount()
+        public static IEnumerable<ePieceType> StandardPieces()
         {
-            return Enum.GetValues<ePieceType>().Count((piece) => piece.IsStandardPiece());
+            return Enum.GetValues<ePieceType>().Where((piece) => piece.IsStandardPiece());
         }
 
         public static bool IsStandardPiece(this ePieceType pieceType)

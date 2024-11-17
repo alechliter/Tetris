@@ -1,5 +1,6 @@
 ﻿using Lechliter.Tetris.Lib.Definitions;
 using Lechliter.Tetris.Lib.Types;
+using Tetris.lib.Design.Helpers;
 
 namespace Lechliter.Tetris.Lib.Objects
 {
@@ -11,9 +12,21 @@ namespace Lechliter.Tetris.Lib.Objects
 
         public event Action PieceUpdated;
 
-        private static IntDimensions Dim { get => new IntDimensions(3, 4); }
+        private static readonly IntDimensions Dim;
 
-        private static readonly Point DefaultOrigin = new Point(1, 2);
+        private static readonly Point DefaultOrigin;
+
+        static Preview()
+        {
+            Dim = new IntDimensions(
+                width: ConfigurationHelper.GetInt("PreviewWindowWidth"),
+                height: ConfigurationHelper.GetInt("PreviewWindowHeight")
+            );
+            DefaultOrigin = new Point(
+                x: ConfigurationHelper.GetFloat("PreviewWindowOriginX"),
+                y: ConfigurationHelper.GetFloat("PreviewWindowOriginY")
+            );
+        }
 
         public Preview()
         {

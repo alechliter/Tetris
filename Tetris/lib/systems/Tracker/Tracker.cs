@@ -12,11 +12,11 @@ namespace Lechliter.Tetris.Lib.Systems
 
         public IPreview<ePieceType, eDirection, eMoveType> HeldPiece { get; }
 
-        public event Action GameOver;
+        public event Action? GameOver;
 
-        public event Action<int> LinesCleared;
+        public event Action<int>? LinesCleared;
 
-        public event Action PieceLocked;
+        public event Action? PieceLocked;
 
         private readonly Point SpawnPoint;
 

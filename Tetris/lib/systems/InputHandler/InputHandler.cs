@@ -6,7 +6,7 @@ namespace Lechliter.Tetris.Lib.Systems
     {
         public IDictionary<ConsoleKey, Action> KeyEvent { get; }
 
-        public Action AnyKeyEvent { get; set; }
+        public Action? AnyKeyEvent { get; set; }
 
         private readonly Queue<ConsoleKeyInfo> PressedKeys;
 
@@ -71,8 +71,7 @@ namespace Lechliter.Tetris.Lib.Systems
 
         private void InvokeKeyAction(ConsoleKeyInfo key)
         {
-            Action keyEvent = null;
-            if (KeyEvent.TryGetValue(key.Key, out keyEvent))
+            if (KeyEvent.TryGetValue(key.Key, out Action? keyEvent))
             {
                 keyEvent?.Invoke();
                 AnyKeyEvent?.Invoke();
