@@ -67,15 +67,14 @@ namespace Lechliter.Tetris.Lib.Objects
             return new Tetromino(InitialPos);
         }
 
-        public void Move(eDirection direction)
-        {
-            Move(direction, eMoveType.Translation);
-        }
-
-        public void Move(eDirection direction, eMoveType moveType)
+        public void Move(eDirection direction, bool emitEvent = true)
         {
             move_blocks(direction);
-            UpdatePosition?.Invoke(moveType);
+
+            if (emitEvent)
+            {
+                UpdatePosition?.Invoke(eMoveType.Translation);
+            }
         }
 
         public void Rotate(eDirection direction)
@@ -158,7 +157,7 @@ namespace Lechliter.Tetris.Lib.Objects
             copy_piece.Blocks = new List<IBlock>();
             foreach (IBlock block in Blocks)
             {
-                copy_piece.Blocks.Add(block.Copy() as IBlock);
+                copy_piece.Blocks.Add(block.Copy());
             }
             copy_piece.Velocity = Velocity.Copy();
             copy_piece.Rotation = Rotation;

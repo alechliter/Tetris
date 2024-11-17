@@ -42,10 +42,9 @@ namespace Lechliter.Tetris.Lib.Systems
         /// Determines whether the given list of moves for a piece on the grid is possible without causing any further collisions. 
         /// </summary>
         /// <param name="piece">Piece to check moves on.</param>
-        /// <param name="grid_pieces">Grid that contains the piece and locked pieces.</param>
         /// <param name="moves">The list of movements to test on the piece.</param>
         /// <returns>True if the list of movements is possible.</returns>
-        public bool TryMove(ITetromino<ePieceType, eDirection, eMoveType> piece, ePieceType[,] grid_pieces, params Movement[] moves);
+        public bool TryMove(ITetromino<ePieceType, eDirection, eMoveType> piece, params Movement[] moves);
 
 
         public void StopAndResetStationaryTimer();

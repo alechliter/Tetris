@@ -19,8 +19,6 @@ namespace Lechliter.Tetris.Lib.Systems
 
         #endregion
 
-        private ITetromino<ePieceType, eDirection, eMoveType>? Piece;
-
         private IGrid<ePieceType, eDirection, eMoveType> _Grid;
 
         public CollisionDetector(IGrid<ePieceType, eDirection, eMoveType> grid)
@@ -41,24 +39,22 @@ namespace Lechliter.Tetris.Lib.Systems
         {
             bool isCollisionDetected = false;
 
-            this.Piece = piece;
-
             foreach (IBlock block in piece.Blocks)
             {
                 _Grid.GridPosition(block.Position, out int x, out int y);
 
-                isCollisionDetected = _Grid.IsInBounds(x, y) && _Grid.LockedPieces[x, y] != ePieceType.Empty;
+                isCollisionDetected = _Grid.IsInBounds(x, y) && !_Grid.IsCellEmpty(x, y);
                 if (isCollisionDetected)
                 {
                     switch (moveType)
                     {
                         case eMoveType.Translation:
                             piece.UndoMove(moveType);
-                            RestartFallingTimerWhenFalling();
-                            RestartStationaryTimerWhenFalling();
+                            RestartFallingTimerWhenFalling(piece);
+                            RestartStationaryTimerWhenFalling(piece);
                             break;
                         case eMoveType.Rotation:
-                            UndoRotation(x, y);
+                            OnRotateCollision(piece, x, y);
                             break;
                         default:
                             throw new TetrisLibException($"Collision Detector: Unhandled collision from move type: {moveType.ToString()}");
@@ -76,12 +72,12 @@ namespace Lechliter.Tetris.Lib.Systems
             return isCollisionDetected;
         }
 
-        public bool TryMove(ITetromino<ePieceType, eDirection, eMoveType> piece, ePieceType[,] grid_pieces, params Movement[] moves)
+        public bool TryMove(ITetromino<ePieceType, eDirection, eMoveType> piece, params Movement[] moves)
         {
             bool isValidMove = true;
 
             // Copy tetromino and move copy with specified movement
-            ITetromino<ePieceType, eDirection, eMoveType> potential_piece = piece.Copy() as ITetromino<ePieceType, eDirection, eMoveType>;
+            ITetromino<ePieceType, eDirection, eMoveType> potential_piece = piece.Copy();
             foreach (Movement movement in moves)
             {
                 switch (movement.MoveType)
@@ -104,9 +100,8 @@ namespace Lechliter.Tetris.Lib.Systems
             // Check if copy is colliding with any grid pieces
             foreach (IBlock block in potential_piece.Blocks)
             {
-                int x, y;
-                _Grid.GridPosition(block.Position, out x, out y);
-                if (!_Grid.IsInBounds(x, y) || grid_pieces[x, y] != ePieceType.Empty)
+                _Grid.GridPosition(block.Position, out int x, out int y);
+                if (!_Grid.IsInBounds(x, y) || !_Grid.IsCellEmpty(x, y))
                 {
                     isValidMove = false;
                     break;
@@ -145,9 +140,9 @@ namespace Lechliter.Tetris.Lib.Systems
             LockTimerStationary.Start();
         }
 
-        private void RestartFallingTimerWhenFalling()
+        private void RestartFallingTimerWhenFalling(ITetromino<ePieceType, eDirection, eMoveType> piece)
         {
-            if (Piece.Velocity.y < 0)
+            if (piece.Velocity.y < 0)
             {
                 // Restart falling timer when bottom of piece has been hit
                 if (!LockTimerFalling.IsRunning)
@@ -157,9 +152,9 @@ namespace Lechliter.Tetris.Lib.Systems
             }
         }
 
-        private void RestartStationaryTimerWhenFalling()
+        private void RestartStationaryTimerWhenFalling(ITetromino<ePieceType, eDirection, eMoveType> piece)
         {
-            if (Piece.Velocity.y < 0)
+            if (piece.Velocity.y < 0)
             {
                 if (!LockTimerStationary.IsRunning)
                 {
@@ -168,72 +163,24 @@ namespace Lechliter.Tetris.Lib.Systems
             }
         }
 
-        /// <summary>
-        /// Determines whether the given list of moves for a piece on the grid is possible without causing any further collisions or leaving bounds.
-        /// </summary>
-        /// <param name="piece">Piece to check moves on.</param>
-        /// <param name="grid_pieces">Grid that contains the piece and locked pieces.</param>
-        /// <param name="x">The horizontal matrix index of the block that the piece has intersected with.</param>
-        /// <param name="y">The vertical matrix index of the block that the piece has intersected with.</param>
-        /// <param name="moves">The list of movements to test on the piece.</param>
-        /// <returns>True if the list of movements is possible.</returns>
-        private bool DirectionIsPossible(int x, int y, params Movement[] moves)
-        {
-            bool isPossible = true;
-
-            Func<int, int, int, bool> noBoundaryToLeft = (int x_pivot, int x, int disp) => x_pivot < x && x_pivot - disp > 0;
-            Func<int, int, int, bool> noBoundaryToRight = (int x_pivot, int x, int disp) => x_pivot > x && x_pivot + disp < _Grid.BoundsDim.X - 1;
-            Func<int, int, bool> noBoundaryAbove = (int y, int disp) => y - disp > 0;
-            Func<int, int, bool> noBoundaryBelow = (int y, int disp) => y + disp < _Grid.BoundsDim.Y - 1;
-
-            int x_pivot, y_pivot;
-            _Grid.GridPosition(Piece.Position, out x_pivot, out y_pivot);
-
-            foreach (Movement move in moves)
-            {
-                switch (move.Direction)
-                {
-                    case eDirection.Up:
-                        isPossible &= noBoundaryAbove(y, move.Count);
-                        break;
-                    case eDirection.Down:
-                        isPossible &= noBoundaryBelow(y, move.Count);
-                        break;
-                    case eDirection.Left:
-                        isPossible &= noBoundaryToLeft(x_pivot, x, move.Count);
-                        break;
-                    case eDirection.Right:
-                        isPossible &= noBoundaryToRight(x_pivot, x, move.Count);
-                        break;
-                }
-            }
-
-            if (isPossible)
-            {
-                isPossible = TryMove(Piece, _Grid.LockedPieces, moves);
-            }
-
-            return isPossible;
-        }
-
-        private bool MoveToNextEmptySpace(int x, int y)
+        private bool MoveToNextEmptySpace(ITetromino<ePieceType, eDirection, eMoveType> piece, int x, int y)
         {
             List<List<Movement>> possibleMoves = GeneratePossibleMoves();
 
-            bool foundPossibleMove = false;
+            List<Movement> possibleMoveSet = new List<Movement>();
             foreach (List<Movement> moveSet in possibleMoves)
             {
-                foundPossibleMove = DirectionIsPossible(x, y, moveSet.ToArray());
-                if (foundPossibleMove)
+                if (TryMove(piece, moveSet.ToArray()))
                 {
-                    foreach (Movement move in moveSet)
-                    {
-                        move.ExecuteMove(Piece);
-                    }
+                    possibleMoveSet = moveSet;
                     break;
                 }
             }
-            return foundPossibleMove;
+            foreach (Movement move in possibleMoveSet)
+            {
+                move.ExecuteMove(piece);
+            }
+            return possibleMoveSet.Any();
         }
 
         private static List<List<Movement>> GeneratePossibleMoves()
@@ -272,13 +219,13 @@ namespace Lechliter.Tetris.Lib.Systems
             };
         }
 
-        private void UndoRotation(int x, int y)
+        private void OnRotateCollision(ITetromino<ePieceType, eDirection, eMoveType> piece, int x, int y)
         {
-            bool foundPossibleMove = MoveToNextEmptySpace(x, y);
+            bool foundPossibleMove = MoveToNextEmptySpace(piece, x, y);
 
             if (!foundPossibleMove)
             {
-                Piece.UndoMove(eMoveType.Rotation);
+                piece.UndoMove(eMoveType.Rotation);
             }
         }
 
@@ -289,10 +236,5 @@ namespace Lechliter.Tetris.Lib.Systems
         private const int NUM_STATIONARY_FRAMES = 2;
 
         #endregion
-    }
-
-    class CollisionPlayGround
-    {
-        // TODO: Move piece mpve testing here
     }
 }

@@ -21,12 +21,6 @@ namespace Lechliter.Tetris.Lib.Objects
 
 
         /// <summary>
-        /// Matrix of locked blocks and boundaries, with the origin (Pieces[0, 0]) in the top left corner of the grid.
-        /// </summary>
-        /// <value>Matrix of TPieceType values.</value>
-        public TPieceType[,] LockedPieces { get; }
-
-        /// <summary>
         /// Subscriber event for when the grid updates. Alert all subscribers when the grid updates.
         /// </summary>
         public event Action? Update;
@@ -50,6 +44,14 @@ namespace Lechliter.Tetris.Lib.Objects
         /// Saves the current state of the grid to the locked pieces matrix.
         /// </summary>
         public void LockPieces();
+
+        /// <summary>
+        /// Checks if the cell positioned at (x, y) is empty.
+        /// </summary>
+        /// <param name="x">The x-axis position of the cell.</param>
+        /// <param name="y">The y-axis position of the cell.</param>
+        /// <returns>True if the cell at (x, y) is empty.</returns>
+        public bool IsCellEmpty(int x, int y);
 
         /// <summary>
         /// Checks if a line does not have any empty spaces.

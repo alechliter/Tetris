@@ -82,7 +82,7 @@ namespace Lechliter.Tetris.Lib.Systems
             {
                 if (HeldPiece.Piece.Type != ePieceType.NotSet)
                 {
-                    Tetromino temp = CurrentPiece.Copy() as Tetromino;
+                    ITetromino<ePieceType, eDirection, eMoveType> temp = CurrentPiece.Copy();
                     CurrentPiece.NewPiece(HeldPiece.Piece.Type);
                     HeldPiece.NewPiece(temp.Type);
                 }

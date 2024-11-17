@@ -33,14 +33,7 @@ namespace Lechliter.Tetris.Lib.Objects
         /// Moves the tetromino piece on block length in the specified direction.
         /// </summary>
         /// <param name="direction">Direction of travel</param>
-        void Move(TDirection direction);
-
-        /// <summary>
-        /// Moves the tetromino piece on block length in the specified direction.
-        /// </summary>
-        /// <param name="direction">Direction of travel</param>
-        /// <param name="moveType">Type of movement</param>
-        void Move(TDirection direction, TMoveType moveType);
+        void Move(TDirection direction, bool emitEvent = true);
 
         void Drop(ITracker<TPieceType, TDirection, TMoveType> tracker);
 

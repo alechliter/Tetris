@@ -23,7 +23,7 @@ namespace Lechliter.Tetris.Lib.Models
         {
             for (int i = 0; i < Count; i++)
             {
-                piece.Move(Direction);
+                piece.Move(Direction, emitEvent: false);
             }
         }
     }

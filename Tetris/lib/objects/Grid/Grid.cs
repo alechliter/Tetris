@@ -12,9 +12,9 @@ namespace Lechliter.Tetris.Lib.Objects
 
         public ePieceType[,] Pieces { get; private set; }
 
-        public ePieceType[,] LockedPieces { get; private set; }
-
         public event Action? Update;
+
+        private ePieceType[,] LockedPieces { get; set; }
 
         private static readonly IntDimensions DefaultBounds;
 
@@ -51,13 +51,18 @@ namespace Lechliter.Tetris.Lib.Objects
             LockedPieces = CopyGrid(Pieces);
         }
 
+        public bool IsCellEmpty(int x, int y)
+        {
+            return LockedPieces[x, y] == ePieceType.Empty;
+        }
+
         public bool IsLineFull(int row_number)
         {
             bool isFull = true;
             int x = 1;
             while (isFull && x < BoundsDim.X - 1)
             {
-                isFull = this.LockedPieces[x, row_number] != ePieceType.Empty;
+                isFull = !IsCellEmpty(x, row_number);
                 x++;
             }
             return isFull;
@@ -69,7 +74,7 @@ namespace Lechliter.Tetris.Lib.Objects
             int x = 1;
             while (isEmpty && x < BoundsDim.X - 1)
             {
-                isEmpty = this.LockedPieces[x, row_number] == ePieceType.Empty;
+                isEmpty = IsCellEmpty(x, row_number);
                 x++;
             }
             return isEmpty;
