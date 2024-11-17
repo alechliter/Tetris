@@ -20,12 +20,12 @@ In October 2024, I returned to this project again with a renewed desire to work 
 
 1. Finish refactoring the core logic into a reusable Tetris library.
 2. Create multiple versions of Tetris that use the core library alongside different languages and UI frameworks, including...
-   # Web - Angular
-   # Web - Vue
-   # Web - React
-   # Desktop - Electron
-   # Desktop - Tauri
-   # Mobile - Swift
+   - Web - Angular
+   - Web - Vue
+   - Web - React
+   - Desktop - Electron
+   - Desktop - Tauri
+   - Mobile - Swift
    
 ---
 ## How to Run
