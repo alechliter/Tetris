@@ -7,6 +7,8 @@ namespace Lechliter.Tetris.Lib.Objects
 
         public event Action? FrameAction;
 
+        public event Action<long, long>? SpeedChange;
+
         private long Past;
 
         private long Now;
@@ -51,7 +53,8 @@ namespace Lechliter.Tetris.Lib.Objects
 
         public void SpeedUp(int ms)
         {
-            IntervalMS = InitialInteravalMS - ms * 100;
+            IntervalMS = Math.Max(InitialInteravalMS - ms, 0);
+            SpeedChange?.Invoke(IntervalMS, InitialInteravalMS);
         }
 
         #region Constants

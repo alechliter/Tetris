@@ -8,6 +8,11 @@
         public event Action FrameAction;
 
         /// <summary>
+        /// Action event to invoke on frame rate changes.
+        /// </summary>
+        public event Action<long, long> SpeedChange;
+
+        /// <summary>
         /// Determines if the next frame is reached. Invokes [frameAction] for each frame.
         /// </summary>
         bool NextFrame();

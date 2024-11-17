@@ -213,6 +213,7 @@ namespace Lechliter.Tetris.Lib.Objects
 
             block.MoveTo(vector + Pivot);
         }
+
         private static void ConstructTetromino(ICollection<IBlock> blocks, ePieceType type, ref Point pivot)
         {
             switch (type)

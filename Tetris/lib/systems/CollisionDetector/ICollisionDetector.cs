@@ -18,6 +18,10 @@ namespace Lechliter.Tetris.Lib.Systems
         /// </summary>
         public IFrameTimer LockTimerStationary { get; }
 
+        public int LockTimerFallingFrameRate { get; }
+
+        public int LockTimerStationaryFrameRate { get; }
+
         /// <summary>
         /// Subscriber event that alerts all subscribers when a collision has been detected.
         /// </summary>
@@ -46,7 +50,8 @@ namespace Lechliter.Tetris.Lib.Systems
         /// <returns>True if the list of movements is possible.</returns>
         public bool TryMove(ITetromino<ePieceType, eDirection, eMoveType> piece, params Movement[] moves);
 
-
         public void StopAndResetStationaryTimer();
+
+        public void OnSpeedChange(long intervalMS, long initialIntervalMS);
     }
 }

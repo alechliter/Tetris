@@ -1,6 +1,7 @@
 ﻿using Lechliter.Tetris.Lib.Definitions;
 using Lechliter.Tetris.Lib.Objects;
 using Lechliter.Tetris.Lib.Types;
+using Tetris.lib.Design.Helpers;
 
 namespace Lechliter.Tetris.Lib.Systems
 {
@@ -45,7 +46,7 @@ namespace Lechliter.Tetris.Lib.Systems
             _InputHandler = inputHandler;
             _Score = score;
 
-            SpawnPoint = new Point(grid.BoundsDim.X / 2 - 1, 0);
+            SpawnPoint = new Point(grid.BoundsDim.X / 2 - 1, -2);
             CurrentPiece = new Tetromino(_Frame, SpawnPoint);
             NextPiece = new Preview();
             HeldPiece = new Preview(ePieceType.NotSet);
@@ -147,11 +148,22 @@ namespace Lechliter.Tetris.Lib.Systems
 
             // advance frame timers
             _Frame.FrameAction += NextFrame;
+            _Frame.SpeedChange += OnSpeedChange;
 
             _InputHandler.AnyKeyEvent += ResetStationaryTimer;
 
-            _Score.NextLevel += _Frame.SpeedUp;
+            _Score.NextLevel += OnNextLevel;
             LinesCleared += _Score.Increase;
+        }
+
+        private void OnNextLevel(int level)
+        {
+            _Frame.SpeedUp(level * ConfigurationHelper.GetInt("NextLevelFrameRateChange"));
+        }
+
+        private void OnSpeedChange(long currentIntervalMS, long initialIntervalMS)
+        {
+            _CollisionDetector.OnSpeedChange(currentIntervalMS, initialIntervalMS);
         }
 
         private void DetectCollisions(eMoveType moveType)

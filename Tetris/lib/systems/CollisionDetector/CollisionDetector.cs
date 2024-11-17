@@ -12,6 +12,16 @@ namespace Lechliter.Tetris.Lib.Systems
 
         public IFrameTimer LockTimerStationary { get; protected set; }
 
+        public int LockTimerFallingFrameRate
+        {
+            get { return ConfigurationHelper.GetInt("LockTimerFallingFrameCount", DEFAULT_NUM_FALLING_FRAMES); }
+        }
+
+        public int LockTimerStationaryFrameRate
+        {
+            get { return ConfigurationHelper.GetInt("LockTimerStationaryFrameCount", DEFAULT_NUM_STATIONARY_FRAMES); }
+        }
+
         #region Events
 
         public event Action? CollisionDetected;
@@ -24,12 +34,8 @@ namespace Lechliter.Tetris.Lib.Systems
 
         public CollisionDetector(IGrid<ePieceType, eDirection, eMoveType> grid)
         {
-            LockTimerFalling = new LockTimer(
-                frame_count: ConfigurationHelper.GetInt("LockTimerFallingFrameCount", DEFAULT_NUM_FALLING_FRAMES)
-            );
-            LockTimerStationary = new LockTimer(
-                frame_count: ConfigurationHelper.GetInt("LockTimerStationaryFrameCount", DEFAULT_NUM_STATIONARY_FRAMES)
-            );
+            LockTimerFalling = new LockTimer(LockTimerFallingFrameRate);
+            LockTimerStationary = new LockTimer(LockTimerStationaryFrameRate);
             _Grid = grid;
             InitializeLockPieceWatcher();
         }
@@ -38,6 +44,13 @@ namespace Lechliter.Tetris.Lib.Systems
         {
             LockTimerStationary.Stop();
             LockTimerStationary.Reset();
+        }
+
+        public void OnSpeedChange(long intervalMS, long initialIntervalMS)
+        {
+            float rateChange = 1 + Math.Abs(initialIntervalMS - intervalMS) / (float)initialIntervalMS;
+            LockTimerStationary.SetTimer((int)(rateChange * LockTimerStationaryFrameRate));
+            LockTimerFalling.SetTimer((int)(rateChange * LockTimerFallingFrameRate));
         }
 
         public bool DetectCollisions(ITetromino<ePieceType, eDirection, eMoveType> piece, eMoveType moveType)
@@ -64,9 +77,13 @@ namespace Lechliter.Tetris.Lib.Systems
                         default:
                             throw new TetrisLibException($"Collision Detector: Unhandled collision from move type: {moveType.ToString()}");
                     }
-                    CollisionDetected?.Invoke();
                     break;
                 }
+            }
+
+            if (isCollisionDetected)
+            {
+                CollisionDetected?.Invoke();
             }
 
             if (!isCollisionDetected && piece.Velocity.y > 0)
@@ -192,35 +209,35 @@ namespace Lechliter.Tetris.Lib.Systems
         {
             return new List<List<Movement>>()
             {
+                new List<Movement>(){ new Movement(eMoveType.Translation, eDirection.Down, 1) },
                 new List<Movement>(){ new Movement(eMoveType.Translation, eDirection.Up, 1) },
                 new List<Movement>(){ new Movement(eMoveType.Translation, eDirection.Left, 1) },
                 new List<Movement>(){ new Movement(eMoveType.Translation, eDirection.Right, 1) },
-                new List<Movement>(){ new Movement(eMoveType.Translation, eDirection.Down, 1) },
 
+                new List<Movement>(){ new Movement(eMoveType.Translation, eDirection.Down, 2) },
                 new List<Movement>(){ new Movement(eMoveType.Translation, eDirection.Up, 2) },
                 new List<Movement>(){ new Movement(eMoveType.Translation, eDirection.Left, 2) },
                 new List<Movement>(){ new Movement(eMoveType.Translation, eDirection.Right, 2) },
-                new List<Movement>(){ new Movement(eMoveType.Translation, eDirection.Down, 2) },
 
-                new List<Movement>(){ new Movement(eMoveType.Translation, eDirection.Up, 1), new Movement(eMoveType.Translation, eDirection.Left, 1) },
-                new List<Movement>(){ new Movement(eMoveType.Translation, eDirection.Up, 1), new Movement(eMoveType.Translation, eDirection.Right, 1) },
                 new List<Movement>(){ new Movement(eMoveType.Translation, eDirection.Down, 1), new Movement(eMoveType.Translation, eDirection.Left, 1) },
                 new List<Movement>(){ new Movement(eMoveType.Translation, eDirection.Down, 1), new Movement(eMoveType.Translation, eDirection.Right, 1) },
+                new List<Movement>(){ new Movement(eMoveType.Translation, eDirection.Up, 1), new Movement(eMoveType.Translation, eDirection.Left, 1) },
+                new List<Movement>(){ new Movement(eMoveType.Translation, eDirection.Up, 1), new Movement(eMoveType.Translation, eDirection.Right, 1) },
 
-                new List<Movement>(){ new Movement(eMoveType.Translation, eDirection.Up, 2), new Movement(eMoveType.Translation, eDirection.Left, 1) },
-                new List<Movement>(){ new Movement(eMoveType.Translation, eDirection.Up, 2), new Movement(eMoveType.Translation, eDirection.Right, 1) },
                 new List<Movement>(){ new Movement(eMoveType.Translation, eDirection.Down, 2), new Movement(eMoveType.Translation, eDirection.Left, 1) },
                 new List<Movement>(){ new Movement(eMoveType.Translation, eDirection.Down, 2), new Movement(eMoveType.Translation, eDirection.Right, 1) },
+                new List<Movement>(){ new Movement(eMoveType.Translation, eDirection.Up, 2), new Movement(eMoveType.Translation, eDirection.Left, 1) },
+                new List<Movement>(){ new Movement(eMoveType.Translation, eDirection.Up, 2), new Movement(eMoveType.Translation, eDirection.Right, 1) },
 
-                new List<Movement>(){ new Movement(eMoveType.Translation, eDirection.Up, 1), new Movement(eMoveType.Translation, eDirection.Left, 2) },
-                new List<Movement>(){ new Movement(eMoveType.Translation, eDirection.Up, 1), new Movement(eMoveType.Translation, eDirection.Right, 2) },
                 new List<Movement>(){ new Movement(eMoveType.Translation, eDirection.Down, 1), new Movement(eMoveType.Translation, eDirection.Left, 2) },
                 new List<Movement>(){ new Movement(eMoveType.Translation, eDirection.Down, 1), new Movement(eMoveType.Translation, eDirection.Right, 2) },
+                new List<Movement>(){ new Movement(eMoveType.Translation, eDirection.Up, 1), new Movement(eMoveType.Translation, eDirection.Left, 2) },
+                new List<Movement>(){ new Movement(eMoveType.Translation, eDirection.Up, 1), new Movement(eMoveType.Translation, eDirection.Right, 2) },
 
-                new List<Movement>(){ new Movement(eMoveType.Translation, eDirection.Up, 2), new Movement(eMoveType.Translation, eDirection.Left, 2) },
-                new List<Movement>(){ new Movement(eMoveType.Translation, eDirection.Up, 2), new Movement(eMoveType.Translation, eDirection.Right, 2) },
                 new List<Movement>(){ new Movement(eMoveType.Translation, eDirection.Down, 2), new Movement(eMoveType.Translation, eDirection.Left, 2) },
                 new List<Movement>(){ new Movement(eMoveType.Translation, eDirection.Down, 2), new Movement(eMoveType.Translation, eDirection.Right, 2) },
+                new List<Movement>(){ new Movement(eMoveType.Translation, eDirection.Up, 2), new Movement(eMoveType.Translation, eDirection.Left, 2) },
+                new List<Movement>(){ new Movement(eMoveType.Translation, eDirection.Up, 2), new Movement(eMoveType.Translation, eDirection.Right, 2) },
             };
         }
 
