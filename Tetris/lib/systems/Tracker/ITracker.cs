@@ -1,29 +1,16 @@
-﻿using Lechliter.Tetris.Lib.Definitions;
-using Lechliter.Tetris.Lib.Objects;
-
-namespace Lechliter.Tetris.Lib.Systems
+﻿namespace Lechliter.Tetris.Lib.Systems
 {
     /// <summary>
     /// ITracker records where the tetromino is with relation to the stationary blocks and the boundaries of the
     /// grid.
     /// </summary>
     /// <typeparam name="TPieceType">Enum: type of tetromino piece</typeparam>
-    /// <typeparam name="TPieceDirection">Enum: direction of movement</typeparam>
-    public interface ITracker<TPieceType, TPieceDirection, TMoveType> where TPieceType : System.Enum
-                                                    where TPieceDirection : System.Enum
+    /// <typeparam name="TDirection">Enum: direction of movement</typeparam>
+    public interface ITracker<TPieceType, TDirection, TMoveType> where TPieceType : System.Enum
+                                                    where TDirection : System.Enum
                                                     where TMoveType : System.Enum
 
     {
-        /// <summary>
-        /// The current tetromino piece being followed by the tracker.
-        /// </summary>
-        /// <value>Reference to the tetromino. </value>
-        public ITetromino<TPieceType, TPieceDirection, TMoveType> CurrentPiece { get; }
-
-        public IPreview<TPieceType, TPieceDirection, TMoveType> NextPiece { get; }
-
-        public IPreview<TPieceType, TPieceDirection, TMoveType> HeldPiece { get; }
-
         /// <summary>
         /// Subscriber event for when the game ends. Alerts all subscribers when a tetromino locks at the very top.
         /// </summary>
@@ -44,19 +31,20 @@ namespace Lechliter.Tetris.Lib.Systems
         /// </summary>
         public void LockPiece();
 
-        public void MovePiece(TPieceDirection direction);
+        public void MovePiece(TDirection direction);
 
-        public void RotatePiece(TPieceDirection direction);
+        public void RotatePiece(TDirection direction);
 
         public void DropPiece();
 
-        public void LoadNewPiece();
+        public void LoadNextPiece();
 
-        public void UpdateGrid(eMoveType moveType);
+        public void UpdateGrid();
+        public void UpdateGrid(TMoveType moveType);
 
         public void HoldPiece();
 
-        public bool IsCollision(eMoveType moveType);
+        public bool IsCollision(TMoveType moveType);
 
         public void ResetStationaryTimer();
 

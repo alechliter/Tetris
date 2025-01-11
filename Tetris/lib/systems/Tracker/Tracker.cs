@@ -1,4 +1,5 @@
 ﻿using Lechliter.Tetris.Lib.Definitions;
+using Lechliter.Tetris.Lib.Exceptions;
 using Lechliter.Tetris.Lib.Objects;
 using Lechliter.Tetris.Lib.Types;
 using Tetris.lib.Design.Helpers;
@@ -7,21 +8,40 @@ namespace Lechliter.Tetris.Lib.Systems
 {
     public class Tracker : ITracker<ePieceType, eDirection, eMoveType>
     {
-        public ITetromino<ePieceType, eDirection, eMoveType> CurrentPiece { get; protected set; }
-
-        public IPreview<ePieceType, eDirection, eMoveType> NextPiece { get; }
-
-        public IPreview<ePieceType, eDirection, eMoveType> HeldPiece { get; }
-
         public event Action? GameOver;
 
         public event Action<int>? LinesCleared;
 
         public event Action? PieceLocked;
 
+        private ITetromino<ePieceType, eDirection, eMoveType> CurrentPiece
+        {
+            get
+            {
+                if (_CurrentPiece == null)
+                {
+                    throw new TetrisLibException(ERROR_CURRENT_PIECE_BEFORE_INIT);
+                }
+                return _CurrentPiece;
+            }
+            set
+            {
+                _CurrentPiece = value;
+                UpdateGrid();
+            }
+        }
+
+        private bool CanHoldPiece = true;
+
+        private ITetromino<ePieceType, eDirection, eMoveType>? _CurrentPiece;
+
         private readonly Point SpawnPoint;
 
         private readonly ICollisionDetector<ePieceType, eDirection, eMoveType> _CollisionDetector;
+
+        private readonly ITetrominoQueue<ePieceType> _TetrominoQueue;
+
+        private readonly ITetrominoStash<ePieceType> _TetrominoStash;
 
         private readonly IGrid<ePieceType, eDirection, eMoveType> _Grid;
 
@@ -31,32 +51,36 @@ namespace Lechliter.Tetris.Lib.Systems
 
         private readonly IScore _Score;
 
-        private bool CanHoldPiece = true;
-
         public Tracker(
             IGrid<ePieceType, eDirection, eMoveType> grid,
             ICollisionDetector<ePieceType, eDirection, eMoveType> collisionDetector,
+            ITetrominoQueue<ePieceType> tetrominoQueue,
+            ITetrominoStash<ePieceType> tetrominoStash,
             IFrame frame,
             IInputHandler<ConsoleKey, Action> inputHandler,
             IScore score)
         {
             _CollisionDetector = collisionDetector;
+            _TetrominoQueue = tetrominoQueue;
+            _TetrominoStash = tetrominoStash;
             _Grid = grid;
             _Frame = frame;
             _InputHandler = inputHandler;
             _Score = score;
 
             SpawnPoint = new Point(grid.BoundsDim.X / 2 - 1, -2);
-            CurrentPiece = new Tetromino(_Frame, SpawnPoint);
-            NextPiece = new Preview();
-            HeldPiece = new Preview(ePieceType.NotSet);
 
-            _Grid.AddTetromino(CurrentPiece);
+            LoadNextPiece();
 
             StartSubscriptions();
         }
 
         #region Public Methods
+
+        public void UpdateGrid()
+        {
+            UpdateGrid(eMoveType.NotSet);
+        }
 
         public void UpdateGrid(eMoveType _moveType)
         {
@@ -71,8 +95,7 @@ namespace Lechliter.Tetris.Lib.Systems
             ResetStationaryTimer();
             if (!IsGameOver())
             {
-                CurrentPiece.NewPiece(NextPiece.Piece.Type);
-                NextPiece.NewPiece();
+                LoadNextPiece();
                 CanHoldPiece = true;
             }
         }
@@ -81,17 +104,14 @@ namespace Lechliter.Tetris.Lib.Systems
         {
             if (CanHoldPiece)
             {
-                if (HeldPiece.Piece.Type != ePieceType.NotSet)
+                ePieceType heldPieceType = _TetrominoStash.Hold(CurrentPiece.Type);
+                if (heldPieceType == ePieceType.NotSet)
                 {
-                    ITetromino<ePieceType, eDirection, eMoveType> temp = CurrentPiece.Copy();
-                    CurrentPiece.NewPiece(HeldPiece.Piece.Type);
-                    HeldPiece.NewPiece(temp.Type);
+                    LoadNextPiece();
                 }
                 else
                 {
-                    HeldPiece.NewPiece(CurrentPiece.Type);
-                    CurrentPiece.NewPiece(NextPiece.Piece.Type);
-                    NextPiece.NewPiece();
+                    CurrentPiece = NewPiece(heldPieceType);
                 }
                 CanHoldPiece = false;
             }
@@ -112,9 +132,11 @@ namespace Lechliter.Tetris.Lib.Systems
             CurrentPiece.Drop(this);
         }
 
-        public void LoadNewPiece()
+        public void LoadNextPiece()
         {
-            CurrentPiece.NewPiece();
+            ePieceType nextPieceType = _TetrominoQueue.Next();
+            CurrentPiece = NewPiece(nextPieceType);
+            _Grid.AddTetromino(CurrentPiece);
         }
 
         public bool IsCollision(eMoveType moveType)
@@ -129,6 +151,8 @@ namespace Lechliter.Tetris.Lib.Systems
 
         public void NextFrame()
         {
+            CurrentPiece.Move(eDirection.Down);
+
             _CollisionDetector.LockTimerFalling.CountDown();
             _CollisionDetector.LockTimerStationary.CountDown();
         }
@@ -139,10 +163,6 @@ namespace Lechliter.Tetris.Lib.Systems
 
         private void StartSubscriptions()
         {
-            // Subscribes to changes in the position
-            CurrentPiece.UpdatePosition += DetectCollisions;
-            CurrentPiece.UpdatePosition += UpdateGrid;
-
             // Subscribe to timer events
             _CollisionDetector.LockPiece += LockPiece;
 
@@ -154,6 +174,18 @@ namespace Lechliter.Tetris.Lib.Systems
 
             _Score.NextLevel += OnNextLevel;
             LinesCleared += _Score.Increase;
+        }
+
+        private ITetromino<ePieceType, eDirection, eMoveType> NewPiece(ePieceType pieceType)
+        {
+            ITetromino<ePieceType, eDirection, eMoveType> newPiece = new Tetromino(SpawnPoint, pieceType);
+
+            newPiece.UpdatePosition += DetectCollisions;
+            newPiece.UpdatePosition += UpdateGrid;
+
+            _Grid.AddTetromino(newPiece);
+
+            return newPiece;
         }
 
         private void OnNextLevel(int level)
@@ -200,6 +232,12 @@ namespace Lechliter.Tetris.Lib.Systems
             CurrentPiece.Blocks.CopyTo(blocks, 0);
             return blocks;
         }
+
+        #endregion
+
+        #region Constants
+
+        const string ERROR_CURRENT_PIECE_BEFORE_INIT = "Tracker current piece accessed before initialized.";
 
         #endregion
     }

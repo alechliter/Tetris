@@ -11,17 +11,53 @@ namespace Lechliter.Tetris.TetrisConsole
 {
     public class TetrisConsoleController : ITetrisConsoleController
     {
-        private IGrid<ePieceType, eDirection, eMoveType> grid;
-        private ICollisionDetector<ePieceType, eDirection, eMoveType> collisionDetector;
-        private ITracker<ePieceType, eDirection, eMoveType> tracker;
-        private IView<eTextColor, ePieceType> view;
-        private IFrame frame;
-        private IInputHandler<ConsoleKey, Action> inputHandler;
-        private IScore scoreBoard;
-        private ISoundEffect soundEffect;
-        private ITetrisConsoleLayout<DynamicComponent, List<DynamicComponent>, IntPoint> layout;
+        private readonly IGrid<ePieceType, eDirection, eMoveType> grid;
+        private readonly ICollisionDetector<ePieceType, eDirection, eMoveType> collisionDetector;
+        private readonly ITetrominoQueue<ePieceType> tetrominoQueue;
+        private readonly ITetrominoStash<ePieceType> tetrominoStash;
+        private readonly ITetrominoStashPreview<ePieceType> tetrominoStashPreview;
+        private readonly ITetrominoQueuePreview<ePieceType> tetrominoQueuePreview;
+        private readonly ITracker<ePieceType, eDirection, eMoveType> tracker;
+        private readonly IView<eTextColor, ePieceType> view;
+        private readonly IFrame frame;
+        private readonly IInputHandler<ConsoleKey, Action> inputHandler;
+        private readonly IScore scoreBoard;
+        private readonly ISoundEffect soundEffect;
+        private readonly ITetrisConsoleLayout<DynamicComponent, List<DynamicComponent>, IntPoint> layout;
+
         private bool isDone = false;
         private bool isDev = false;
+
+        public TetrisConsoleController()
+        {
+            grid = new Grid();
+            frame = new Frame();
+            collisionDetector = new CollisionDetector(grid);
+            tetrominoQueue = new TetrominoQueue();
+            tetrominoStash = new TetrominoStash();
+            tetrominoQueuePreview = new TetrominoQueuePreview(tetrominoQueue);
+            tetrominoStashPreview = new TetrominoStashPreview(tetrominoStash);
+            inputHandler = new InputHandler();
+            scoreBoard = new ScoreBoard();
+            tracker = new Tracker(
+                grid: grid,
+                collisionDetector: collisionDetector,
+                tetrominoQueue: tetrominoQueue,
+                tetrominoStash: tetrominoStash,
+                frame: frame,
+                inputHandler: inputHandler,
+                score: scoreBoard);
+            soundEffect = new SimpleSoundEffect(tracker);
+            layout = new TetrisConsoleLayout(
+                collisionDetector: collisionDetector,
+                tracker: tracker,
+                tetrominoQueuePreview: tetrominoQueuePreview,
+                tetrominoStashPreview: tetrominoStashPreview,
+                grid: grid,
+                scoreBoard: scoreBoard,
+                frame: frame);
+            view = new ConsoleView(layout);
+        }
 
         public void Run(string[] args)
         {
@@ -39,7 +75,7 @@ namespace Lechliter.Tetris.TetrisConsole
             inputHandler.KeyEvent[ConsoleKey.S] = () => tracker.RotatePiece(eDirection.Left);
             inputHandler.KeyEvent[ConsoleKey.D] = () => tracker.RotatePiece(eDirection.Right);
 
-            inputHandler.KeyEvent[ConsoleKey.N] = () => { tracker.LockPiece(); tracker.LoadNewPiece(); };
+            inputHandler.KeyEvent[ConsoleKey.N] = () => { tracker.LockPiece(); tracker.LoadNextPiece(); };
             inputHandler.KeyEvent[ConsoleKey.Q] = () => isDone = true;
 
             inputHandler.KeyEvent[ConsoleKey.R] = () => { Console.Clear(); Display(); };
@@ -54,16 +90,6 @@ namespace Lechliter.Tetris.TetrisConsole
 
         private void StartGame()
         {
-            grid = new Grid();
-            frame = new Frame();
-            collisionDetector = new CollisionDetector(grid);
-            inputHandler = new InputHandler();
-            scoreBoard = new ScoreBoard();
-            tracker = new Tracker(grid, collisionDetector, frame, inputHandler, scoreBoard);
-            soundEffect = new SimpleSoundEffect(tracker);
-            layout = new TetrisConsoleLayout(collisionDetector, tracker, grid, scoreBoard, frame);
-            view = new ConsoleView(layout);
-
             InitializeInputHandler();
 
             /* Set Up Cross-Component Listeners*/

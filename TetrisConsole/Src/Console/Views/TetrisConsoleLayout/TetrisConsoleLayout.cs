@@ -6,6 +6,7 @@ using Lechliter.Tetris.TetrisConsole.Enumerations;
 using Lechliter.Tetris.TetrisConsole.Models;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Lechliter.Tetris.TetrisConsole
 {
@@ -14,6 +15,10 @@ namespace Lechliter.Tetris.TetrisConsole
         private readonly ICollisionDetector<ePieceType, eDirection, eMoveType> _CollisionDetector;
 
         private readonly ITracker<ePieceType, eDirection, eMoveType> _Tracker;
+
+        private readonly ITetrominoQueuePreview<ePieceType> _TetrominoQueuePreview;
+
+        private readonly ITetrominoStashPreview<ePieceType> _TetrominoStashPreview;
 
         private readonly IGrid<ePieceType, eDirection, eMoveType> _Grid;
 
@@ -24,12 +29,16 @@ namespace Lechliter.Tetris.TetrisConsole
         public TetrisConsoleLayout(
             ICollisionDetector<ePieceType, eDirection, eMoveType> collisionDetector,
             ITracker<ePieceType, eDirection, eMoveType> tracker,
+            ITetrominoQueuePreview<ePieceType> tetrominoQueuePreview,
+            ITetrominoStashPreview<ePieceType> tetrominoStashPreview,
             IGrid<ePieceType, eDirection, eMoveType> grid,
             IScore scoreBoard,
             IFrame frame)
         {
             _CollisionDetector = collisionDetector;
             _Tracker = tracker;
+            _TetrominoQueuePreview = tetrominoQueuePreview;
+            _TetrominoStashPreview = tetrominoStashPreview;
             _Grid = grid;
             _ScoreBoard = scoreBoard;
             _Frame = frame;
@@ -52,12 +61,12 @@ namespace Lechliter.Tetris.TetrisConsole
 
             // Next Tetromino Preview
             IntPoint nextPosition = gridComponent.Origin + new IntPoint(gridComponent.Dimensions.X * 2 + 2, 3 + scoreBoardView.Dim.Y);
-            PreviewPieceView nextPiece = new PreviewPieceView(2, nextPosition, _Tracker.NextPiece);
+            PreviewPieceView nextPiece = new PreviewPieceView(2, nextPosition, _TetrominoQueuePreview.Previews.First());
             AddComponent(nextPiece.Component);
 
             // Held Tetromino Preview
             IntPoint heldPosition = nextPosition + new IntPoint(0, nextPiece.Dim.Y + 2);
-            PreviewPieceView heldPiece = new PreviewPieceView(2, heldPosition, _Tracker.HeldPiece);
+            PreviewPieceView heldPiece = new PreviewPieceView(2, heldPosition, _TetrominoStashPreview.Preview);
             AddComponent(heldPiece.Component);
 
 

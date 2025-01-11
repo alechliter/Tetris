@@ -33,8 +33,6 @@ namespace Lechliter.Tetris.Lib.Objects
 
         private double Angle;
 
-        private readonly IFrame? _Frame;
-
         private static int BlocksCount
         {
             get
@@ -43,38 +41,17 @@ namespace Lechliter.Tetris.Lib.Objects
             }
         }
 
-        private static readonly Random _Random;
-
-        private static readonly IEnumerable<ePieceType> StandardPieces;
-
         #endregion
 
-        static Tetromino()
-        {
-            _Random = new Random(DateTime.Now.GetHashCode());
-            StandardPieces = PieceTypeExtensions.StandardPieces();
-        }
-
-        public Tetromino(Point initialPos)
+        public Tetromino(Point initialPos, ePieceType pieceType)
         {
             this.InitialPos = initialPos;
             Blocks = new List<IBlock>();
             Velocity = new Point();
-            NewPiece();
-        }
-
-        public Tetromino(IFrame frame, Point initialPos) : this(initialPos)
-        {
-            _Frame = frame;
-            StartSubscriptions();
+            InitializePiece(pieceType);
         }
 
         #region  Public Methods
-
-        public ITetromino<ePieceType, eDirection, eMoveType> CreatePiece()
-        {
-            return new Tetromino(InitialPos);
-        }
 
         public void Move(eDirection direction, bool emitEvent = true)
         {
@@ -140,28 +117,10 @@ namespace Lechliter.Tetris.Lib.Objects
             }
         }
 
-        public void NewPiece()
-        {
-            NewPiece(RandType());
-        }
-
-        public void NewPiece(ePieceType type)
-        {
-            Pivot = this.InitialPos;
-
-            this.Type = type;
-
-            Blocks = new List<IBlock>(BlocksCount);
-            ConstructTetromino(Blocks, type, ref Pivot);
-
-            UpdatePosition?.Invoke(eMoveType.Spawn);
-        }
-
         public ITetromino<ePieceType, eDirection, eMoveType> Copy()
         {
-            Tetromino copy_piece = new Tetromino(Position);
+            Tetromino copy_piece = new Tetromino(Position, Type);
 
-            copy_piece.Type = Type;
             copy_piece.Pivot = Pivot.Copy();
             copy_piece.Blocks = new List<IBlock>();
             foreach (IBlock block in Blocks)
@@ -178,15 +137,16 @@ namespace Lechliter.Tetris.Lib.Objects
         #endregion
 
         #region  Private Methods
-
-        private void StartSubscriptions()
+        private void InitializePiece(ePieceType type)
         {
-            if (_Frame == null)
-            {
-                return;
-            }
+            Pivot = this.InitialPos;
 
-            _Frame.FrameAction += () => Move(eDirection.Down);
+            this.Type = type;
+
+            Blocks = new List<IBlock>(BlocksCount);
+            ConstructTetromino(Blocks, type, ref Pivot);
+
+            UpdatePosition?.Invoke(eMoveType.Spawn);
         }
 
         private void MoveBlocksBy(Point vector)
@@ -294,19 +254,6 @@ namespace Lechliter.Tetris.Lib.Objects
                     throw new TetrisLibException("Tetromino: Invalid direction");
             }
             this.Velocity = velocity;
-        }
-
-        private static ePieceType RandType()
-        {
-            int randomType = _Random.Next(StandardPieces.Count());
-            ePieceType newType = StandardPieces.ElementAtOrDefault(randomType);
-
-            if (newType == ePieceType.NotSet)
-            {
-                throw new TetrisLibException("Tetromino: Invalid Tetromino Type (RandType)");
-            }
-
-            return newType;
         }
 
         #endregion

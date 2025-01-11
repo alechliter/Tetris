@@ -10,7 +10,7 @@ namespace Lechliter.Tetris.TetrisConsole
     {
         public DynamicComponent Component { get; protected set; }
 
-        public IPreview<ePieceType, eDirection, eMoveType> Preview { get; protected set; }
+        public IPreview<ePieceType> Preview { get; protected set; }
 
         public IntDimensions Dim
         {
@@ -20,7 +20,7 @@ namespace Lechliter.Tetris.TetrisConsole
             }
         }
 
-        public PreviewPieceView(int layer, IntPoint position, IPreview<ePieceType, eDirection, eMoveType> preview)
+        public PreviewPieceView(int layer, IntPoint position, IPreview<ePieceType> preview)
         {
             Preview = preview;
             preview.PieceUpdated += OnUpdate;

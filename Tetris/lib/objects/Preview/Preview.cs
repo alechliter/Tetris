@@ -4,13 +4,27 @@ using Tetris.lib.Design.Helpers;
 
 namespace Lechliter.Tetris.Lib.Objects
 {
-    public class Preview : IPreview<ePieceType, eDirection, eMoveType>
+    public class Preview : IPreview<ePieceType>
     {
-        public ITetromino<ePieceType, eDirection, eMoveType> Piece { get; }
+        public ePieceType PieceType
+        {
+            get
+            {
+                return _piece;
+            }
+            set
+            {
+                _piece = value;
+                AddPieceToGrid(_piece);
+                PieceUpdated?.Invoke();
+            }
+        }
 
-        public ePieceType[,] Grid { get; protected set; }
+        public ePieceType[,] Grid { get; private set; }
 
-        public event Action PieceUpdated;
+        public event Action? PieceUpdated;
+
+        private ePieceType _piece = ePieceType.NotSet;
 
         private static readonly IntDimensions Dim;
 
@@ -30,39 +44,29 @@ namespace Lechliter.Tetris.Lib.Objects
 
         public Preview()
         {
-            Piece = new Tetromino(DefaultOrigin);
-            NewPiece();
+            Grid = CreateGrid();
         }
 
-        public Preview(ePieceType type)
+        private void AddPieceToGrid(ePieceType pieceType)
         {
-            Piece = new Tetromino(DefaultOrigin);
-            NewPiece(type);
-        }
+            Grid = CreateGrid();
 
-        public void NewPiece()
-        {
-            Piece.NewPiece();
-            AddPieceToGrid();
-            PieceUpdated?.Invoke();
-        }
+            if (pieceType == ePieceType.NotSet)
+            {
+                return;
+            }
 
-        public void NewPiece(ePieceType type)
-        {
-            Piece.NewPiece(type);
-            AddPieceToGrid();
-            PieceUpdated?.Invoke();
-        }
-
-
-        private void AddPieceToGrid()
-        {
-            this.Grid = new ePieceType[Dim.X, Dim.Y];
-            foreach (IBlock block in this.Piece.Blocks)
+            ITetromino<ePieceType, eDirection, eMoveType> tetromino = new Tetromino(DefaultOrigin, pieceType);
+            foreach (IBlock block in tetromino.Blocks)
             {
                 IntPoint point = GridPosition(block.Position);
-                Grid[point.X, point.Y] = Piece.Type;
+                Grid[point.X, point.Y] = pieceType;
             }
+        }
+
+        private ePieceType[,] CreateGrid()
+        {
+            return new ePieceType[Dim.X, Dim.Y];
         }
 
         private static IntPoint GridPosition(Point point)
