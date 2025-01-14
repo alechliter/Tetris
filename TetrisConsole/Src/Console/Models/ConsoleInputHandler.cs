@@ -1,33 +1,28 @@
 ﻿using Lechliter.Tetris.Lib.Objects;
+using Lechliter.Tetris.Lib.Systems;
+using System;
+using System.Collections.Generic;
 
-namespace Lechliter.Tetris.Lib.Systems
+namespace Lechliter.Tetris.TetrisConsole
 {
-    public class InputHandler : IInputHandler<ConsoleKey, Action>
+    public class ConsoleInputHandler : IInputHandler<ConsoleKey>
     {
         public IDictionary<ConsoleKey, Action> KeyEvent { get; }
 
-        public Action? AnyKeyEvent { get; set; }
+        public event Action? AnyKeyEvent;
 
         private readonly Queue<ConsoleKeyInfo> PressedKeys;
 
         private readonly IFrame Timer;
 
-        private static readonly ConsoleKey[] DEFAULT_KEYS = {
-            ConsoleKey.UpArrow, ConsoleKey.DownArrow, ConsoleKey.LeftArrow, ConsoleKey.RightArrow,
-            ConsoleKey.C, ConsoleKey.V,
-            ConsoleKey.Q, ConsoleKey.N
-        };
-
         private static readonly int QUEUE_LIMIT = 10;
 
-        public InputHandler()
+        public ConsoleInputHandler()
         {
             KeyEvent = new Dictionary<ConsoleKey, Action>();
             PressedKeys = new Queue<ConsoleKeyInfo>();
             Timer = new Frame(interval: 10);
             Timer.FrameAction += InvokeNextWaitingKey;
-
-            InitializeKeyEvents();
         }
 
         public void HandleInput()
@@ -54,18 +49,13 @@ namespace Lechliter.Tetris.Lib.Systems
 
         public void AddKey(ConsoleKey key, Action action)
         {
-            if (!KeyEvent.ContainsKey(key))
+            if (KeyEvent.ContainsKey(key))
+            {
+                KeyEvent[key] += action;
+            }
+            else
             {
                 KeyEvent.Add(key, action);
-            }
-        }
-
-        private void InitializeKeyEvents()
-        {
-            KeyEvent.Clear();
-            foreach (ConsoleKey key in DEFAULT_KEYS)
-            {
-                AddKey(key, () => { });
             }
         }
 

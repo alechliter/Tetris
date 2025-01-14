@@ -20,7 +20,7 @@ namespace Lechliter.Tetris.TetrisConsole
         private readonly ITracker<ePieceType, eDirection, eMoveType> tracker;
         private readonly IView<eTextColor, ePieceType> view;
         private readonly IFrame frame;
-        private readonly IInputHandler<ConsoleKey, Action> inputHandler;
+        private readonly IInputHandler<ConsoleKey> inputHandler;
         private readonly IScore scoreBoard;
         private readonly ISoundEffect soundEffect;
         private readonly ITetrisConsoleLayout<DynamicComponent, List<DynamicComponent>, IntPoint> layout;
@@ -37,7 +37,7 @@ namespace Lechliter.Tetris.TetrisConsole
             tetrominoStash = new TetrominoStash();
             tetrominoQueuePreview = new TetrominoQueuePreview(tetrominoQueue);
             tetrominoStashPreview = new TetrominoStashPreview(tetrominoStash);
-            inputHandler = new InputHandler();
+            inputHandler = new ConsoleInputHandler();
             scoreBoard = new ScoreBoard();
             tracker = new Tracker(
                 grid: grid,
@@ -67,20 +67,20 @@ namespace Lechliter.Tetris.TetrisConsole
 
         private void InitializeInputHandler()
         {
-            inputHandler.KeyEvent[ConsoleKey.UpArrow] = () => tracker.DropPiece();
-            inputHandler.KeyEvent[ConsoleKey.DownArrow] = () => tracker.MovePiece(eDirection.Down);
-            inputHandler.KeyEvent[ConsoleKey.LeftArrow] = () => tracker.MovePiece(eDirection.Left);
-            inputHandler.KeyEvent[ConsoleKey.RightArrow] = () => tracker.MovePiece(eDirection.Right);
+            inputHandler.AddKey(ConsoleKey.UpArrow, () => tracker.DropPiece());
+            inputHandler.AddKey(ConsoleKey.DownArrow, () => tracker.MovePiece(eDirection.Down));
+            inputHandler.AddKey(ConsoleKey.LeftArrow, () => tracker.MovePiece(eDirection.Left));
+            inputHandler.AddKey(ConsoleKey.RightArrow, () => tracker.MovePiece(eDirection.Right));
 
-            inputHandler.KeyEvent[ConsoleKey.S] = () => tracker.RotatePiece(eDirection.Left);
-            inputHandler.KeyEvent[ConsoleKey.D] = () => tracker.RotatePiece(eDirection.Right);
+            inputHandler.AddKey(ConsoleKey.S, () => tracker.RotatePiece(eDirection.Left));
+            inputHandler.AddKey(ConsoleKey.D, () => tracker.RotatePiece(eDirection.Right));
 
-            inputHandler.KeyEvent[ConsoleKey.N] = () => { tracker.LockPiece(); tracker.LoadNextPiece(); };
-            inputHandler.KeyEvent[ConsoleKey.Q] = () => isDone = true;
+            inputHandler.AddKey(ConsoleKey.N, () => { tracker.LockPiece(); tracker.LoadNextPiece(); });
+            inputHandler.AddKey(ConsoleKey.Q, () => isDone = true);
 
-            inputHandler.KeyEvent[ConsoleKey.R] = () => { Console.Clear(); Display(); };
-            inputHandler.KeyEvent[ConsoleKey.H] = () => Console.CursorVisible = false;
-            inputHandler.KeyEvent[ConsoleKey.Spacebar] = () => tracker.HoldPiece();
+            inputHandler.AddKey(ConsoleKey.R, () => { Console.Clear(); Display(); });
+            inputHandler.AddKey(ConsoleKey.H, () => Console.CursorVisible = false);
+            inputHandler.AddKey(ConsoleKey.Spacebar, () => tracker.HoldPiece());
         }
 
         private void InitializeEventListeners()

@@ -47,7 +47,7 @@ namespace Lechliter.Tetris.Lib.Systems
 
         private readonly IFrame _Frame;
 
-        private readonly IInputHandler<ConsoleKey, Action> _InputHandler;
+        private readonly IReadOnlyInputHandler _InputHandler;
 
         private readonly IScore _Score;
 
@@ -57,7 +57,7 @@ namespace Lechliter.Tetris.Lib.Systems
             ITetrominoQueue<ePieceType> tetrominoQueue,
             ITetrominoStash<ePieceType> tetrominoStash,
             IFrame frame,
-            IInputHandler<ConsoleKey, Action> inputHandler,
+            IReadOnlyInputHandler inputHandler,
             IScore score)
         {
             _CollisionDetector = collisionDetector;
@@ -170,7 +170,7 @@ namespace Lechliter.Tetris.Lib.Systems
             _Frame.FrameAction += NextFrame;
             _Frame.SpeedChange += OnSpeedChange;
 
-            _InputHandler.AnyKeyEvent += ResetStationaryTimer;
+            _InputHandler.AnyKeyEvent += ResetStationaryTimer; //TODO: Replace, should only matter for movement (add input type?)
 
             _Score.NextLevel += OnNextLevel;
             LinesCleared += _Score.Increase;
@@ -224,13 +224,6 @@ namespace Lechliter.Tetris.Lib.Systems
                 GameOver?.Invoke();
             }
             return isOver;
-        }
-
-        private Block[] copyBlocks()
-        {
-            Block[] blocks = new Block[CurrentPiece.Blocks.Count];
-            CurrentPiece.Blocks.CopyTo(blocks, 0);
-            return blocks;
         }
 
         #endregion
