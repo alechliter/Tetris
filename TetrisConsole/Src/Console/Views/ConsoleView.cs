@@ -16,10 +16,10 @@ namespace Lechliter.Tetris.TetrisConsole
 
         static ConsoleView()
         {
-            Console.Clear();
-            Console.CursorVisible = false;
-            Console.SetWindowSize(100, 40);
-            Console.Title = "Console Tetris";
+            System.Console.Clear();
+            System.Console.CursorVisible = false;
+            System.Console.SetWindowSize(100, 40);
+            System.Console.Title = "Console Tetris";
         }
 
         public ConsoleView(ITetrisConsoleLayout<DynamicComponent, List<DynamicComponent>, IntPoint> layout)
@@ -58,28 +58,28 @@ namespace Lechliter.Tetris.TetrisConsole
             switch (color)
             {
                 case eTextColor.Red:
-                    Console.ForegroundColor = ConsoleColor.Red;
+                    System.Console.ForegroundColor = ConsoleColor.Red;
                     break;
                 case eTextColor.Yellow:
-                    Console.ForegroundColor = ConsoleColor.Yellow;
+                    System.Console.ForegroundColor = ConsoleColor.Yellow;
                     break;
                 case eTextColor.Blue:
-                    Console.ForegroundColor = ConsoleColor.Cyan;
+                    System.Console.ForegroundColor = ConsoleColor.Cyan;
                     break;
                 case eTextColor.DarkBlue:
-                    Console.ForegroundColor = ConsoleColor.Blue;
+                    System.Console.ForegroundColor = ConsoleColor.Blue;
                     break;
                 case eTextColor.Green:
-                    Console.ForegroundColor = ConsoleColor.Green;
+                    System.Console.ForegroundColor = ConsoleColor.Green;
                     break;
                 case eTextColor.Orange:
-                    Console.ForegroundColor = ConsoleColor.White;
+                    System.Console.ForegroundColor = ConsoleColor.White;
                     break;
                 case eTextColor.Purple:
-                    Console.ForegroundColor = ConsoleColor.Magenta;
+                    System.Console.ForegroundColor = ConsoleColor.Magenta;
                     break;
                 default:
-                    Console.ForegroundColor = ConsoleColor.Gray;
+                    System.Console.ForegroundColor = ConsoleColor.Gray;
                     break;
             }
         }

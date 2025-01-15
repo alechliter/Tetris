@@ -1,4 +1,5 @@
-﻿using Tetris.lib.Design.Helpers;
+﻿using Ninject;
+using Tetris.lib.Design.Helpers;
 
 namespace Lechliter.Tetris.Lib.Objects
 {
@@ -17,7 +18,7 @@ namespace Lechliter.Tetris.Lib.Objects
 
         private long IntervalMS;
 
-        private long InitialInteravalMS;
+        private long InitialIntervalMS;
 
         private static int DefaultInterval
         {
@@ -27,13 +28,19 @@ namespace Lechliter.Tetris.Lib.Objects
             }
         }
 
+        [Inject]
+        public Frame() : this(DefaultInterval)
+        {
+
+        }
+
         public Frame(long? interval = null)
         {
             Past = DateTime.Now.Ticks;
             Now = Past;
             TicksDiff = Now - Past;
             IntervalMS = interval.HasValue ? interval.Value : DefaultInterval;
-            InitialInteravalMS = IntervalMS;
+            InitialIntervalMS = IntervalMS;
         }
 
         public bool NextFrame()
@@ -53,8 +60,8 @@ namespace Lechliter.Tetris.Lib.Objects
 
         public void SpeedUp(int ms)
         {
-            IntervalMS = Math.Max(InitialInteravalMS - ms, 0);
-            SpeedChange?.Invoke(IntervalMS, InitialInteravalMS);
+            IntervalMS = Math.Max(InitialIntervalMS - ms, 0);
+            SpeedChange?.Invoke(IntervalMS, InitialIntervalMS);
         }
 
         #region Constants

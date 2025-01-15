@@ -1,62 +1,29 @@
 using Lechliter.Tetris.Lib.Definitions;
-using Lechliter.Tetris.Lib.Effects;
 using Lechliter.Tetris.Lib.Objects;
 using Lechliter.Tetris.Lib.Systems;
 using Lechliter.Tetris.Lib.Types;
-using Lechliter.Tetris.TetrisConsole.Enumerations;
 using System;
 using System.Collections.Generic;
+using Tetris.lib.Tetris;
 
 namespace Lechliter.Tetris.TetrisConsole
 {
     public class TetrisConsoleController : ITetrisConsoleController
     {
-        private readonly IGrid<ePieceType, eDirection, eMoveType> grid;
-        private readonly ICollisionDetector<ePieceType, eDirection, eMoveType> collisionDetector;
-        private readonly ITetrominoQueue<ePieceType> tetrominoQueue;
-        private readonly ITetrominoStash<ePieceType> tetrominoStash;
-        private readonly ITetrominoStashPreview<ePieceType> tetrominoStashPreview;
-        private readonly ITetrominoQueuePreview<ePieceType> tetrominoQueuePreview;
-        private readonly ITracker<ePieceType, eDirection, eMoveType> tracker;
-        private readonly IView<eTextColor, ePieceType> view;
-        private readonly IFrame frame;
-        private readonly IInputHandler<ConsoleKey> inputHandler;
-        private readonly IScore scoreBoard;
-        private readonly ISoundEffect soundEffect;
-        private readonly ITetrisConsoleLayout<DynamicComponent, List<DynamicComponent>, IntPoint> layout;
-
         private bool isDone = false;
         private bool isDev = false;
 
+        private readonly IFrame Frame;
+        private readonly IInputHandler<ConsoleKey> InputHandler;
+        private readonly ITetrisConsoleLayout<DynamicComponent, List<DynamicComponent>, IntPoint> Layout;
+        private readonly ITracker<ePieceType, eDirection, eMoveType> Tracker;
+
         public TetrisConsoleController()
         {
-            grid = new Grid();
-            frame = new Frame();
-            collisionDetector = new CollisionDetector(grid);
-            tetrominoQueue = new TetrominoQueue();
-            tetrominoStash = new TetrominoStash();
-            tetrominoQueuePreview = new TetrominoQueuePreview(tetrominoQueue);
-            tetrominoStashPreview = new TetrominoStashPreview(tetrominoStash);
-            inputHandler = new ConsoleInputHandler();
-            scoreBoard = new ScoreBoard();
-            tracker = new Tracker(
-                grid: grid,
-                collisionDetector: collisionDetector,
-                tetrominoQueue: tetrominoQueue,
-                tetrominoStash: tetrominoStash,
-                frame: frame,
-                inputHandler: inputHandler,
-                score: scoreBoard);
-            soundEffect = new SimpleSoundEffect(tracker);
-            layout = new TetrisConsoleLayout(
-                collisionDetector: collisionDetector,
-                tracker: tracker,
-                tetrominoQueuePreview: tetrominoQueuePreview,
-                tetrominoStashPreview: tetrominoStashPreview,
-                grid: grid,
-                scoreBoard: scoreBoard,
-                frame: frame);
-            view = new ConsoleView(layout);
+            Frame = TetrisApp.IoC.Get<IFrame>();
+            InputHandler = TetrisApp.IoC.Get<IInputHandler<ConsoleKey>>();
+            Layout = TetrisApp.IoC.Get<ITetrisConsoleLayout<DynamicComponent, List<DynamicComponent>, IntPoint>>();
+            Tracker = TetrisApp.IoC.Get<ITracker<ePieceType, eDirection, eMoveType>>();
         }
 
         public void Run(string[] args)
@@ -67,43 +34,32 @@ namespace Lechliter.Tetris.TetrisConsole
 
         private void InitializeInputHandler()
         {
-            inputHandler.AddKey(ConsoleKey.UpArrow, () => tracker.DropPiece());
-            inputHandler.AddKey(ConsoleKey.DownArrow, () => tracker.MovePiece(eDirection.Down));
-            inputHandler.AddKey(ConsoleKey.LeftArrow, () => tracker.MovePiece(eDirection.Left));
-            inputHandler.AddKey(ConsoleKey.RightArrow, () => tracker.MovePiece(eDirection.Right));
+            InputHandler.AddKey(ConsoleKey.UpArrow, () => Tracker.DropPiece());
+            InputHandler.AddKey(ConsoleKey.DownArrow, () => Tracker.MovePiece(eDirection.Down));
+            InputHandler.AddKey(ConsoleKey.LeftArrow, () => Tracker.MovePiece(eDirection.Left));
+            InputHandler.AddKey(ConsoleKey.RightArrow, () => Tracker.MovePiece(eDirection.Right));
 
-            inputHandler.AddKey(ConsoleKey.S, () => tracker.RotatePiece(eDirection.Left));
-            inputHandler.AddKey(ConsoleKey.D, () => tracker.RotatePiece(eDirection.Right));
+            InputHandler.AddKey(ConsoleKey.S, () => Tracker.RotatePiece(eDirection.Left));
+            InputHandler.AddKey(ConsoleKey.D, () => Tracker.RotatePiece(eDirection.Right));
 
-            inputHandler.AddKey(ConsoleKey.N, () => { tracker.LockPiece(); tracker.LoadNextPiece(); });
-            inputHandler.AddKey(ConsoleKey.Q, () => isDone = true);
+            InputHandler.AddKey(ConsoleKey.N, () => { Tracker.LockPiece(); Tracker.LoadNextPiece(); });
+            InputHandler.AddKey(ConsoleKey.Q, () => isDone = true);
 
-            inputHandler.AddKey(ConsoleKey.R, () => { Console.Clear(); Display(); });
-            inputHandler.AddKey(ConsoleKey.H, () => Console.CursorVisible = false);
-            inputHandler.AddKey(ConsoleKey.Spacebar, () => tracker.HoldPiece());
-        }
-
-        private void InitializeEventListeners()
-        {
-            tracker.GameOver += () => isDone = true;
+            InputHandler.AddKey(ConsoleKey.Spacebar, () => Tracker.HoldPiece());
         }
 
         private void StartGame()
         {
             InitializeInputHandler();
-
-            /* Set Up Cross-Component Listeners*/
             InitializeEventListeners();
-
-            /* Add Components to the View Layout */
             AddComponents();
 
             while (!isDone)
             {
                 try
                 {
-                    inputHandler.HandleInput();
-                    frame.NextFrame();
+                    InputHandler.HandleInput();
+                    Frame.NextFrame();
                 }
                 catch (Exception e)
                 {
@@ -111,8 +67,8 @@ namespace Lechliter.Tetris.TetrisConsole
                 }
             }
 
-            Console.WriteLine("Done.");
-            Console.Read();
+            System.Console.WriteLine("Done.");
+            System.Console.Read();
         }
 
         private void SetFlags(string[] args)
@@ -130,14 +86,20 @@ namespace Lechliter.Tetris.TetrisConsole
             }
         }
 
-        private void Display()
+        /// <summary>
+        /// Set Up Cross-Component Listeners
+        /// </summary>
+        private void InitializeEventListeners()
         {
-            view?.Display();
+            Tracker.GameOver += () => isDone = true;
         }
 
+        /// <summary>
+        /// Add Components to the View Layout
+        /// </summary>
         private void AddComponents()
         {
-            layout.AddComponents(isDev);
+            Layout.AddComponents(isDev);
         }
     }
 }

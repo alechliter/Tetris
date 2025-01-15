@@ -1,7 +1,6 @@
 ﻿using Lechliter.Tetris.Lib.Definitions;
 using Lechliter.Tetris.Lib.Types;
 using Lechliter.Tetris.TetrisConsole.Models;
-using System;
 using System.Collections.Generic;
 
 namespace Lechliter.Tetris.TetrisConsole
@@ -23,7 +22,7 @@ namespace Lechliter.Tetris.TetrisConsole
         // Constructors
         public StaticConsoleLayout()
         {
-            Origin = new IntPoint(Console.CursorLeft, Console.CursorTop);
+            Origin = new IntPoint(System.Console.CursorLeft, System.Console.CursorTop);
             Dimensions = new IntDimensions(GRID_WIDTH, GRID_HEIGHT);
             Grid = new ePieceType[GRID_WIDTH, GRID_HEIGHT];
             Components = new List<StaticComponent>();

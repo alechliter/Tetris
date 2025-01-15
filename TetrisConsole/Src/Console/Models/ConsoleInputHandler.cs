@@ -28,9 +28,9 @@ namespace Lechliter.Tetris.TetrisConsole
         public void HandleInput()
         {
             ConsoleKeyInfo key;
-            if (Console.KeyAvailable)
+            if (System.Console.KeyAvailable)
             {
-                key = Console.ReadKey(true);
+                key = System.Console.ReadKey(true);
                 if (Timer.NextFrame())
                 {
                     PressedKeys.Clear();
@@ -75,9 +75,9 @@ namespace Lechliter.Tetris.TetrisConsole
                 ConsoleKeyInfo key = PressedKeys.Dequeue();
                 InvokeKeyAction(key);
             }
-            while (Console.KeyAvailable)
+            while (System.Console.KeyAvailable)
             {
-                Console.ReadKey(true);
+                System.Console.ReadKey(true);
             }
         }
     }

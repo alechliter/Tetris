@@ -43,7 +43,7 @@ namespace Lechliter.Tetris.TetrisConsole
         {
             try
             {
-                ConsoleOrigin = new IntPoint(Console.CursorLeft, Console.CursorTop);
+                ConsoleOrigin = new IntPoint(System.Console.CursorLeft, System.Console.CursorTop);
             }
             catch
             {
@@ -132,24 +132,24 @@ namespace Lechliter.Tetris.TetrisConsole
         private void SetCursorPosition(IntPoint point)
         {
             CursorPosition = ConsoleOrigin + this.Origin + point;
-            Console.SetCursorPosition(CursorPosition.X, CursorPosition.Y);
+            System.Console.SetCursorPosition(CursorPosition.X, CursorPosition.Y);
         }
 
         private void ResetCursorPosition()
         {
-            Console.SetCursorPosition(ConsoleOrigin.X, ConsoleOrigin.Y);
+            System.Console.SetCursorPosition(ConsoleOrigin.X, ConsoleOrigin.Y);
         }
 
         protected static void WriteAt(string s, int x, int y)
         {
             try
             {
-                Console.SetCursorPosition(CursorPosition.X + x, CursorPosition.Y + y);
-                Console.Write(s);
+                System.Console.SetCursorPosition(CursorPosition.X + x, CursorPosition.Y + y);
+                System.Console.Write(s);
             }
             catch (ArgumentOutOfRangeException e)
             {
-                Console.Clear();
+                System.Console.Clear();
                 ErrorMessageHandler.DisplayMessage(e.Message);
             }
         }
