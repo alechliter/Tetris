@@ -43,11 +43,20 @@ namespace Lechliter.Tetris.Lib.Objects
 
         #endregion
 
-        public Tetromino(Point initialPos, ePieceType pieceType)
+        public Tetromino()
         {
-            this.InitialPos = initialPos;
             Blocks = new List<IBlock>();
             Velocity = new Point();
+        }
+
+        private Tetromino(Point position, ePieceType pieceType) : this()
+        {
+            Initialize(pieceType, position);
+        }
+
+        public void Initialize(ePieceType pieceType, Point position)
+        {
+            InitialPos = position;
             InitializePiece(pieceType);
         }
 

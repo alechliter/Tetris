@@ -18,6 +18,8 @@ namespace Tetris.lib.Modules
             Bind<ITetrominoQueuePreview<ePieceType>>().To<TetrominoQueuePreview>().InSingletonScope();
             Bind<ITracker<ePieceType, eDirection, eMoveType>>().To<Tracker>().InSingletonScope();
             Bind<IScore>().To<ScoreBoard>().InSingletonScope();
+
+            Bind<ITetromino<ePieceType, eDirection, eMoveType>>().To<Tetromino>().InTransientScope();
         }
     }
 }

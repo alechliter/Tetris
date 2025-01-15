@@ -3,6 +3,7 @@ using Lechliter.Tetris.Lib.Exceptions;
 using Lechliter.Tetris.Lib.Objects;
 using Lechliter.Tetris.Lib.Types;
 using Tetris.lib.Design.Helpers;
+using Tetris.lib.Tetris;
 
 namespace Lechliter.Tetris.Lib.Systems
 {
@@ -178,7 +179,8 @@ namespace Lechliter.Tetris.Lib.Systems
 
         private ITetromino<ePieceType, eDirection, eMoveType> NewPiece(ePieceType pieceType)
         {
-            ITetromino<ePieceType, eDirection, eMoveType> newPiece = new Tetromino(SpawnPoint, pieceType);
+            ITetromino<ePieceType, eDirection, eMoveType> newPiece = TetrisApp.IoC.Get<ITetromino<ePieceType, eDirection, eMoveType>>();
+            newPiece.Initialize(pieceType, SpawnPoint);
 
             newPiece.UpdatePosition += DetectCollisions;
             newPiece.UpdatePosition += UpdateGrid;
