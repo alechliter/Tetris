@@ -9,6 +9,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TetrisTest", "TetrisTest\Te
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tetris", "Tetris\Tetris.csproj", "{F4B34B50-060F-45B3-A64E-7A2AEC1F14E2}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TetrisIoC", "TetrisIoC\TetrisIoC.csproj", "{5165D193-BE50-464D-BB5F-217B543461A7}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{F4B34B50-060F-45B3-A64E-7A2AEC1F14E2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F4B34B50-060F-45B3-A64E-7A2AEC1F14E2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F4B34B50-060F-45B3-A64E-7A2AEC1F14E2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5165D193-BE50-464D-BB5F-217B543461A7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5165D193-BE50-464D-BB5F-217B543461A7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5165D193-BE50-464D-BB5F-217B543461A7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5165D193-BE50-464D-BB5F-217B543461A7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

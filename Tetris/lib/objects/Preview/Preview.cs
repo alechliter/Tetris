@@ -1,6 +1,7 @@
 ﻿using Lechliter.Tetris.Lib.Definitions;
 using Lechliter.Tetris.Lib.Types;
 using Tetris.lib.Design.Helpers;
+using Tetris.lib.Tetris;
 
 namespace Lechliter.Tetris.Lib.Objects
 {
@@ -56,7 +57,9 @@ namespace Lechliter.Tetris.Lib.Objects
                 return;
             }
 
-            ITetromino<ePieceType, eDirection, eMoveType> tetromino = new Tetromino(DefaultOrigin, pieceType);
+            ITetromino<ePieceType, eDirection, eMoveType> tetromino = TetrisApp.IoC.Get<ITetromino<ePieceType, eDirection, eMoveType>>();
+            tetromino.Initialize(pieceType, DefaultOrigin);
+
             foreach (IBlock block in tetromino.Blocks)
             {
                 IntPoint point = GridPosition(block.Position);

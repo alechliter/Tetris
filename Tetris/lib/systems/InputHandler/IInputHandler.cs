@@ -1,17 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Lechliter.Tetris.Lib.Systems
+﻿namespace Lechliter.Tetris.Lib.Systems
 {
-    public interface IInputHandler<TKey, TEvent>
+    public interface IInputHandler<TKey> : IReadOnlyInputHandler
     {
-        public IDictionary<TKey, TEvent> KeyEvent { get; }
-
-        public TEvent AnyKeyEvent { get; set; }
-
-        void HandleInput();
-
-        public void AddKey(ConsoleKey key, Action action);
+        void AddKey(TKey key, Action action);
     }
 }

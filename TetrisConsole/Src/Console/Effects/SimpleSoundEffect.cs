@@ -1,7 +1,6 @@
 using Lechliter.Tetris.Lib.Definitions;
 using Lechliter.Tetris.Lib.Effects;
 using Lechliter.Tetris.Lib.Systems;
-using System;
 
 namespace Lechliter.Tetris.TetrisConsole
 {
@@ -17,7 +16,7 @@ namespace Lechliter.Tetris.TetrisConsole
 
         public void PlayCollision()
         {
-            Console.Beep(600, 200);
+            System.Console.Beep(600, 200);
         }
 
         public void PlaySingleLine()
@@ -55,7 +54,7 @@ namespace Lechliter.Tetris.TetrisConsole
             const int frequencyIncrement = 135;
             const int baseDuration = 115;
 
-            Console.Beep(baseFrequency + lineCount * frequencyIncrement, baseDuration);
+            System.Console.Beep(baseFrequency + lineCount * frequencyIncrement, baseDuration);
         }
     }
 }

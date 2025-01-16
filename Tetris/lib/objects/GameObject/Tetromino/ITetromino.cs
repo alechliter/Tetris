@@ -22,6 +22,8 @@ namespace Lechliter.Tetris.Lib.Objects
         /// </summary>
         event Action<TMoveType> UpdatePosition;
 
+        void Initialize(TPieceType pieceType, Point position);
+
         /// <summary>
         /// Rotates the piece about its pivot point.
         /// </summary>

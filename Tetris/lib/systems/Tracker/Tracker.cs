@@ -3,6 +3,7 @@ using Lechliter.Tetris.Lib.Exceptions;
 using Lechliter.Tetris.Lib.Objects;
 using Lechliter.Tetris.Lib.Types;
 using Tetris.lib.Design.Helpers;
+using Tetris.lib.Tetris;
 
 namespace Lechliter.Tetris.Lib.Systems
 {
@@ -47,7 +48,7 @@ namespace Lechliter.Tetris.Lib.Systems
 
         private readonly IFrame _Frame;
 
-        private readonly IInputHandler<ConsoleKey, Action> _InputHandler;
+        private readonly IReadOnlyInputHandler _InputHandler;
 
         private readonly IScore _Score;
 
@@ -57,7 +58,7 @@ namespace Lechliter.Tetris.Lib.Systems
             ITetrominoQueue<ePieceType> tetrominoQueue,
             ITetrominoStash<ePieceType> tetrominoStash,
             IFrame frame,
-            IInputHandler<ConsoleKey, Action> inputHandler,
+            IReadOnlyInputHandler inputHandler,
             IScore score)
         {
             _CollisionDetector = collisionDetector;
@@ -170,7 +171,7 @@ namespace Lechliter.Tetris.Lib.Systems
             _Frame.FrameAction += NextFrame;
             _Frame.SpeedChange += OnSpeedChange;
 
-            _InputHandler.AnyKeyEvent += ResetStationaryTimer;
+            _InputHandler.AnyKeyEvent += ResetStationaryTimer; //TODO: Replace, should only matter for movement (add input type?)
 
             _Score.NextLevel += OnNextLevel;
             LinesCleared += _Score.Increase;
@@ -178,7 +179,8 @@ namespace Lechliter.Tetris.Lib.Systems
 
         private ITetromino<ePieceType, eDirection, eMoveType> NewPiece(ePieceType pieceType)
         {
-            ITetromino<ePieceType, eDirection, eMoveType> newPiece = new Tetromino(SpawnPoint, pieceType);
+            ITetromino<ePieceType, eDirection, eMoveType> newPiece = TetrisApp.IoC.Get<ITetromino<ePieceType, eDirection, eMoveType>>();
+            newPiece.Initialize(pieceType, SpawnPoint);
 
             newPiece.UpdatePosition += DetectCollisions;
             newPiece.UpdatePosition += UpdateGrid;
@@ -224,13 +226,6 @@ namespace Lechliter.Tetris.Lib.Systems
                 GameOver?.Invoke();
             }
             return isOver;
-        }
-
-        private Block[] copyBlocks()
-        {
-            Block[] blocks = new Block[CurrentPiece.Blocks.Count];
-            CurrentPiece.Blocks.CopyTo(blocks, 0);
-            return blocks;
         }
 
         #endregion
