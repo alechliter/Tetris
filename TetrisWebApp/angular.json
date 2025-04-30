@@ -1,0 +1,214 @@
+{
+   "$schema": "./node_modules/@angular/cli/lib/config/schema.json",
+   "version": 1,
+   "newProjectRoot": "projects",
+   "projects": {
+      "twa-core": {
+         "projectType": "library",
+         "root": "projects/twa-core",
+         "sourceRoot": "projects/twa-core/src",
+         "prefix": "twa-lib",
+         "architect": {
+            "build": {
+               "builder": "@angular-devkit/build-angular:ng-packagr",
+               "options": {
+                  "project": "projects/twa-core/ng-package.json"
+               },
+               "configurations": {
+                  "production": {
+                     "tsConfig": "projects/twa-core/tsconfig.lib.prod.json"
+                  },
+                  "development": {
+                     "tsConfig": "projects/twa-core/tsconfig.lib.json"
+                  }
+               },
+               "defaultConfiguration": "production"
+            },
+            "test": {
+               "builder": "@angular-devkit/build-angular:karma",
+               "options": {
+                  "tsConfig": "projects/twa-core/tsconfig.spec.json",
+                  "polyfills": ["zone.js", "zone.js/testing"]
+               }
+            }
+         }
+      },
+      "twa-example": {
+         "projectType": "application",
+         "schematics": {
+            "@schematics/angular:component": {
+               "style": "scss"
+            }
+         },
+         "root": "projects/twa-example",
+         "sourceRoot": "projects/twa-example/src",
+         "prefix": "twa-app-ex",
+         "architect": {
+            "build": {
+               "builder": "@angular-devkit/build-angular:application",
+               "options": {
+                  "outputPath": "dist/twa-example",
+                  "index": "projects/twa-example/src/index.html",
+                  "browser": "projects/twa-example/src/main.ts",
+                  "polyfills": ["zone.js"],
+                  "tsConfig": "projects/twa-example/tsconfig.app.json",
+                  "inlineStyleLanguage": "scss",
+                  "assets": [
+                     {
+                        "glob": "**/*",
+                        "input": "projects/twa-example/public"
+                     }
+                  ],
+                  "styles": ["projects/twa-example/src/styles.scss"],
+                  "scripts": [],
+                  "sourceMap": {
+                     "scripts": true,
+                     "styles": true,
+                     "vendor": true
+                  }
+               },
+               "configurations": {
+                  "production": {
+                     "budgets": [
+                        {
+                           "type": "initial",
+                           "maximumWarning": "500kB",
+                           "maximumError": "1MB"
+                        },
+                        {
+                           "type": "anyComponentStyle",
+                           "maximumWarning": "4kB",
+                           "maximumError": "8kB"
+                        }
+                     ],
+                     "outputHashing": "all"
+                  },
+                  "development": {
+                     "optimization": false,
+                     "extractLicenses": false,
+                     "sourceMap": true
+                  }
+               },
+               "defaultConfiguration": "production"
+            },
+            "serve": {
+               "builder": "@angular-devkit/build-angular:dev-server",
+               "configurations": {
+                  "production": {
+                     "buildTarget": "twa-example:build:production"
+                  },
+                  "development": {
+                     "buildTarget": "twa-example:build:development"
+                  }
+               },
+               "defaultConfiguration": "development"
+            },
+            "extract-i18n": {
+               "builder": "@angular-devkit/build-angular:extract-i18n"
+            },
+            "test": {
+               "builder": "@angular-devkit/build-angular:karma",
+               "options": {
+                  "polyfills": ["zone.js", "zone.js/testing"],
+                  "tsConfig": "projects/twa-example/tsconfig.spec.json",
+                  "inlineStyleLanguage": "scss",
+                  "assets": [
+                     {
+                        "glob": "**/*",
+                        "input": "projects/twa-example/public"
+                     }
+                  ],
+                  "styles": ["projects/twa-example/src/styles.scss"],
+                  "scripts": []
+               }
+            }
+         }
+      },
+      "twa-tetris": {
+         "projectType": "application",
+         "schematics": {
+            "@schematics/angular:component": {
+               "style": "scss"
+            }
+         },
+         "root": "projects/twa-tetris",
+         "sourceRoot": "projects/twa-tetris/src",
+         "prefix": "twa",
+         "architect": {
+            "build": {
+               "builder": "@angular-devkit/build-angular:application",
+               "options": {
+                  "outputPath": "dist/twa-tetris",
+                  "index": "projects/twa-tetris/src/index.html",
+                  "browser": "projects/twa-tetris/src/main.ts",
+                  "polyfills": ["zone.js"],
+                  "tsConfig": "projects/twa-tetris/tsconfig.app.json",
+                  "inlineStyleLanguage": "scss",
+                  "assets": [
+                     {
+                        "glob": "**/*",
+                        "input": "projects/twa-tetris/public"
+                     }
+                  ],
+                  "styles": ["projects/twa-tetris/src/styles.scss"],
+                  "scripts": []
+               },
+               "configurations": {
+                  "production": {
+                     "budgets": [
+                        {
+                           "type": "initial",
+                           "maximumWarning": "500kB",
+                           "maximumError": "1MB"
+                        },
+                        {
+                           "type": "anyComponentStyle",
+                           "maximumWarning": "4kB",
+                           "maximumError": "8kB"
+                        }
+                     ],
+                     "outputHashing": "all"
+                  },
+                  "development": {
+                     "optimization": false,
+                     "extractLicenses": false,
+                     "sourceMap": true
+                  }
+               },
+               "defaultConfiguration": "production"
+            },
+            "serve": {
+               "builder": "@angular-devkit/build-angular:dev-server",
+               "configurations": {
+                  "production": {
+                     "buildTarget": "twa-tetris:build:production"
+                  },
+                  "development": {
+                     "buildTarget": "twa-tetris:build:development"
+                  }
+               },
+               "defaultConfiguration": "development"
+            },
+            "extract-i18n": {
+               "builder": "@angular-devkit/build-angular:extract-i18n"
+            },
+            "test": {
+               "builder": "@angular-devkit/build-angular:karma",
+               "options": {
+                  "polyfills": ["zone.js", "zone.js/testing"],
+                  "tsConfig": "projects/twa-tetris/tsconfig.spec.json",
+                  "inlineStyleLanguage": "scss",
+                  "assets": [
+                     {
+                        "glob": "**/*",
+                        "input": "projects/twa-tetris/public"
+                     }
+                  ],
+                  "styles": ["projects/twa-tetris/src/styles.scss"],
+                  "scripts": []
+               }
+            }
+         }
+      }
+   }
+}
