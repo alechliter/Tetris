@@ -33,33 +33,33 @@
             }
          }
       },
-      "twa-tetris-example": {
+      "twa-example": {
          "projectType": "application",
          "schematics": {
             "@schematics/angular:component": {
                "style": "scss"
             }
          },
-         "root": "projects/twa-tetris-example",
-         "sourceRoot": "projects/twa-tetris-example/src",
+         "root": "projects/twa-example",
+         "sourceRoot": "projects/twa-example/src",
          "prefix": "twa-app-ex",
          "architect": {
             "build": {
                "builder": "@angular-devkit/build-angular:application",
                "options": {
-                  "outputPath": "dist/twa-tetris-example",
-                  "index": "projects/twa-tetris-example/src/index.html",
-                  "browser": "projects/twa-tetris-example/src/main.ts",
+                  "outputPath": "dist/twa-example",
+                  "index": "projects/twa-example/src/index.html",
+                  "browser": "projects/twa-example/src/main.ts",
                   "polyfills": ["zone.js"],
-                  "tsConfig": "projects/twa-tetris-example/tsconfig.app.json",
+                  "tsConfig": "projects/twa-example/tsconfig.app.json",
                   "inlineStyleLanguage": "scss",
                   "assets": [
                      {
                         "glob": "**/*",
-                        "input": "projects/twa-tetris-example/public"
+                        "input": "projects/twa-example/public"
                      }
                   ],
-                  "styles": ["projects/twa-tetris-example/src/styles.scss"],
+                  "styles": ["projects/twa-example/src/styles.scss"],
                   "scripts": [],
                   "sourceMap": {
                      "scripts": true,
@@ -95,10 +95,10 @@
                "builder": "@angular-devkit/build-angular:dev-server",
                "configurations": {
                   "production": {
-                     "buildTarget": "twa-tetris-example:build:production"
+                     "buildTarget": "twa-example:build:production"
                   },
                   "development": {
-                     "buildTarget": "twa-tetris-example:build:development"
+                     "buildTarget": "twa-example:build:development"
                   }
                },
                "defaultConfiguration": "development"
@@ -110,15 +110,15 @@
                "builder": "@angular-devkit/build-angular:karma",
                "options": {
                   "polyfills": ["zone.js", "zone.js/testing"],
-                  "tsConfig": "projects/twa-tetris-example/tsconfig.spec.json",
+                  "tsConfig": "projects/twa-example/tsconfig.spec.json",
                   "inlineStyleLanguage": "scss",
                   "assets": [
                      {
                         "glob": "**/*",
-                        "input": "projects/twa-tetris-example/public"
+                        "input": "projects/twa-example/public"
                      }
                   ],
-                  "styles": ["projects/twa-tetris-example/src/styles.scss"],
+                  "styles": ["projects/twa-example/src/styles.scss"],
                   "scripts": []
                }
             }

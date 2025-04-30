@@ -7,7 +7,9 @@
       "build": "ng build",
       "watch": "ng build --watch --configuration development",
       "test": "ng test",
-      "lint": "ng lint"
+      "lint": "ng lint",
+      "build:core": "ng build --watch --configuration development twa-core",
+      "start:example": "ng serve --open --watch --configuration development twa-example"
    },
    "private": true,
    "dependencies": {
