@@ -18,7 +18,7 @@
       "target": "ES2022",
       "module": "ES2022",
       "paths": {
-         "twa-tetris-core": ["./dist/twa-tetris-core"]
+         "@twa-core": ["./dist/twa-core"]
       }
    },
    "angularCompilerOptions": {

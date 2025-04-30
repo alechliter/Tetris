@@ -37,6 +37,13 @@
                }
             }
          }
+      },
+      {
+         "label": "start-example-app",
+         "type": "shell",
+         "command": "pwsh ${workspaceFolder}/.vscode/scripts/startTetrisWebAppExample.ps1",
+         "isBackground": true,
+         "problemMatcher": []
       }
    ]
 }

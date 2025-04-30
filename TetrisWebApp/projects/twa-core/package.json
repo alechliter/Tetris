@@ -1,5 +1,5 @@
 {
-   "name": "twa-tetris-core",
+   "name": "twa-core",
    "version": "0.0.1",
    "peerDependencies": {
       "@angular/common": "^19.2.0",

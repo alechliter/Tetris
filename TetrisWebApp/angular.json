@@ -3,23 +3,23 @@
    "version": 1,
    "newProjectRoot": "projects",
    "projects": {
-      "twa-tetris-core": {
+      "twa-core": {
          "projectType": "library",
-         "root": "projects/twa-tetris-core",
-         "sourceRoot": "projects/twa-tetris-core/src",
+         "root": "projects/twa-core",
+         "sourceRoot": "projects/twa-core/src",
          "prefix": "twa-lib",
          "architect": {
             "build": {
                "builder": "@angular-devkit/build-angular:ng-packagr",
                "options": {
-                  "project": "projects/twa-tetris-core/ng-package.json"
+                  "project": "projects/twa-core/ng-package.json"
                },
                "configurations": {
                   "production": {
-                     "tsConfig": "projects/twa-tetris-core/tsconfig.lib.prod.json"
+                     "tsConfig": "projects/twa-core/tsconfig.lib.prod.json"
                   },
                   "development": {
-                     "tsConfig": "projects/twa-tetris-core/tsconfig.lib.json"
+                     "tsConfig": "projects/twa-core/tsconfig.lib.json"
                   }
                },
                "defaultConfiguration": "production"
@@ -27,7 +27,7 @@
             "test": {
                "builder": "@angular-devkit/build-angular:karma",
                "options": {
-                  "tsConfig": "projects/twa-tetris-core/tsconfig.spec.json",
+                  "tsConfig": "projects/twa-core/tsconfig.spec.json",
                   "polyfills": ["zone.js", "zone.js/testing"]
                }
             }
@@ -60,7 +60,12 @@
                      }
                   ],
                   "styles": ["projects/twa-tetris-example/src/styles.scss"],
-                  "scripts": []
+                  "scripts": [],
+                  "sourceMap": {
+                     "scripts": true,
+                     "styles": true,
+                     "vendor": true
+                  }
                },
                "configurations": {
                   "production": {
