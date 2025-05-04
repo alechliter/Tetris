@@ -60,6 +60,9 @@
                      }
                   ],
                   "styles": ["projects/twa-example/src/styles.scss"],
+                  "stylePreprocessorOptions": {
+                     "includePaths": ["dist/twa-core/assets/themes"]
+                  },
                   "scripts": [],
                   "sourceMap": {
                      "scripts": true,
@@ -151,6 +154,9 @@
                      }
                   ],
                   "styles": ["projects/twa-tetris/src/styles.scss"],
+                  "stylePreprocessorOptions": {
+                     "includePaths": ["dist/twa-core/assets/themes"]
+                  },
                   "scripts": []
                },
                "configurations": {

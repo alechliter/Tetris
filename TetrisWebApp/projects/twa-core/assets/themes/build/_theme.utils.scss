@@ -1,0 +1,112 @@
+@use "sass:meta";
+@use "sass:list";
+@use "sass:map";
+
+/// Validates the color schemes of each theme for the theme color.
+/// 
+/// @param {string} $theme-color - The name of the theme color.
+/// 
+/// @param {map} $themes - The themes to apply to the theme color.
+/// 
+/// @return $theme-color: (
+///    theme-1: (
+///        light: #000000,
+///        dark: #000000,
+///    ),
+///    theme-2: (
+///        light: #000000,
+///        dark: #000000,
+///    ),
+///    ...
+/// )
+@function color($theme-color, $themes...) {
+    @each $theme-name, $theme-schemes in meta.keywords($themes) {
+        $error: _validate-color-scheme($theme-color, $theme-name, $theme-schemes);
+
+        @if ($error != null) {
+            @error($error);
+        } 
+    }
+
+    @return ($theme-color: meta.keywords($themes));
+}
+
+@mixin set-colors($theme-colors...) {
+    @each $theme, $colors in _group-by-theme($theme-colors...) {
+        .#{$theme}-theme {
+            @each $color-name, $scheme in $colors {
+                $light: map.get($scheme, "light");
+                $dark: map.get($scheme, "dark");
+
+                --twa-#{$color-name}: light-dark(#{$light}, #{$dark});
+            }
+        }
+    }
+}
+
+/// Groups theme color schemes by themes.
+/// 
+/// @return (
+///   theme-1: (
+///      theme-color-1: (
+///          light: #000000,
+///          dark: #000000,
+///      ),
+///      theme-color-2: (
+///          light: #000000,
+///          dark: #000000,
+///      ),
+///      ...
+///   ),
+///   theme-2: (
+///      theme-color-1: (
+///          light: #000000,
+///          dark: #000000,
+///      ),
+///      theme-color-2: (
+///          light: #000000,
+///          dark: #000000,
+///      ),
+///      ...
+///   ),
+///   ...
+///)
+@function _group-by-theme($theme-colors...) {
+    $theme-map: ();
+
+    @each $theme-color in $theme-colors {
+        @each $theme-color-name, $themes in $theme-color {
+            @each $theme-name, $theme-schemes in $themes {
+                $theme-color-map: map.get($theme-map, $theme-name);
+
+                @if ($theme-color-map == null) {
+                    $theme-color-map: ();
+                }
+                
+                $theme-color-map: map.set($theme-color-map, $theme-color-name, $theme-schemes);
+                $theme-map: map.set($theme-map, $theme-name, $theme-color-map);
+            } 
+        }
+    }
+
+    @return $theme-map;
+}
+
+/// Validates the format of the provided color scheme.
+/// 
+/// @param {string} $theme-color - Name of the theme color.
+/// @param {string} $theme - Name of the color scheme's theme.
+/// @param {map} $colors - The color scheme map for the theme color.
+/// 
+/// @return null if scheme is correct. Otherwise, an error string.
+@function _validate-color-scheme($theme-color, $theme, $colors) {
+    @if (map.has-key($colors, "light") == false) {
+        @return "Missing light theme color for #{$theme-color} in #{$theme} theme.";
+    }
+
+    @if (map.has-key($colors, "dark") == false) {
+        @return "Missing dark theme color for #{$theme-color} in #{$theme} theme.";
+    }
+
+    @return null;
+}

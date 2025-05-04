@@ -1,0 +1,9 @@
+@use 'colors';
+
+:host {
+   @include colors.define-themes();
+}
+
+button {
+   background-color: var(--twa-example);
+}

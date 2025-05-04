@@ -1,1 +1,5 @@
-<div>Example Component</div>
+<div [ngClass]="selectedTheme()">
+   <input type="text" ngModel (ngModelChange)="onThemeChange($event)" />
+
+   <button (click)="onToggleColorScheme()">Toggle Light/Dark Theme</button>
+</div>

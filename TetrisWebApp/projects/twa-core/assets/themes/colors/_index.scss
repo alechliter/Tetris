@@ -1,0 +1,31 @@
+@use 'build/theme.utils';
+@use 'colors/classic.palette';
+
+$colors: (
+   theme.color(
+      $theme-color: 'example',
+      $classic: (
+         light: classic.$green_1,
+         dark: classic.$green_2,
+      ),
+      $modern: (
+         light: #ffffff,
+         dark: #000000,
+      ),
+   ),
+   theme.color(
+      $theme-color: 'example-2',
+      $classic: (
+         light: classic.$green_1,
+         dark: classic.$green_2,
+      ),
+      $modern: (
+         light: #ffffff,
+         dark: #000000,
+      ),
+   )
+);
+
+@mixin define-themes {
+   @include theme.set-colors($colors...);
+}
