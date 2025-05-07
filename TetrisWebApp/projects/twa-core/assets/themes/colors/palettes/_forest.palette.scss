@@ -1,0 +1,33 @@
+@use 'colors/palettes/palette.utils';
+
+$_colors: (
+   'mint-green': (
+      '-2': hsla(163, 62%, 69%, 1),
+      '+0': hsla(163, 62%, 89%, 1),
+      '+2': hsla(163, 62%, 100%, 1),
+   ),
+   'moss-green': (
+      '-2': hsla(64, 29%, 12%, 1),
+      '+0': hsla(64, 29%, 32%, 1),
+      '+2': hsla(64, 29%, 52%, 1),
+   ),
+   'tea-green': (
+      '-2': hsla(81, 91%, 67%, 1),
+      '+0': hsla(81, 91%, 87%, 1),
+      '+2': hsla(81, 91%, 100%, 1),
+   ),
+   'pistachio': (
+      '-2': hsla(78, 46%, 43%, 1),
+      '+0': hsla(78, 46%, 63%, 1),
+      '+2': hsla(78, 46%, 83%, 1),
+   ),
+   'violet': (
+      '-2': hsla(251, 19%, 9%, 1),
+      '+0': hsla(251, 19%, 29%, 1),
+      '+2': hsla(251, 19%, 49%, 1),
+   ),
+);
+
+@function get($color, $modifier: '+0') {
+   @return palette.get-color('forest', $_colors, $color, $modifier);
+}

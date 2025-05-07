@@ -1,0 +1,23 @@
+@use 'colors/palettes/palette.utils';
+
+$_colors: (
+   'turquoise': (
+      '-2': hsla(172, 80%, 36%, 1),
+      '+0': hsla(172, 80%, 56%, 1),
+      '+2': hsla(172, 80%, 76%, 1),
+   ),
+   'dark-brown': (
+      '-2': hsla(28, 43%, 0%, 1),
+      '+0': hsla(28, 43%, 14%, 1),
+      '+2': hsla(28, 43%, 34%, 1),
+   ),
+   'grey': (
+      '-2': hsla(188, 6%, 52%, 1),
+      '+0': hsla(150, 1%, 39%, 1),
+      '+2': hsla(30, 12%, 27%, 1),
+   ),
+);
+
+@function get($color, $modifier: '+0') {
+   @return palette.get-color('default', $_colors, $color, $modifier);
+}

@@ -1,0 +1,18 @@
+@use 'sass:map';
+@use 'sass:string';
+
+@function get-color($paletteName, $colors, $color, $modifier) {
+   $colorMap: map.get($colors, string.quote($color));
+
+   @if ($colorMap == null) {
+      @error "Undefined color #{$color} for the #{$paletteName} palette.";
+   }
+
+   $colorValue: map.get($colorMap, $modifier);
+
+   @if ($colorValue == null) {
+      @error "Undefined color modifier #{$color}#{$modifier} for the #{$paletteName} palette.";
+   }
+
+   @return $colorValue;
+}

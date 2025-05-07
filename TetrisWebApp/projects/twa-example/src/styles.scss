@@ -4,3 +4,7 @@
 :root {
    @include colors.define-themes();
 }
+
+body {
+   background-color: var(--twa-background);
+}
