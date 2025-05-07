@@ -1,0 +1,110 @@
+@use 'build/theme.utils';
+@use 'colors/palettes/global.palette';
+@use 'colors/palettes/default.palette';
+@use 'colors/palettes/forest.palette';
+
+$colors: (
+   theme.color(
+      $theme-color: 'primary',
+      $default: (
+         light: default.get('turquoise'),
+         dark: default.get('turquoise', '-2'),
+      ),
+      $forest: (
+         light: forest.get('pistachio'),
+         dark: forest.get('pistachio', '-2'),
+      ),
+   ),
+   theme.color(
+      $theme-color: 'secondary',
+      $default: (
+         light: default.get('turquoise', '+2'),
+         dark: default.get('turquoise'),
+      ),
+      $forest: (
+         light: forest.get('mint-green', '-2'),
+         dark: forest.get('moss-green'),
+      ),
+   ),
+   theme.color(
+      $theme-color: 'background',
+      $default: (
+         light: global.get('white'),
+         dark: default.get('dark-brown', '-2'),
+      ),
+      $forest: (
+         light: global.get('white'),
+         dark: global.get('black'),
+      ),
+   ),
+   theme.color(
+      $theme-color: 'text',
+      $default: (
+         light: global.get('black'),
+         dark: global.get('white', '+2'),
+      ),
+      $forest: (
+         light: forest.get('violet'),
+         dark: forest.get('tea-green'),
+      ),
+   ),
+   theme.color(
+      $theme-color: 'light-text',
+      $default: (
+         light: global.get('white', '-2'),
+         dark: global.get('white', '+2'),
+      ),
+      $forest: (
+         light: global.get('white', '-2'),
+         dark: global.get('white', '+2'),
+      ),
+   ),
+   theme.color(
+      $theme-color: 'dark-text',
+      $default: (
+         light: global.get('black'),
+         dark: global.get('black', '-2'),
+      ),
+      $forest: (
+         light: global.get('black'),
+         dark: global.get('black', '-2'),
+      ),
+   ),
+   theme.color(
+      $theme-color: 'input-background',
+      $default: (
+         light: global.get('white', '-2'),
+         dark: default.get('grey', '+2'),
+      ),
+      $forest: (
+         light: forest.get('tea-green'),
+         dark: forest.get('moss-green', '-2'),
+      ),
+   ),
+   theme.color(
+      $theme-color: 'input-border',
+      $default: (
+         light: default.get('turquoise', '-2'),
+         dark: default.get('turquoise'),
+      ),
+      $forest: (
+         light: forest.get('pistachio'),
+         dark: forest.get('pistachio', '-2'),
+      ),
+   ),
+   theme.color(
+      $theme-color: 'input-text',
+      $default: (
+         light: default.get('dark-brown'),
+         dark: global.get('white', '+2'),
+      ),
+      $forest: (
+         light: forest.get('violet'),
+         dark: forest.get('tea-green'),
+      ),
+   )
+);
+
+@mixin define-themes {
+   @include theme.set-colors($colors...);
+}
