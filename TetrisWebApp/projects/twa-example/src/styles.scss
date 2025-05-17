@@ -3,8 +3,17 @@
 
 :root {
    @include colors.define-themes();
+
+   * {
+      font-family: 'Figtree', sans-serif;
+      font-optical-sizing: auto;
+      font-weight: 500;
+      font-style: normal;
+   }
 }
 
 body {
    background-color: var(--twa-background);
+   margin: 0;
+   height: 100dvh;
 }

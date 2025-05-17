@@ -1,4 +1,10 @@
 <main>
-   <router-outlet />
-   <twa-lib-example></twa-lib-example>
+   <twa-side-bar-layout>
+      <twa-side-bar title="Example Sections">
+         <twa-navigation-menu></twa-navigation-menu>
+      </twa-side-bar>
+      <twa-side-bar-content>
+         <router-outlet />
+      </twa-side-bar-content>
+   </twa-side-bar-layout>
 </main>

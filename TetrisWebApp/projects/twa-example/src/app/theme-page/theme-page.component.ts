@@ -11,18 +11,17 @@ import {
    WritableSignal,
 } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { ThemeService } from '../theme/theme.service';
+import { Theme, ColorScheme, ThemeService, ThemeModel } from '@twa-core';
 import { Subject, takeUntil } from 'rxjs';
-import { ColorScheme, Theme, ThemeModel } from '../../public-api';
 
 @Component({
-   selector: 'twa-lib-example',
-   templateUrl: 'example.component.html',
-   styleUrl: 'example.component.scss',
+   selector: 'twa-theme-page',
+   templateUrl: 'theme-page.component.html',
+   styleUrl: 'theme-page.component.scss',
    changeDetection: ChangeDetectionStrategy.OnPush,
    imports: [CommonModule, FormsModule, ReactiveFormsModule],
 })
-export class ExampleComponent implements OnInit {
+export class ThemePageComponent implements OnInit {
    protected readonly themes: Array<Theme>;
 
    protected readonly oppositeColorScheme: Signal<ColorScheme>;
