@@ -1,0 +1,16 @@
+<div class="section-menu-item">
+   <twa-button
+      [cssClass]="{ secondary: isFocused() }"
+      (clicked)="onSectionSelected()"
+      (focusChange)="onFocusChange($event)"
+   >
+      <div class="section-menu-item-text">
+         <span class="section-id">{{ section().sectionID }}</span> {{ section().name() }}
+      </div>
+   </twa-button>
+   <div class="subsections">
+      @for (subsection of section().subsections(); track subsection) {
+         <twa-section-menu-item [section]="subsection"></twa-section-menu-item>
+      }
+   </div>
+</div>

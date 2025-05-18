@@ -28,6 +28,17 @@ $colors: (
       ),
    ),
    theme.color(
+      $theme-color: 'tertiary',
+      $default: (
+         light: default.get('dark-brown'),
+         dark: default.get('dark-brown', '+2'),
+      ),
+      $forest: (
+         light: forest.get('violet'),
+         dark: forest.get('violet', '+2'),
+      ),
+   ),
+   theme.color(
       $theme-color: 'background',
       $default: (
          light: global.get('white'),
@@ -36,6 +47,17 @@ $colors: (
       $forest: (
          light: global.get('white'),
          dark: global.get('black'),
+      ),
+   ),
+   theme.color(
+      $theme-color: 'divider',
+      $default: (
+         light: default.get('grey'),
+         dark: default.get('grey', '-2'),
+      ),
+      $forest: (
+         light: forest.get('moss-green'),
+         dark: forest.get('moss-green', '+2'),
       ),
    ),
    theme.color(
@@ -140,16 +162,16 @@ $colors: (
    theme.color(
       $theme-color: 'scrollbar-thumb',
       $default: (
-         light: global.get('white'),
-         dark: global.get('black'),
+         light: global.get('black'),
+         dark: global.get('white'),
       ),
       $forest: (
-         light: global.get('white'),
-         dark: global.get('black'),
+         light: global.get('black'),
+         dark: global.get('white'),
       ),
    ),
    theme.color(
-      $theme-color: 'scroll-bar-gutter',
+      $theme-color: 'scrollbar-gutter',
       $default: (
          light: transparent,
          dark: transparent,

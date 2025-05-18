@@ -1,0 +1,35 @@
+:host {
+   display: block;
+}
+
+@mixin section-heading($level) {
+   &.heading-#{$level} {
+      font-size: 2em - (($level - 1) * 0.5em);
+      font-weight: 600;
+   }
+}
+
+.section-header {
+   cursor: default;
+   color: var(--twa-text);
+   padding-bottom: 0.25em;
+
+   @include section-heading(1);
+   @include section-heading(2);
+   @include section-heading(3);
+
+   .section-id {
+      color: var(--twa-divider);
+   }
+}
+
+.section-content {
+   display: flex;
+   flex-direction: column;
+   gap: 1em;
+   cursor: default;
+   color: var(--twa-text);
+   border-left: 1px solid var(--twa-divider);
+   padding-left: 0.5em;
+   margin-left: 0.5em;
+}

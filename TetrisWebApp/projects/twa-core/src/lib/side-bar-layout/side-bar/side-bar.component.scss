@@ -1,5 +1,6 @@
 :host {
    height: 100%;
+   flex-shrink: 0;
 
    --side-bar-min-width: 10em;
    --side-bar-padding: 1em;
@@ -33,7 +34,7 @@
    overflow-y: auto;
 
    overflow-y: auto;
-   scrollbar-color: var(--twa-scrollbar-thumb) var(--twa-scroll-bar-gutter);
+   scrollbar-color: var(--twa-scrollbar-thumb) var(--twa-scrollbar-gutter);
    scrollbar-width: thin;
    scrollbar-gutter: both-edges stable;
 }
