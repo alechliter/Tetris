@@ -9,6 +9,7 @@
       font-optical-sizing: auto;
       font-weight: 500;
       font-style: normal;
+      box-sizing: border-box;
    }
 }
 
@@ -16,4 +17,6 @@ body {
    background-color: var(--twa-background);
    margin: 0;
    height: 100dvh;
+   width: 100dvw;
+   position: fixed;
 }

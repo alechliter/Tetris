@@ -136,6 +136,28 @@ $colors: (
          light: color.change(forest.get('moss-green', '-2'), $alpha: 0.25),
          dark: color.change(forest.get('shadow'), $alpha: 0.25),
       ),
+   ),
+   theme.color(
+      $theme-color: 'scrollbar-thumb',
+      $default: (
+         light: global.get('white'),
+         dark: global.get('black'),
+      ),
+      $forest: (
+         light: global.get('white'),
+         dark: global.get('black'),
+      ),
+   ),
+   theme.color(
+      $theme-color: 'scroll-bar-gutter',
+      $default: (
+         light: transparent,
+         dark: transparent,
+      ),
+      $forest: (
+         light: transparent,
+         dark: transparent,
+      ),
    )
 );
 

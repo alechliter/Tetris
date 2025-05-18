@@ -1,0 +1,10 @@
+<twa-button
+   class="nav-button"
+   [cssClass]="{ secondary: isFocused() }"
+   (clicked)="onRouteTo()"
+   (focusChange)="onFocusChange($event)"
+>
+   <div class="nav-text">
+      {{ route().title }}
+   </div>
+</twa-button>

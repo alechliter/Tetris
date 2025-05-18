@@ -3,7 +3,7 @@ import { HomePageComponent } from './home-page/home-page.component';
 import { ThemePageComponent } from './theme-page/theme-page.component';
 
 export const routes: Routes = [
-   { path: 'home', component: HomePageComponent },
-   { path: 'themes', component: ThemePageComponent },
+   { title: 'Home', path: 'home', component: HomePageComponent },
+   { title: 'Themes', path: 'themes', component: ThemePageComponent },
    { path: '', redirectTo: '/home', pathMatch: 'full' },
 ];

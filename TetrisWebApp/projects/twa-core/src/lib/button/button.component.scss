@@ -1,0 +1,24 @@
+:host {
+   --twa-button-padding: 0.5em 1.25em;
+   --twa-button-color: var(--twa-primary);
+}
+
+.twa-button {
+   padding: var(--twa-button-padding);
+
+   background-color: var(--twa-button-color);
+   color: var(--twa-text);
+   border: none;
+   border-radius: 4px;
+   cursor: pointer;
+   width: inherit;
+
+   &:focus-visible {
+      outline: var(--twa-button-color) solid 3px;
+      outline-offset: 3px;
+   }
+
+   &.secondary {
+      background-color: var(--twa-secondary);
+   }
+}

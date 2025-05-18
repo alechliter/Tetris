@@ -12,5 +12,7 @@ import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 export class SideBarComponent {
    readonly title = input.required<string>();
 
+   readonly side = input.required<'left' | 'right'>();
+
    constructor() {}
 }

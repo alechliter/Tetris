@@ -3,7 +3,6 @@ import {
    ChangeDetectionStrategy,
    Component,
    computed,
-   HostBinding,
    inject,
    OnInit,
    Signal,
@@ -11,7 +10,7 @@ import {
    WritableSignal,
 } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { Theme, ColorScheme, ThemeService, ThemeModel } from '@twa-core';
+import { ButtonComponent, ColorScheme, Theme, ThemeModel, ThemeService } from '@twa-core';
 import { Subject, takeUntil } from 'rxjs';
 
 @Component({
@@ -19,7 +18,7 @@ import { Subject, takeUntil } from 'rxjs';
    templateUrl: 'theme-page.component.html',
    styleUrl: 'theme-page.component.scss',
    changeDetection: ChangeDetectionStrategy.OnPush,
-   imports: [CommonModule, FormsModule, ReactiveFormsModule],
+   imports: [CommonModule, FormsModule, ReactiveFormsModule, ButtonComponent],
 })
 export class ThemePageComponent implements OnInit {
    protected readonly themes: Array<Theme>;

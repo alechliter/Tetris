@@ -1,4 +1,6 @@
-<div class="side-bar">
+<div class="side-bar" [ngClass]="side()">
    <h3 class="title">{{ title() }}</h3>
-   <ng-content></ng-content>
+   <div class="side-bar-content">
+      <ng-content></ng-content>
+   </div>
 </div>

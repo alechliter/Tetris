@@ -1,0 +1,14 @@
+<button
+   class="twa-button"
+   [ngClass]="cssClass()"
+   [attr.type]="type()"
+   tabindex="0"
+   (click)="onClick($event)"
+   (keydown.enter)="onClick($event)"
+   (mouseenter)="onFocus($event)"
+   (mouseleave)="onBlur($event)"
+   (focus)="onFocus($event)"
+   (blur)="onBlur($event)"
+>
+   <ng-content></ng-content>
+</button>

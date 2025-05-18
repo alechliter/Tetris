@@ -1,10 +1,5 @@
 <nav>
-   <ul>
-      <li>
-         <a routerLink="/home" routerLinkActive="active" ariaCurrentWhenActive="page"> Home </a>
-      </li>
-      <li>
-         <a routerLink="/themes" routerLinkActive="active" ariaCurrentWhenActive="page"> Themes </a>
-      </li>
-   </ul>
+   @for (route of availableRoutes; track route) {
+      <twa-navigation-link [route]="route"></twa-navigation-link>
+   }
 </nav>
