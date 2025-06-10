@@ -10,6 +10,7 @@ import {
    WritableSignal,
 } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { ButtonComponent, ColorScheme, IconComponent, Theme, ThemeModel, ThemeService } from '@twa-core';
 import { Subject, takeUntil } from 'rxjs';
 
@@ -33,7 +34,7 @@ export class ThemePageComponent implements OnInit {
 
    private readonly unsubscribe = new Subject<void>();
 
-   constructor() {
+   constructor(private readonly snackbar: MatSnackBar) {
       this.themeService = inject(ThemeService);
 
       this.themes = this.themeService.getThemes();
@@ -57,7 +58,7 @@ export class ThemePageComponent implements OnInit {
    }
 
    onIconClicked(): void {
-      alert('Icon Clicked');
+      this.snackbar.open('Icon clicked', 'Close', { duration: 3_000 });
    }
 
    private computeOppositeColorScheme(): ColorScheme {
