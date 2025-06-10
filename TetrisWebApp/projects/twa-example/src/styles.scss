@@ -4,13 +4,18 @@
 :root {
    @include colors.define-themes();
 
-   * {
+   *:not(.material-symbols-rounded) {
       font-family: 'Figtree', sans-serif;
       font-optical-sizing: auto;
       font-weight: 500;
       font-style: normal;
       box-sizing: border-box;
    }
+}
+
+.material-symbols-rounded {
+   user-select: none;
+   cursor: default;
 }
 
 body {

@@ -21,6 +21,9 @@ export class ButtonComponent {
    readonly focusChange = output<ButtonFocusChangeEvent>();
 
    onClick(event: MouseEvent | Event): void {
+      event.stopPropagation();
+      event.preventDefault();
+
       this.clicked.emit(event);
    }
 

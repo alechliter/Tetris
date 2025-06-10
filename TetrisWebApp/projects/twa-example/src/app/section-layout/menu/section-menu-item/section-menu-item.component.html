@@ -1,9 +1,5 @@
 <div class="section-menu-item">
-   <twa-button
-      [cssClass]="{ secondary: isFocused() }"
-      (clicked)="onSectionSelected()"
-      (focusChange)="onFocusChange($event)"
-   >
+   <twa-button class="section-menu-button" (clicked)="onSectionSelected()">
       <div class="section-menu-item-text">
          <span class="section-id">{{ section().sectionID }}</span> {{ section().name() }}
       </div>

@@ -10,7 +10,7 @@ import {
    WritableSignal,
 } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { ButtonComponent, ColorScheme, Theme, ThemeModel, ThemeService } from '@twa-core';
+import { ButtonComponent, ColorScheme, IconComponent, Theme, ThemeModel, ThemeService } from '@twa-core';
 import { Subject, takeUntil } from 'rxjs';
 
 @Component({
@@ -18,7 +18,7 @@ import { Subject, takeUntil } from 'rxjs';
    templateUrl: 'theme-page.component.html',
    styleUrl: 'theme-page.component.scss',
    changeDetection: ChangeDetectionStrategy.OnPush,
-   imports: [CommonModule, FormsModule, ReactiveFormsModule, ButtonComponent],
+   imports: [CommonModule, FormsModule, ReactiveFormsModule, ButtonComponent, IconComponent],
 })
 export class ThemePageComponent implements OnInit {
    protected readonly themes: Array<Theme>;
@@ -54,6 +54,10 @@ export class ThemePageComponent implements OnInit {
 
    onThemeChange(theme: Theme): void {
       this.themeService.changeTheme({ theme: theme });
+   }
+
+   onIconClicked(): void {
+      alert('Icon Clicked');
    }
 
    private computeOppositeColorScheme(): ColorScheme {

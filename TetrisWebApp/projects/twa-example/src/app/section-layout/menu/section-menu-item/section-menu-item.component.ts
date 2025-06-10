@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, input, signal, WritableSignal } from '@angular/core';
-import { ButtonComponent, ButtonFocusChangeEvent } from '@twa-core';
+import { ChangeDetectionStrategy, Component, input } from '@angular/core';
+import { ButtonComponent } from '@twa-core';
 import { SectionModel } from '../../section/models/section.model';
 
 @Component({
@@ -12,15 +12,10 @@ import { SectionModel } from '../../section/models/section.model';
 })
 export class SectionMenuItemComponent {
    readonly section = input.required<SectionModel>();
-   protected readonly isFocused: WritableSignal<boolean> = signal(false);
 
    constructor() {}
 
    onSectionSelected(): void {
       this.section().elementRef.nativeElement.scrollIntoView({ behavior: 'smooth' });
-   }
-
-   onFocusChange(event: ButtonFocusChangeEvent): void {
-      this.isFocused.set(event.active);
    }
 }
