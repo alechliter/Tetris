@@ -1,7 +1,9 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { Route, Router } from '@angular/router';
+import { ColorSchemeToggleComponent } from '../../../../twa-core/src/lib/theme/components/color-scheme-toggle/color-scheme-toggle.component';
 import { routes } from '../app.routes';
+import { QuickSettingsMenuComponent } from '../quick-settings-menu/quick-settings-menu.component';
 import { NavigationLinkComponent } from './navigation-link/navigation-link.component';
 
 @Component({
@@ -10,7 +12,7 @@ import { NavigationLinkComponent } from './navigation-link/navigation-link.compo
    styleUrl: 'navigation-menu.component.scss',
    standalone: true,
    changeDetection: ChangeDetectionStrategy.OnPush,
-   imports: [CommonModule, NavigationLinkComponent],
+   imports: [CommonModule, NavigationLinkComponent, ColorSchemeToggleComponent, QuickSettingsMenuComponent],
 })
 export class NavigationMenuComponent {
    protected readonly availableRoutes;

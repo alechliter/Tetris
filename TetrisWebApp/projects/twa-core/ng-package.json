@@ -3,7 +3,7 @@
    "dest": "../../dist/twa-core",
    "lib": {
       "entryFile": "src/public-api.ts",
-      "styleIncludePaths": ["assets/themes/", "assets/styles"]
+      "styleIncludePaths": ["assets/themes/", "assets/styles/"]
    },
    "assets": ["./assets/**/*.*"]
 }

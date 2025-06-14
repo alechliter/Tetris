@@ -61,7 +61,7 @@
                   ],
                   "styles": ["projects/twa-example/src/styles.scss"],
                   "stylePreprocessorOptions": {
-                     "includePaths": ["dist/twa-core/assets/themes"]
+                     "includePaths": ["dist/twa-core/assets/themes", "dist/twa-core/assets/styles"]
                   },
                   "scripts": [],
                   "sourceMap": {

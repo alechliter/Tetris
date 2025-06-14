@@ -1,0 +1,9 @@
+:host {
+   --twa-icon-color: var(--twa-text);
+   --twa-icon-clickable-color: var(--twa-primary);
+}
+
+twa-icon {
+   --twa-icon-color: var(--twa-icon-color);
+   --twa-icon-clickable-color: var(--twa-icon-clickable-color);
+}

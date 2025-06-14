@@ -1,12 +1,19 @@
 @use 'click.utils' as click;
 
+:host {
+   --twa-icon-color: var(--twa-text);
+   --twa-icon-clickable-color: var(--twa-primary);
+
+   display: block;
+}
+
 .icon {
-   color: var(--twa-text);
+   color: var(--twa-icon-color);
 }
 
 .icon-clickable {
    cursor: pointer;
-   color: var(--twa-primary);
+   color: var(--twa-icon-clickable-color);
    filter: drop-shadow(0 1px 3px var(--twa-shadow));
 
    @include click.clickable();
