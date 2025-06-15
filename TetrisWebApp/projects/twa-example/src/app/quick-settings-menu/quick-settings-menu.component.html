@@ -8,11 +8,14 @@
       matTooltip="Settings"
       matTooltipPosition="right"
    ></twa-icon>
-   <div style="padding: 1em; width: 14em">
-      <div>Overlay Test</div>
-      <div>Overlay Test</div>
-      <div>Overlay Test</div>
-      <div>Overlay Test</div>
-      <div>Overlay Test</div>
+   <div class="quick-settings-overlay">
+      <div class="quick-settings-section">
+         <div class="quick-settings-title">Theme</div>
+         <twa-button-toggle [selected]="selectedTheme()" (selectedChange)="onThemeChange($event)">
+            @for (theme of themes; track theme) {
+               <twa-button-toggle-item [value]="theme"> {{ theme }} </twa-button-toggle-item>
+            }
+         </twa-button-toggle>
+      </div>
    </div>
 </twa-overlay>

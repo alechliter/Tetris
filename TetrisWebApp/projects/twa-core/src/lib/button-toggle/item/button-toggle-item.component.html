@@ -1,0 +1,13 @@
+<button
+   class="twa-button-toggle-item"
+   [class.selected]="isSelected()"
+   type="button"
+   tabindex="0"
+   (click)="onClick($event)"
+   (keydown.enter)="onClick($event)"
+>
+   @if (isSelected()) {
+      <twa-icon icon="check"></twa-icon>
+   }
+   <ng-content></ng-content>
+</button>

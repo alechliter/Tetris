@@ -1,9 +1,11 @@
 :host {
-   --twa-icon-color: var(--twa-text);
-   --twa-icon-clickable-color: var(--twa-primary);
+   --twa-cst-color: var(--twa-text);
+   --twa-cst-clickable-color: var(--twa-primary);
 }
 
 twa-icon {
-   --twa-icon-color: var(--twa-icon-color);
-   --twa-icon-clickable-color: var(--twa-icon-clickable-color);
+   --twa-icon-color: var(--twa-cst-color);
+   --twa-icon-clickable-color: var(--twa-cst-clickable-color);
+
+   display: flex;
 }

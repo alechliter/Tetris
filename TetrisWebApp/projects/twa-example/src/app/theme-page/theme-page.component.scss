@@ -15,6 +15,7 @@
 
 %section-base {
    display: flex;
+   flex-wrap: wrap;
    gap: 1em;
    align-items: center;
    justify-content: center;
@@ -27,23 +28,6 @@
 .vertical-section {
    @extend %section-base;
    flex-direction: column;
-}
-
-button {
-   background-color: var(--twa-primary);
-   color: var(--twa-text);
-   padding: 0.5em 1.25em;
-   border: none;
-   border-radius: 4px;
-   cursor: pointer;
-
-   &:focus {
-      outline: var(--twa-primary);
-   }
-
-   &:not(.selected) {
-      background-color: var(--twa-secondary);
-   }
 }
 
 input {

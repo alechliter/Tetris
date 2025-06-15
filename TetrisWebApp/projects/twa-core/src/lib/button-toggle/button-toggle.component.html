@@ -1,0 +1,13 @@
+<div class="twa-button-toggle">
+   <ng-content></ng-content>
+
+   @if (selectionRect(); as rect) {
+      <div
+         class="twa-bt-selection-indicator"
+         [style.transform]="'translateX(' + rect.x + 'px' + ')'"
+         [style.top.px]="rect.y"
+         [style.width.px]="rect.width"
+         [style.height.px]="rect.height"
+      ></div>
+   }
+</div>

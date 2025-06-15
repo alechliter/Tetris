@@ -11,15 +11,34 @@ import {
 } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { ButtonComponent, ColorScheme, IconComponent, Theme, ThemeModel, ThemeService } from '@twa-core';
+import {
+   ButtonComponent,
+   ButtonToggleComponent,
+   ButtonToggleItemComponent,
+   ColorScheme,
+   IconComponent,
+   Theme,
+   ThemeModel,
+   ThemeService,
+} from '@twa-core';
 import { Subject, takeUntil } from 'rxjs';
+import { ColorSchemeToggleComponent } from '../../../../twa-core/src/lib/theme/components/color-scheme-toggle/color-scheme-toggle.component';
 
 @Component({
    selector: 'twa-theme-page',
    templateUrl: 'theme-page.component.html',
    styleUrl: 'theme-page.component.scss',
    changeDetection: ChangeDetectionStrategy.OnPush,
-   imports: [CommonModule, FormsModule, ReactiveFormsModule, ButtonComponent, IconComponent],
+   imports: [
+      CommonModule,
+      FormsModule,
+      ReactiveFormsModule,
+      ButtonComponent,
+      IconComponent,
+      ButtonToggleComponent,
+      ButtonToggleItemComponent,
+      ColorSchemeToggleComponent,
+   ],
 })
 export class ThemePageComponent implements OnInit {
    protected readonly themes: Array<Theme>;

@@ -1,0 +1,33 @@
+:host {
+   --twa-bt-active-item-color: var(--twa-primary);
+   --twa-bt-inactive-item-color: transparent;
+   --twa-bt-border-radius: 10px;
+   --twa-bt-padding: 0.25em;
+   --twa-bt-shadow: 0 1px 3px var(--twa-shadow);
+   --twa-bt-z-index: 5;
+}
+
+.twa-button-toggle {
+   position: relative;
+   z-index: var(--twa-bt-z-index);
+   display: flex;
+   gap: 0.25em;
+   padding: var(--twa-bt-padding);
+   border: solid 1px var(--twa-border);
+   border-radius: calc(var(--twa-bt-border-radius) + var(--twa-bt-padding));
+   backdrop-filter: blur(25px) opacity(0.75);
+   box-shadow: var(--twa-bt-shadow);
+   overflow: visible;
+}
+
+.twa-bt-selection-indicator {
+   position: absolute;
+   top: 0;
+   left: 0;
+   box-shadow: var(--twa-bt-shadow);
+   border-radius: var(--twa-bt-border-radius);
+   background-color: var(--twa-bt-active-item-color);
+   transition:
+      transform 0.5s cubic-bezier(0.08, 0.82, 0.17, 1),
+      width 0.5s cubic-bezier(0.08, 0.82, 0.17, 1);
+}

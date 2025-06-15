@@ -1,3 +1,5 @@
+export * from './lib/button-toggle/button-toggle.component';
+export * from './lib/button-toggle/item/button-toggle-item.component';
 export * from './lib/button/button.component';
 export * from './lib/icon/icon.component';
 export { TetrisWebAppOverlayComponent as OverlayComponent } from './lib/overlay/overlay.component';
