@@ -1,0 +1,15 @@
+:host {
+   width: 100%;
+}
+
+.nav-button {
+   --twa-button-shadow: unset;
+   width: inherit;
+}
+
+.nav-text {
+   width: inherit;
+   text-align: right;
+   user-select: none;
+   cursor: pointer;
+}

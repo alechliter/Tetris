@@ -1,0 +1,12 @@
+.side-bar-layout {
+   display: flex;
+   overflow: hidden;
+   height: 95dvh;
+   width: 95dvw;
+   margin: auto;
+   border: solid 15px var(--twa-primary);
+   border-radius: 12px;
+
+   box-shadow: 0px 0px 52px 3px var(--twa-shadow);
+   background-color: var(--twa-primary);
+}

@@ -1,0 +1,15 @@
+@use '@angular/material' as mat;
+
+@mixin override {
+   @include mat.tooltip-overrides(
+      (
+         container-color: var(--twa-secondary),
+         supporting-text-color: var(--twa-text),
+         container-shape: 4px,
+      )
+   );
+
+   .mat-mdc-tooltip {
+      cursor: pointer;
+   }
+}

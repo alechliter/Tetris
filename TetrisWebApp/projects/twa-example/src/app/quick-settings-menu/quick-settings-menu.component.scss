@@ -1,0 +1,33 @@
+:host {
+   --twa-icon-color: var(--twa-text);
+   --twa-icon-clickable-color: var(--twa-primary);
+}
+
+twa-icon {
+   --twa-icon-color: var(--twa-icon-color);
+   --twa-icon-clickable-color: var(--twa-icon-clickable-color);
+}
+
+.quick-settings-overlay {
+   padding: 1em;
+   display: flex;
+   flex-direction: column;
+   gap: 1em;
+
+   .quick-settings-section {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5em;
+      flex-shrink: 0;
+
+      .quick-settings-title {
+         cursor: default;
+         user-select: none;
+         color: var(--twa-text);
+      }
+   }
+}
+
+.theme-options {
+   display: flex;
+}

@@ -1,3 +1,4 @@
+@use 'sass:color';
 @use 'build/theme.utils';
 @use 'colors/palettes/global.palette';
 @use 'colors/palettes/default.palette';
@@ -22,8 +23,19 @@ $colors: (
          dark: default.get('turquoise'),
       ),
       $forest: (
-         light: forest.get('mint-green', '-2'),
+         light: forest.get('moss-green', '+2'),
          dark: forest.get('moss-green'),
+      ),
+   ),
+   theme.color(
+      $theme-color: 'tertiary',
+      $default: (
+         light: default.get('dark-brown'),
+         dark: default.get('dark-brown', '+2'),
+      ),
+      $forest: (
+         light: forest.get('violet'),
+         dark: forest.get('violet', '+2'),
       ),
    ),
    theme.color(
@@ -35,6 +47,28 @@ $colors: (
       $forest: (
          light: global.get('white'),
          dark: global.get('black'),
+      ),
+   ),
+   theme.color(
+      $theme-color: 'border',
+      $default: (
+         light: global.get('black'),
+         dark: global.get('white', '+2'),
+      ),
+      $forest: (
+         light: forest.get('violet'),
+         dark: forest.get('tea-green'),
+      ),
+   ),
+   theme.color(
+      $theme-color: 'divider',
+      $default: (
+         light: default.get('grey'),
+         dark: default.get('grey', '-2'),
+      ),
+      $forest: (
+         light: forest.get('moss-green'),
+         dark: forest.get('moss-green', '+2'),
       ),
    ),
    theme.color(
@@ -95,12 +129,67 @@ $colors: (
    theme.color(
       $theme-color: 'input-text',
       $default: (
-         light: default.get('dark-brown'),
+         light: default.get('turquoise', '-4'),
+         dark: default.get('turquoise', '+3'),
+      ),
+      $forest: (
+         light: forest.get('violet'),
+         dark: forest.get('tea-green'),
+      ),
+   ),
+   theme.color(
+      $theme-color: 'side-bar-title',
+      $default: (
+         light: global.get('black'),
          dark: global.get('white', '+2'),
       ),
       $forest: (
          light: forest.get('violet'),
          dark: forest.get('tea-green'),
+      ),
+   ),
+   theme.color(
+      $theme-color: 'side-bar-background',
+      $default: (
+         light: default.get('turquoise'),
+         dark: default.get('turquoise', '-2'),
+      ),
+      $forest: (
+         light: forest.get('pistachio'),
+         dark: forest.get('pistachio', '-2'),
+      ),
+   ),
+   theme.color(
+      $theme-color: 'shadow',
+      $default: (
+         light: color.change(default.get('dark-brown'), $alpha: 0.25),
+         dark: color.change(default.get('turquoise', '+3'), $alpha: 0.25),
+      ),
+      $forest: (
+         light: color.change(forest.get('moss-green', '-2'), $alpha: 0.25),
+         dark: color.change(forest.get('shadow'), $alpha: 0.25),
+      ),
+   ),
+   theme.color(
+      $theme-color: 'scrollbar-thumb',
+      $default: (
+         light: global.get('black'),
+         dark: global.get('white'),
+      ),
+      $forest: (
+         light: global.get('black'),
+         dark: global.get('white'),
+      ),
+   ),
+   theme.color(
+      $theme-color: 'scrollbar-gutter',
+      $default: (
+         light: transparent,
+         dark: transparent,
+      ),
+      $forest: (
+         light: transparent,
+         dark: transparent,
       ),
    )
 );

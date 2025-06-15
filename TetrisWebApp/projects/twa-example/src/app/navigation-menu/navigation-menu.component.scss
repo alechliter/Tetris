@@ -1,0 +1,30 @@
+nav {
+   display: flex;
+   flex-direction: column;
+   gap: 0.5em;
+   justify-content: space-between;
+   height: 100%;
+}
+
+.nav-pages {
+   display: flex;
+   flex-direction: column;
+   gap: 0.5em;
+   flex-grow: 1;
+
+   .nav-button {
+      width: 100%;
+   }
+}
+
+.menu-options {
+   display: flex;
+   align-items: flex-start;
+   justify-content: flex-start;
+   gap: 0.5em;
+
+   .menu-option {
+      --twa-icon-clickable-color: var(--twa-dark-text);
+      --twa-cst-clickable-color: var(--twa-dark-text);
+   }
+}

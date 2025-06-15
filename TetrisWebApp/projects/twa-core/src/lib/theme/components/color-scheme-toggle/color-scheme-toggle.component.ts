@@ -1,29 +1,20 @@
 import { CommonModule } from '@angular/common';
-import {
-   ChangeDetectionStrategy,
-   Component,
-   computed,
-   HostBinding,
-   inject,
-   OnInit,
-   Signal,
-   signal,
-   WritableSignal,
-} from '@angular/core';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { ThemeService } from '../theme/theme.service';
+import { Component, computed, inject, input, signal, Signal, WritableSignal } from '@angular/core';
+import { MatTooltip, TooltipPosition } from '@angular/material/tooltip';
+import { ThemeService } from '@twa-core';
 import { Subject, takeUntil } from 'rxjs';
-import { ColorScheme, Theme, ThemeModel } from '../../public-api';
+import { IconComponent } from '../../../icon/icon.component';
+import { ThemeModel } from '../../models/theme.model';
+import { ColorScheme, Theme } from '../../types/theme.types';
 
 @Component({
-   selector: 'twa-lib-example',
-   templateUrl: 'example.component.html',
-   styleUrl: 'example.component.scss',
-   changeDetection: ChangeDetectionStrategy.OnPush,
-   imports: [CommonModule, FormsModule, ReactiveFormsModule],
+   selector: 'twa-color-scheme-toggle',
+   templateUrl: 'color-scheme-toggle.component.html',
+   styleUrl: 'color-scheme-toggle.component.scss',
+   imports: [CommonModule, MatTooltip, IconComponent],
 })
-export class ExampleComponent implements OnInit {
-   protected readonly themes: Array<Theme>;
+export class ColorSchemeToggleComponent {
+   readonly tooltipPosition = input<TooltipPosition>('right');
 
    protected readonly oppositeColorScheme: Signal<ColorScheme>;
 
@@ -37,8 +28,6 @@ export class ExampleComponent implements OnInit {
 
    constructor() {
       this.themeService = inject(ThemeService);
-
-      this.themes = this.themeService.getThemes();
 
       this.oppositeColorScheme = computed(this.computeOppositeColorScheme.bind(this));
    }
@@ -54,10 +43,6 @@ export class ExampleComponent implements OnInit {
       this.themeService.changeTheme({ scheme: this.oppositeColorScheme() });
    }
 
-   onThemeChange(theme: Theme): void {
-      this.themeService.changeTheme({ theme: theme });
-   }
-
    private computeOppositeColorScheme(): ColorScheme {
       if (this.selectedColorScheme() === 'light') {
          return 'dark';
@@ -67,7 +52,6 @@ export class ExampleComponent implements OnInit {
    }
 
    private updateThemeSelection(theme: ThemeModel): void {
-      this.selectedTheme.set(theme.theme);
       this.selectedColorScheme.set(theme.scheme);
    }
 }

@@ -1,5 +1,13 @@
-export * from './lib/example/example.component';
-export * from './lib/theme/theme.service';
+export * from './lib/button-toggle/button-toggle.component';
+export * from './lib/button-toggle/item/button-toggle-item.component';
+export * from './lib/button/button.component';
+export * from './lib/icon/icon.component';
+export { TetrisWebAppOverlayComponent as OverlayComponent } from './lib/overlay/overlay.component';
+export * from './lib/side-bar-layout/side-bar-content/side-bar-content.component';
+export * from './lib/side-bar-layout/side-bar-layout.component';
+export * from './lib/side-bar-layout/side-bar/side-bar.component';
 export * from './lib/theme/models/theme-options.interface';
 export * from './lib/theme/models/theme.model';
+export * from './lib/theme/theme.service';
 export * from './lib/theme/types/theme.types';
+export * from './types/angular.types';

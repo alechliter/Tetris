@@ -1,0 +1,22 @@
+@mixin clickable($color: var(--twa-primary), $border-radius: 4px) {
+   cursor: pointer;
+   transition:
+      filter 0.15s ease-in-out,
+      outline 0.15s ease-in-out;
+
+   &:hover {
+      filter: brightness(1.1);
+   }
+
+   &:active {
+      filter: brightness(0.8);
+   }
+
+   &:focus-visible {
+      outline: $color solid 2px;
+      outline-offset: -1.5px;
+      border-radius: $border-radius;
+
+      filter: brightness(1.1);
+   }
+}

@@ -26,6 +26,9 @@ $_colors: (
       '+0': hsla(251, 19%, 29%, 1),
       '+2': hsla(251, 19%, 49%, 1),
    ),
+   'shadow': (
+      '+0': hsla(0, 0%, 0%, 0.34),
+   ),
 );
 
 @function get($color, $modifier: '+0') {

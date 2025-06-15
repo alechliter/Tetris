@@ -1,0 +1,20 @@
+<h4>Theme Options</h4>
+<div class="vertical-section">
+   <div class="section">
+      <twa-button-toggle [selected]="selectedTheme()" (selectedChange)="onThemeChange($event)">
+         @for (theme of themes; track theme) {
+            <twa-button-toggle-item [value]="theme"> {{ theme }} </twa-button-toggle-item>
+         }
+      </twa-button-toggle>
+      <twa-color-scheme-toggle></twa-color-scheme-toggle>
+   </div>
+</div>
+
+<h4>Examples</h4>
+<div class="section">
+   <input type="text" ngModel />
+   <twa-icon icon="widget_medium"></twa-icon>
+   <twa-icon icon="star" clickable (clicked)="onIconClicked()"></twa-icon>
+   <twa-button>Primary</twa-button>
+   <twa-button cssClass="secondary">Secondary</twa-button>
+</div>

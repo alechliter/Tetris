@@ -1,0 +1,48 @@
+@use 'click.utils' as click;
+
+:host {
+   --twa-bti-vertical-padding: 0.5em;
+   --twa-bti-horizontal-padding: 1.25em;
+   --twa-bti-color: var(--twa-bt-inactive-item-color);
+   --twa-bti-border-radius: var(--twa-bt-border-radius);
+   --twa-bti-shadow: var(--twa-bt-shadow);
+   --twa-bti-z-index: calc(var(--twa-bt-z-index) + 1);
+
+   display: block;
+}
+
+.twa-button-toggle-item {
+   display: flex;
+   position: relative;
+   z-index: var(--twa-bti-z-index);
+   justify-content: space-between;
+   align-items: center;
+   gap: 0.25em;
+   height: 100%;
+   padding: var(--twa-bti-vertical-padding) var(--twa-bti-horizontal-padding);
+
+   background-color: var(--twa-bti-color);
+   color: var(--twa-text);
+   border-radius: var(--twa-bti-border-radius);
+   border: none;
+   cursor: pointer;
+   width: inherit;
+
+   @include click.clickable(
+      $color: hsl(from var(--twa-bt-active-item-color) h s calc(l - 25)),
+      $border-radius: var(--twa-bti-border-radius)
+   );
+
+   &:hover:not(.selected),
+   &:focus-visible:not(.selected) {
+      backdrop-filter: blur(25px) opacity(0.75);
+   }
+
+   &.selected {
+      padding-left: calc(var(--twa-bti-horizontal-padding) - 0.5em);
+   }
+
+   twa-icon {
+      flex-shrink: 0;
+   }
+}

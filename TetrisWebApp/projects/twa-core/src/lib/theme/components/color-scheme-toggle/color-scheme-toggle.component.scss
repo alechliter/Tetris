@@ -1,0 +1,11 @@
+:host {
+   --twa-cst-color: var(--twa-text);
+   --twa-cst-clickable-color: var(--twa-primary);
+}
+
+twa-icon {
+   --twa-icon-color: var(--twa-cst-color);
+   --twa-icon-clickable-color: var(--twa-cst-clickable-color);
+
+   display: flex;
+}

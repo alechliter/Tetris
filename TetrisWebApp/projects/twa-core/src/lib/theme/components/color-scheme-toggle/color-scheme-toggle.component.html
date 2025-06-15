@@ -1,0 +1,7 @@
+<twa-icon
+   [icon]="selectedColorScheme() + '_mode'"
+   clickable
+   (clicked)="onToggleColorScheme()"
+   matTooltip="Switch to {{ oppositeColorScheme() }} mode"
+   [matTooltipPosition]="tooltipPosition()"
+></twa-icon>

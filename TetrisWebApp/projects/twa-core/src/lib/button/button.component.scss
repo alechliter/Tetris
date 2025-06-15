@@ -1,0 +1,29 @@
+@use 'click.utils' as click;
+
+:host {
+   --twa-button-padding: 0.5em 1.25em;
+   --twa-button-color: var(--twa-primary);
+   --twa-button-border-radius: 4px;
+   --twa-button-shadow: 0 1px 3px var(--twa-shadow);
+}
+
+.twa-button {
+   padding: var(--twa-button-padding);
+
+   background-color: var(--twa-button-color);
+   color: var(--twa-text);
+   border: none;
+   border-radius: var(--twa-button-border-radius);
+   cursor: pointer;
+   width: inherit;
+   box-shadow: var(--twa-button-shadow);
+
+   @include click.clickable(
+      $color: hsl(from var(--twa-button-color) h s calc(l - 25)),
+      $border-radius: var(--twa-button-border-radius)
+   );
+
+   &.secondary {
+      --twa-button-color: var(--twa-secondary);
+   }
+}

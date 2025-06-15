@@ -1,0 +1,21 @@
+<twa-overlay [(isOpen)]="isOpen">
+   <twa-icon
+      origin
+      class="menu-option"
+      icon="settings"
+      clickable
+      (clicked)="toggleSettings()"
+      matTooltip="Settings"
+      matTooltipPosition="right"
+   ></twa-icon>
+   <div class="quick-settings-overlay">
+      <div class="quick-settings-section">
+         <div class="quick-settings-title">Theme</div>
+         <twa-button-toggle [selected]="selectedTheme()" (selectedChange)="onThemeChange($event)">
+            @for (theme of themes; track theme) {
+               <twa-button-toggle-item [value]="theme"> {{ theme }} </twa-button-toggle-item>
+            }
+         </twa-button-toggle>
+      </div>
+   </div>
+</twa-overlay>

@@ -1,10 +1,33 @@
 /* You can add global styles to this file, and also import other style files */
 @use 'colors';
+@use 'material-override';
 
 :root {
    @include colors.define-themes();
+
+   *:not(.material-symbols-rounded) {
+      font-family: 'Figtree', sans-serif;
+      font-optical-sizing: auto;
+      font-weight: 500;
+      font-style: normal;
+   }
+
+   * {
+      box-sizing: border-box;
+   }
+}
+
+.material-symbols-rounded {
+   user-select: none;
+   cursor: default;
 }
 
 body {
    background-color: var(--twa-background);
+   margin: 0;
+   height: 100dvh;
+   width: 100dvw;
+   position: fixed;
+
+   @include material-override.override();
 }

@@ -1,0 +1,8 @@
+<section>
+   <header class="section-header" [ngClass]="'heading-' + section.level">
+      <span class="section-id">{{ section.sectionID }}</span> {{ name() }}
+   </header>
+   <div class="section-content">
+      <ng-content></ng-content>
+   </div>
+</section>

@@ -1,0 +1,10 @@
+<span
+   class="icon material-symbols-rounded"
+   [class.icon-clickable]="clickable()"
+   [tabIndex]="clickable() ? 0 : -1"
+   [ngClass]="iconClass()"
+   (click)="onClick($event)"
+   (keydown.enter)="onClick($event)"
+>
+   {{ icon() }}
+</span>

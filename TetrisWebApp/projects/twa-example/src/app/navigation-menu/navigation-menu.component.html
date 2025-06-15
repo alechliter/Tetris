@@ -1,0 +1,11 @@
+<nav>
+   <div class="nav-pages">
+      @for (route of availableRoutes; track route) {
+         <twa-navigation-link [route]="route"></twa-navigation-link>
+      }
+   </div>
+   <div class="menu-options">
+      <twa-quick-settings-menu></twa-quick-settings-menu>
+      <twa-color-scheme-toggle class="menu-option"></twa-color-scheme-toggle>
+   </div>
+</nav>

@@ -1,16 +1,26 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
-import { ExampleComponent, ThemeService } from '@twa-core';
-import { DefaultThemeOptions, ThemeOptionsToken } from '@twa-core';
+import { SideBarComponent, SideBarContentComponent, SideBarLayoutComponent, ThemeService } from '@twa-core';
+import { NavigationMenuComponent } from './navigation-menu/navigation-menu.component';
+import { SectionMenuComponent } from './section-layout/menu/section-menu.component';
 
 @Component({
    selector: 'app-root',
    providers: [ThemeService],
-   imports: [RouterOutlet, ExampleComponent],
+   imports: [
+      RouterOutlet,
+      SideBarComponent,
+      SideBarContentComponent,
+      SideBarLayoutComponent,
+      NavigationMenuComponent,
+      SectionMenuComponent,
+   ],
    templateUrl: './app.component.html',
    styleUrl: './app.component.scss',
 })
 export class AppComponent implements OnInit {
+   readonly title = 'Example App';
+
    constructor(private themeService: ThemeService) {}
 
    ngOnInit(): void {

@@ -1,0 +1,30 @@
+<div cdkOverlayOrigin #trigger="cdkOverlayOrigin">
+   <ng-content select="[origin]"></ng-content>
+</div>
+
+<ng-template
+   cdkConnectedOverlay
+   [cdkConnectedOverlayOrigin]="trigger"
+   [cdkConnectedOverlayOpen]="isOpen()"
+   [cdkConnectedOverlayDisableClose]="disableClose()"
+   [cdkConnectedOverlayDisposeOnNavigation]="disposeOnNavigation()"
+   [cdkConnectedOverlayFlexibleDimensions]="flexibleDimensions()"
+   [cdkConnectedOverlayGrowAfterOpen]="growAfterOpen()"
+   [cdkConnectedOverlayHasBackdrop]="hasBackdrop()"
+   [cdkConnectedOverlayHeight]="height()"
+   [cdkConnectedOverlayMinHeight]="minHeight()"
+   [cdkConnectedOverlayWidth]="width()"
+   [cdkConnectedOverlayMinWidth]="minWidth()"
+   [cdkConnectedOverlayOffsetX]="offsetX()"
+   [cdkConnectedOverlayOffsetY]="offsetY()"
+   [cdkConnectedOverlayLockPosition]="lockPosition()"
+   [cdkConnectedOverlayPositions]="positions()"
+   [cdkConnectedOverlayPush]="push()"
+   [cdkConnectedOverlayTransformOriginOn]="transformOriginSelector()"
+   [cdkConnectedOverlayViewportMargin]="viewportMargin()"
+   (detach)="onDetach()"
+>
+   <div cdkScrollable class="overlay-content">
+      <ng-content></ng-content>
+   </div>
+</ng-template>
