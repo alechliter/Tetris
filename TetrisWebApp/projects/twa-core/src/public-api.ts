@@ -1,3 +1,4 @@
+export * from './lib/board/tetris-board.component';
 export * from './lib/button-toggle/button-toggle.component';
 export * from './lib/button-toggle/item/button-toggle-item.component';
 export * from './lib/button/button.component';
@@ -6,6 +7,7 @@ export { TetrisWebAppOverlayComponent as OverlayComponent } from './lib/overlay/
 export * from './lib/side-bar-layout/side-bar-content/side-bar-content.component';
 export * from './lib/side-bar-layout/side-bar-layout.component';
 export * from './lib/side-bar-layout/side-bar/side-bar.component';
+export * from './lib/theme/components/color-scheme-toggle/color-scheme-toggle.component';
 export * from './lib/theme/models/theme-options.interface';
 export * from './lib/theme/models/theme.model';
 export * from './lib/theme/theme.service';

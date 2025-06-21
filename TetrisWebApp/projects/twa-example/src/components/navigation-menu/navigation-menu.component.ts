@@ -1,8 +1,8 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { Route, Router } from '@angular/router';
-import { ColorSchemeToggleComponent } from '../../../../twa-core/src/lib/theme/components/color-scheme-toggle/color-scheme-toggle.component';
-import { routes } from '../app.routes';
+import { ColorSchemeToggleComponent } from '@twa-core';
+import { routes } from '../../app/app.routes';
 import { QuickSettingsMenuComponent } from '../quick-settings-menu/quick-settings-menu.component';
 import { NavigationLinkComponent } from './navigation-link/navigation-link.component';
 

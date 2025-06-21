@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { SectionLayoutComponent } from '../section-layout/section-layout.component';
-import { SectionComponent } from '../section-layout/section/section.component';
+import { SectionLayoutComponent } from '../../components/section-layout/section-layout.component';
+import { SectionComponent } from '../../components/section-layout/section/section.component';
 
 @Component({
    selector: 'twa-home-page',

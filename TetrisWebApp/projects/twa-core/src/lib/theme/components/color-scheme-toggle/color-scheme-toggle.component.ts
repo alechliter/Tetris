@@ -1,10 +1,10 @@
 import { CommonModule } from '@angular/common';
 import { Component, computed, inject, input, signal, Signal, WritableSignal } from '@angular/core';
 import { MatTooltip, TooltipPosition } from '@angular/material/tooltip';
-import { ThemeService } from '@twa-core';
 import { Subject, takeUntil } from 'rxjs';
 import { IconComponent } from '../../../icon/icon.component';
 import { ThemeModel } from '../../models/theme.model';
+import { ThemeService } from '../../theme.service';
 import { ColorScheme, Theme } from '../../types/theme.types';
 
 @Component({

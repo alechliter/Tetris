@@ -16,13 +16,13 @@ import {
    ButtonToggleComponent,
    ButtonToggleItemComponent,
    ColorScheme,
+   ColorSchemeToggleComponent,
    IconComponent,
    Theme,
    ThemeModel,
    ThemeService,
 } from '@twa-core';
 import { Subject, takeUntil } from 'rxjs';
-import { ColorSchemeToggleComponent } from '../../../../twa-core/src/lib/theme/components/color-scheme-toggle/color-scheme-toggle.component';
 
 @Component({
    selector: 'twa-theme-page',
